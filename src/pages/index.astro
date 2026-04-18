@@ -1,17 +1,104 @@
 ---
+// =============================================================
+// index.astro · Home do portal InFinitudes
+// -------------------------------------------------------------
+// Layout editorial (benchmark: newyorker.com) na ordem:
+//   1. Header
+//   2. HeroFeatured     ← ensaio de capa (sempre visível)
+//   3. FeaturedCategories ← bloco Outras Histórias + Divã Infinito
+//   4. Grid Relatos & Podcasts
+//   5. BookSection
+//   6. Footer
+//
+// Os dados vêm do Sanity. Cada componente tem fake data default
+// para manter o site apresentável enquanto a editora alimenta
+// o Studio (estado "vazio" elegante, não quebrado).
+// =============================================================
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import PostCard from "../components/PostCard.astro";
+import HeroFeatured, {
+  type HeroContent,
+} from "../components/HeroFeatured.astro";
+import FeaturedCategories from "../components/FeaturedCategories.astro";
+import BookSection from "../components/BookSection.astro";
+import { getAllPosts, urlFor } from "../lib/sanity";
+import { getCategory } from "../lib/categories";
 
+const posts = await getAllPosts();
+
+// O primeiro post (mais recente) vira o ensaio de capa · os próximos
+// entram no grid de "Relatos & Podcasts da semana"
+const [featured, ...rest] = posts;
+const gridPosts = rest.slice(0, 3);
+
+// -------------------------------------------------------------
+// Monta o conteúdo do hero a partir do post em destaque. Se não
+// houver post no Sanity, HeroFeatured usa seu próprio fake data.
+// -------------------------------------------------------------
+const heroContent: HeroContent | undefined = featured
+  ? {
+      eyebrow: `${getCategory(featured.category ?? "")?.title ?? "Ensaio de capa"} · InFinitudes`,
+      title: featured.title,
+      dek: featured.excerpt,
+      byline: null, // futuramente virá de um campo "author" no Sanity
+      readingTime: null,
+      href: featured.category
+        ? `/${featured.category}/${featured.slug}`
+        : `/${featured.slug}`,
+      imageUrl: featured.mainImage
+        ? urlFor(featured.mainImage)
+            .width(1400)
+            .height(1750)
+            .fit("crop")
+            .auto("format")
+            .url()
+        : null,
+      imageAlt: featured.mainImage?.alt ?? null,
+    }
+  : undefined;
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout title="InFinitudes — Humanização na saúde e cuidados paliativos">
+  <Header />
+
+  <main>
+    {/* 1 · Ensaio de capa · primeira seção da home */}
+    <HeroFeatured hero={heroContent} />
+
+    {/* 2 · Destaques assimétricos · Outras Histórias + Divã Infinito */}
+    <FeaturedCategories />
+
+    {/* 3 · Grid Relatos & Podcasts da semana (vindo do Sanity) */}
+    <section class="max-w-7xl mx-auto px-6 lg:px-12 border-t border-rule">
+      <div class="py-12 flex items-center gap-6">
+        <span class="flex-1 h-px bg-rule"></span>
+        <h2 class="meta">Relatos &amp; Podcasts da semana</h2>
+        <span class="flex-1 h-px bg-rule"></span>
+      </div>
+
+      {
+        gridPosts.length > 0 ? (
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-y-14 md:gap-x-10 lg:gap-x-16 pb-20 lg:pb-24">
+            {gridPosts.map((post) => (
+              <PostCard post={post} />
+            ))}
+          </div>
+        ) : (
+          <div class="py-16 text-center">
+            <p class="font-serif italic text-xl text-ink/70">
+              Novos relatos estão sendo escritos.
+            </p>
+            <p class="meta mt-4">Volte em breve</p>
+          </div>
+        )
+      }
+    </section>
+
+    {/* 4 · Box de destaque do livro · CTA → Lojinha */}
+    <BookSection />
+  </main>
+
+  <Footer />
+</Layout>

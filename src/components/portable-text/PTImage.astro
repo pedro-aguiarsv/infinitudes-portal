@@ -1,0 +1,30 @@
+---
+// =============================================================
+// PTImage.astro · Renderiza imagens embutidas no Portable Text
+// -------------------------------------------------------------
+// Quando o editor insere uma imagem no corpo do post, o Sanity
+// a envia como um bloco do tipo "image". Aqui transformamos em
+// <figure> com legenda opcional e largura maior que a coluna
+// de texto (efeito "bleed" editorial).
+// =============================================================
+import { urlFor, type SanityImage } from "../../lib/sanity";
+import type { Props as PTProps } from "astro-portabletext/types";
+
+type Props = PTProps<SanityImage & { caption?: string }>;
+
+const { node } = Astro.props as Props;
+
+const src = urlFor(node).width(1400).fit("max").auto("format").url();
+const alt = node.alt ?? "";
+---
+
+<figure class="my-14 -mx-6 lg:-mx-24">
+  <img src={src} alt={alt} class="w-full h-auto" loading="lazy" decoding="async" />
+  {
+    node.caption && (
+      <figcaption class="meta text-center mt-3 font-sans">
+        {node.caption}
+      </figcaption>
+    )
+  }
+</figure>

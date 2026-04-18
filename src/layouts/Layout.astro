@@ -1,0 +1,47 @@
+---
+// =============================================================
+// Layout.astro · Shell base de todas as páginas
+// Carrega tokens do Tailwind, fontes do Google e meta tags.
+// =============================================================
+import "../styles/global.css";
+
+export interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "InFinitudes — Humanização na saúde e cuidados paliativos",
+  description = "Ensaios, relatos e curadoria sobre humanização na saúde, cuidados paliativos e a arte de acompanhar.",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!--
+      Google Fonts · Playfair Display (serif editorial) + Inter (sans UI).
+      Preconnect acelera o handshake com o CDN e melhora o LCP.
+      Os tokens font-serif e font-sans estão registrados em global.css (@theme)
+      e ficam disponíveis como utilitários Tailwind.
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap"
+    />
+
+    <title>{title}</title>
+  </head>
+  <body class="font-sans bg-paper text-ink">
+    <slot />
+  </body>
+</html>

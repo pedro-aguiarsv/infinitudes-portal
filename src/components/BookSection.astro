@@ -1,0 +1,101 @@
+---
+// =============================================================
+// BookSection.astro · Box editorial de destaque do livro
+// -------------------------------------------------------------
+// Segue o DNA New Yorker: sem cards, sem sombras. Apenas
+// capa + tipografia hierárquica + hairline 1px + CTA sóbrio.
+// O botão "Comprar" aponta para a Lojinha (categoria comercial).
+// =============================================================
+import { getCategory } from "../lib/categories";
+
+export interface Props {
+  title?: string;
+  subtitle?: string;
+  dek?: string;
+  price?: string;
+  coverUrl?: string | null;     // Se null → placeholder de wireframe
+  features?: Array<{ label: string; meta: string }>;
+}
+
+// A rota da "Comprar" vem da fonte única de categorias:
+// se um dia o slug da Lojinha mudar, o link se atualiza sozinho.
+const lojinhaHref = getCategory("lojinha")?.href ?? "/lojinha";
+
+const {
+  title = "InFinitudes: ensaios sobre o tempo que resta",
+  subtitle = "Livro · Edição de 2026",
+  dek = "Vinte e quatro ensaios reunidos sobre presença, escuta e a gramática silenciosa dos cuidados paliativos.",
+  price = "R$ 98,00",
+  coverUrl = null,
+  features = [
+    { label: "Edição impressa com acabamento artesanal", meta: "320 páginas" },
+    { label: "Prefácio de Dra. Ana Claudia Quintana Arantes", meta: "Exclusivo" },
+    { label: "Inclui acesso ao áudio-livro narrado pelo autor", meta: "8h 40min" },
+  ],
+} = Astro.props;
+---
+
+<section class="border-t border-b border-rule bg-[#f2ede4]">
+  <div class="max-w-7xl mx-auto px-6 lg:px-12 py-20 lg:py-28">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
+      {/* Capa do livro · proporção 3:4 */}
+      <figure class="lg:col-span-5 max-w-sm mx-auto lg:mx-0">
+        {
+          coverUrl ? (
+            <img
+              src={coverUrl}
+              alt={`Capa do livro ${title}`}
+              class="w-full aspect-[3/4] object-cover border border-rule"
+              loading="lazy"
+              decoding="async"
+            />
+          ) : (
+            <div class="ph aspect-[3/4] w-full border border-rule" data-label="Capa do livro · 3:4" />
+          )
+        }
+      </figure>
+
+      {/* Texto de venda · 7/12 */}
+      <div class="lg:col-span-7">
+        <span class="meta text-amber">{subtitle}</span>
+
+        <h2
+          class="font-serif text-4xl sm:text-5xl lg:text-[56px] leading-[1.05] mt-6 font-normal"
+        >
+          {title}
+        </h2>
+
+        <p class="font-serif italic text-xl leading-snug mt-6 text-ink/80">
+          {dek}
+        </p>
+
+        {/* Reforços de valor · hairlines 1px, sem ícones */}
+        <ul
+          class="mt-10 divide-y divide-rule border-t border-b border-rule"
+        >
+          {
+            features.map((f) => (
+              <li class="py-4 flex justify-between items-baseline gap-6">
+                <span class="text-[15px]">{f.label}</span>
+                <span class="meta">{f.meta}</span>
+              </li>
+            ))
+          }
+        </ul>
+
+        {/* CTAs · principal aponta para a Lojinha */}
+        <div class="mt-10 flex flex-wrap items-center gap-x-10 gap-y-4">
+          <a
+            href={lojinhaHref}
+            class="inline-flex items-center gap-3 border border-ink bg-ink text-paper px-8 py-4 text-[12px] font-medium tracking-[0.18em] uppercase hover:bg-transparent hover:text-ink transition-colors"
+          >
+            Comprar na Lojinha — {price}
+          </a>
+          <a href={`${lojinhaHref}#trecho`} class="meta link-ed text-amber">
+            Ler um trecho grátis →
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

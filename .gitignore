@@ -22,3 +22,6 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# screenshots locais (só referência visual, não entra no repo)
+screenshots/

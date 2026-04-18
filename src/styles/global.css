@@ -1,0 +1,104 @@
+@import "tailwindcss";
+
+/* =================================================================
+   THEME · InFinitudes
+   Tailwind v4 expõe estas variáveis como utilitários automaticamente:
+   --font-serif     → font-serif
+   --font-sans      → font-sans
+   --color-paper    → bg-paper / text-paper
+   --color-ink      → text-ink / border-ink
+   --color-muted    → text-muted
+   --color-amber    → text-amber
+   --color-rule     → border-rule / bg-rule
+   ================================================================= */
+@theme {
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+
+  --color-paper: #faf7f2;
+  --color-ink: #1c1c1c;
+  --color-muted: #6b6558;
+  --color-amber: #8c6a3f;
+  --color-rule: #e2e1dc;
+
+  --tracking-meta: 0.16em;
+}
+
+/* Base editorial: fundo off-white quente, texto grafite, fonte sans padrão */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Utilitários editoriais reutilizáveis */
+@layer components {
+  /* Metadados (categoria, data, autor) — padrão editorial clássico */
+  .meta {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: var(--tracking-meta);
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  /* Placeholder de imagem para wireframe — será substituído por <Image /> do Sanity */
+  .ph {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #ece9e3 0%, #d9d5cc 100%);
+  }
+  .ph::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(to right, rgba(255, 255, 255, 0.35) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.35) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+  }
+  .ph::after {
+    content: attr(data-label);
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  /* Link editorial com sublinhado animado sutil */
+  .link-ed {
+    position: relative;
+    display: inline-block;
+  }
+  .link-ed::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -2px;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+  .link-ed:hover::after {
+    transform: scaleX(1);
+  }
+}

@@ -1,0 +1,124 @@
+---
+// =============================================================
+// HeroFeatured.astro · Primeira seção da home (ensaio de capa)
+// -------------------------------------------------------------
+// Layout assimétrico inspirado no wireframe editorial:
+//
+//   ┌──────────────────────┬─────────────────┐
+//   │                      │  EYEBROW (meta) │
+//   │                      │                 │
+//   │   IMAGEM EDITORIAL   │  Título serif   │
+//   │        (4:5)         │  muito grande   │
+//   │                      │                 │
+//   │                      │  Dek itálico    │
+//   │                      │  Byline meta    │
+//   │                      │  CTA            │
+//   └──────────────────────┴─────────────────┘
+//
+// Componente autossuficiente: sem props, renderiza com fake data
+// editorial; com props, usa os dados reais do Sanity.
+// =============================================================
+
+export interface HeroContent {
+  eyebrow: string;   // Ex.: "Ensaio de capa · Cuidados paliativos"
+  title: string;
+  dek?: string | null;
+  byline?: string | null;  // Ex.: "Por Dra. Helena Brandão"
+  readingTime?: string | null;
+  href: string;
+  imageUrl?: string | null;
+  imageAlt?: string | null;
+  imageCaption?: string | null;
+}
+
+export interface Props {
+  hero?: HeroContent;
+}
+
+const FAKE: HeroContent = {
+  eyebrow: "Ensaio de capa · Cuidados paliativos",
+  title: "Quando o cuidado se torna a última linguagem do amor",
+  dek:
+    "Uma reflexão sobre presença, escuta e os silêncios que sustentam a dignidade no fim da vida — e o que a medicina aprende com eles.",
+  byline: "Por Dra. Helena Brandão",
+  readingTime: "14 min de leitura",
+  href: "/outras-historias/ultima-linguagem-do-amor",
+  imageUrl: null,
+  imageAlt: "Fotografia editorial",
+  imageCaption: null,
+};
+
+const { hero = FAKE } = Astro.props;
+---
+
+<section class="max-w-7xl mx-auto px-6 lg:px-12 py-16 lg:py-24">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+    {/* Imagem vertical 4:5 · coluna esquerda (7/12 ≈ 58%) */}
+    <figure class="lg:col-span-7 order-1">
+      {
+        hero.imageUrl ? (
+          <img
+            src={hero.imageUrl}
+            alt={hero.imageAlt ?? hero.title}
+            class="w-full aspect-[4/5] object-cover"
+            loading="eager"
+            fetchpriority="high"
+          />
+        ) : (
+          <div
+            class="ph w-full aspect-[4/5]"
+            data-label="Imagem editorial · 4:5"
+          />
+        )
+      }
+      {
+        hero.imageCaption && (
+          <figcaption class="meta mt-3">{hero.imageCaption}</figcaption>
+        )
+      }
+    </figure>
+
+    {/* Texto · coluna direita (5/12 ≈ 42%) */}
+    <div class="lg:col-span-5 order-2 lg:pl-4">
+      <span class="meta text-amber">{hero.eyebrow}</span>
+
+      <h1
+        class="font-serif text-4xl sm:text-5xl lg:text-6xl xl:text-[72px] leading-[1.02] mt-6 font-normal"
+      >
+        <a
+          href={hero.href}
+          class="transition-colors hover:text-amber"
+        >
+          {hero.title}
+        </a>
+      </h1>
+
+      {
+        hero.dek && (
+          <p class="font-serif italic text-xl lg:text-2xl leading-snug mt-8 text-ink/80">
+            {hero.dek}
+          </p>
+        )
+      }
+
+      {
+        (hero.byline || hero.readingTime) && (
+          <div class="mt-10 flex flex-wrap items-center gap-x-3 gap-y-1">
+            {hero.byline && <span class="meta">{hero.byline}</span>}
+            {hero.byline && hero.readingTime && (
+              <span class="meta">·</span>
+            )}
+            {hero.readingTime && <span class="meta">{hero.readingTime}</span>}
+          </div>
+        )
+      }
+
+      <a
+        href={hero.href}
+        class="inline-block mt-8 meta link-ed text-amber"
+      >
+        Ler o ensaio completo →
+      </a>
+    </div>
+  </div>
+</section>

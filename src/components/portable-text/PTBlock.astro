@@ -1,0 +1,46 @@
+---
+// =============================================================
+// PTBlock.astro · Renderiza blocos de texto do Portable Text
+// -------------------------------------------------------------
+// Aplica estilo editorial a parágrafos, headings e citações.
+// A lib astro-portabletext passa o bloco completo em `node`.
+// =============================================================
+import type { Props as PTProps } from "astro-portabletext/types";
+
+type Props = PTProps<{ style?: string }>;
+
+const { node } = Astro.props as Props;
+const style = node.style ?? "normal";
+---
+
+{
+  style === "h2" && (
+    <h2 class="font-serif text-3xl lg:text-4xl leading-tight mt-16 mb-2 font-normal">
+      <slot />
+    </h2>
+  )
+}
+
+{
+  style === "h3" && (
+    <h3 class="font-serif text-2xl lg:text-[28px] leading-tight mt-12 mb-2 font-normal">
+      <slot />
+    </h3>
+  )
+}
+
+{
+  style === "blockquote" && (
+    <blockquote class="font-serif italic text-2xl lg:text-[28px] leading-snug text-center my-12 px-6 border-l-0 text-ink/85">
+      <slot />
+    </blockquote>
+  )
+}
+
+{
+  style === "normal" && (
+    <p>
+      <slot />
+    </p>
+  )
+}

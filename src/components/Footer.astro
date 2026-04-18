@@ -1,0 +1,97 @@
+---
+// =============================================================
+// Footer.astro · Rodapé editorial minimalista
+//   · Bloco de newsletter sóbrio (sem linguagem publicitária)
+//   · Linha com as 7 páginas do projeto
+//   · Linha institucional final (copyright + redes)
+// =============================================================
+
+import { CATEGORIES } from "../lib/categories";
+const nav = CATEGORIES.map((c) => ({ label: c.title, href: c.href }));
+
+const social = [
+  { label: "Instagram", href: "#" },
+  { label: "LinkedIn", href: "#" },
+  { label: "Spotify", href: "#" },
+  { label: "Contato", href: "/contato" },
+];
+
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-rule bg-paper">
+  <!-- Bloco newsletter · convite autoral, zero hype -->
+  <section id="newsletter" class="border-b border-rule">
+    <div class="max-w-3xl mx-auto px-6 py-20 text-center">
+      <span class="meta text-amber">Carta semanal</span>
+      <h3
+        class="font-serif text-3xl sm:text-4xl lg:text-5xl leading-tight mt-5 font-normal"
+      >
+        Um ensaio, toda quinta-feira. Sem ruído.
+      </h3>
+      <p class="text-[15px] leading-relaxed mt-5 text-ink/75 max-w-xl mx-auto">
+        Assine nossa carta e receba um texto autoral sobre humanização,
+        cuidado e finitude, direto no seu e-mail.
+      </p>
+
+      <!-- Form (integração MailerLite/Brevo entra no Bloco 4) -->
+      <form
+        class="mt-10 flex flex-col sm:flex-row gap-3 max-w-lg mx-auto"
+        onsubmit="event.preventDefault();"
+      >
+        <label for="newsletter-email" class="sr-only">Seu e-mail</label>
+        <input
+          id="newsletter-email"
+          type="email"
+          required
+          placeholder="seu@email.com"
+          class="flex-1 bg-transparent border border-rule px-5 py-4 text-[15px] placeholder:text-muted/70 focus:outline-none focus:border-ink transition-colors"
+        />
+        <button
+          type="submit"
+          class="border border-ink bg-ink text-paper px-8 py-4 text-[12px] font-medium tracking-[0.16em] uppercase hover:bg-transparent hover:text-ink transition-colors"
+        >
+          Assinar
+        </button>
+      </form>
+      <p class="meta mt-4">Grátis · cancele quando quiser</p>
+    </div>
+  </section>
+
+  <!-- Linha de categorias -->
+  <div class="max-w-7xl mx-auto px-6 lg:px-12 py-12">
+    <nav
+      aria-label="Rodapé"
+      class="flex flex-wrap justify-center gap-x-8 gap-y-3"
+    >
+      {
+        nav.map((item) => (
+          <a href={item.href} class="meta link-ed hover:text-ink">
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+
+  <!-- Linha institucional -->
+  <div class="border-t border-rule">
+    <div
+      class="max-w-7xl mx-auto px-6 lg:px-12 py-8 flex flex-col md:flex-row items-center justify-between gap-4"
+    >
+      <p class="font-serif text-lg">
+        <span class="italic">In</span><span class="font-semibold">Finitudes</span>
+      </p>
+      <p class="meta">© {year} · Todos os direitos reservados</p>
+      <div class="flex items-center gap-6">
+        {
+          social.map((item) => (
+            <a href={item.href} class="meta link-ed hover:text-ink">
+              {item.label}
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</footer>

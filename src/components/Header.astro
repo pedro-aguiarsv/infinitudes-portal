@@ -1,0 +1,63 @@
+---
+// =============================================================
+// Header.astro · Cabeçalho editorial (benchmark: The New Yorker)
+//   · Barra utilitária superior (data + CTA)
+//   · Logo central em serif (Playfair Display)
+//   · Navegação Inter uppercase, tracking 0.16em, 7 seções
+//   · Sticky com backdrop-blur e hairlines de 1px
+// As seções vêm de src/lib/categories.ts (fonte única do projeto).
+// =============================================================
+import { CATEGORIES } from "../lib/categories";
+
+const today = new Intl.DateTimeFormat("pt-BR", {
+  weekday: "long",
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+}).format(new Date());
+---
+
+<header class="sticky top-0 z-50 bg-paper/95 backdrop-blur-sm border-b border-rule">
+  {/* Barra utilitária · data + atalho de assinatura */}
+  <div class="border-b border-rule">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12 py-2.5 flex items-center justify-between">
+      <span class="meta capitalize">{today}</span>
+      <div class="flex items-center gap-6">
+        <a href="/entrar" class="meta link-ed hidden sm:inline-block">Entrar</a>
+        <a href="#newsletter" class="meta link-ed text-amber">
+          Assine a carta semanal
+        </a>
+      </div>
+    </div>
+  </div>
+
+  {/* Logo central · serif editorial maiúsculo */}
+  <div class="max-w-7xl mx-auto px-6 lg:px-12 py-8 lg:py-10 text-center">
+    <a href="/" class="inline-block" aria-label="InFinitudes — página inicial">
+      <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-normal tracking-tight">
+        <span class="italic">In</span><span class="font-semibold">Finitudes</span>
+      </h1>
+      <p class="meta mt-2">Humanização na saúde · cuidados paliativos</p>
+    </a>
+  </div>
+
+  {/* Navegação principal · 7 seções em Inter uppercase, espaçamento generoso */}
+  <nav aria-label="Navegação principal" class="border-t border-rule">
+    <ul
+      class="max-w-7xl mx-auto px-6 lg:px-12 py-5 flex flex-wrap items-center justify-center gap-x-8 md:gap-x-10 lg:gap-x-14 gap-y-3"
+    >
+      {
+        CATEGORIES.map((cat) => (
+          <li>
+            <a
+              href={cat.href}
+              class="font-sans text-[11px] font-medium uppercase tracking-[0.18em] text-ink/85 link-ed hover:text-ink whitespace-nowrap"
+            >
+              {cat.title}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>

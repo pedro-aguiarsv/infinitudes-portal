@@ -1,0 +1,101 @@
+---
+// =============================================================
+// PostCard.astro · Miniatura editorial de post
+// -------------------------------------------------------------
+// Uso:
+//   <PostCard post={post} category="Divã Infinito" />
+//
+// Regras de design (benchmark New Yorker):
+//   · Sem card, sem sombra — apenas imagem + texto em coluna
+//   · Categoria em âmbar, título em Playfair Display
+//   · Data formatada em pt-BR com tracking amplo
+// =============================================================
+import { urlFor, type PostPreview } from "../lib/sanity";
+import { getCategory } from "../lib/categories";
+
+export interface Props {
+  post: PostPreview;
+  category?: string;      // Sobrescreve o label da categoria (opcional)
+  imageRatio?: string;    // Ex.: "aspect-[4/3]" (default) ou "aspect-[4/5]"
+  size?: "sm" | "md" | "lg"; // Escala tipográfica do título
+}
+
+const {
+  post,
+  category,
+  imageRatio = "aspect-[4/3]",
+  size = "md",
+} = Astro.props;
+
+// Resolve o label da categoria: prop > post.category (Sanity) > fallback
+const categoryLabel =
+  category ?? (post.category ? getCategory(post.category)?.title ?? null : null);
+
+// URL editorial: /categoria/slug (fallback para /slug se o post não tiver categoria)
+const postHref = post.category ? `/${post.category}/${post.slug}` : `/${post.slug}`;
+
+// Imagem otimizada via @sanity/image-url (crop inteligente via hotspot do Sanity)
+const imageUrl = post.mainImage
+  ? urlFor(post.mainImage).width(800).height(600).fit("crop").auto("format").url()
+  : null;
+
+// Data em português · ex: "18 de abril, 2026"
+const formattedDate = post.publishedAt
+  ? new Intl.DateTimeFormat("pt-BR", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }).format(new Date(post.publishedAt))
+  : null;
+
+// Escala tipográfica do título
+const titleSize = {
+  sm: "text-xl lg:text-2xl",
+  md: "text-2xl lg:text-[28px]",
+  lg: "text-3xl lg:text-4xl",
+}[size];
+---
+
+<article class="group">
+  <a href={postHref} class="block">
+    {
+      imageUrl ? (
+        <img
+          src={imageUrl}
+          alt={post.mainImage?.alt ?? post.title}
+          class={`w-full ${imageRatio} object-cover transition-[filter] duration-300 group-hover:brightness-[0.96]`}
+          loading="lazy"
+          decoding="async"
+        />
+      ) : (
+        <div class={`ph w-full ${imageRatio}`} data-label="Sem imagem" />
+      )
+    }
+
+    {
+      categoryLabel && (
+        <span class="meta text-amber mt-6 block">{categoryLabel}</span>
+      )
+    }
+
+    <h3
+      class={`font-serif ${titleSize} leading-tight mt-3 font-normal transition-colors group-hover:text-amber`}
+    >
+      {post.title}
+    </h3>
+
+    {
+      post.excerpt && (
+        <p class="text-[15px] leading-relaxed mt-4 text-ink/75">
+          {post.excerpt}
+        </p>
+      )
+    }
+
+    {
+      formattedDate && (
+        <div class="meta mt-5">{formattedDate}</div>
+      )
+    }
+  </a>
+</article>

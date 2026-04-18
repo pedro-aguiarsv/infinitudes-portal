@@ -1,0 +1,151 @@
+---
+// =============================================================
+// [category]/[slug].astro · Página de um post individual
+// -------------------------------------------------------------
+// URLs no formato /hub-infinito/titulo-do-post (editorial e SEO).
+// Uma rota estática é pré-gerada para cada post publicado.
+// O corpo é texto rico (Portable Text) do Sanity, renderizado
+// com componentes customizados que aplicam a tipografia da marca.
+// =============================================================
+import Layout from "../../layouts/Layout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import { PortableText } from "astro-portabletext";
+import {
+  getAllPosts,
+  getPostBySlug,
+  urlFor,
+  type PostFull,
+} from "../../lib/sanity";
+import { getCategory } from "../../lib/categories";
+import PTBlock from "../../components/portable-text/PTBlock.astro";
+import PTImage from "../../components/portable-text/PTImage.astro";
+
+export async function getStaticPaths() {
+  const posts = await getAllPosts();
+  return posts
+    .filter((p) => p.category) // só posts com categoria definida
+    .map((post) => ({
+      params: { category: post.category!, slug: post.slug },
+    }));
+}
+
+const { slug } = Astro.params;
+const post = (await getPostBySlug(slug!)) as PostFull | null;
+
+if (!post) {
+  return Astro.redirect("/404");
+}
+
+const category = post.category ? getCategory(post.category) : null;
+
+const heroImage = post.mainImage
+  ? urlFor(post.mainImage).width(1600).height(1067).fit("crop").auto("format").url()
+  : null;
+
+const formattedDate = post.publishedAt
+  ? new Intl.DateTimeFormat("pt-BR", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }).format(new Date(post.publishedAt))
+  : null;
+
+// Componentes customizados para o Portable Text (tipografia editorial)
+const components = {
+  type: {
+    image: PTImage,
+  },
+  block: {
+    normal: PTBlock,
+    h2: PTBlock,
+    h3: PTBlock,
+    blockquote: PTBlock,
+  },
+};
+---
+
+<Layout title={`${post.title} — InFinitudes`} description={post.excerpt ?? undefined}>
+  <Header />
+
+  <main>
+    <article>
+      {/* Cabeçalho do artigo */}
+      <header class="max-w-3xl mx-auto px-6 pt-16 lg:pt-24 pb-12 text-center">
+        {
+          category && (
+            <a
+              href={category.href}
+              class="meta text-amber link-ed inline-block"
+            >
+              {category.title}
+            </a>
+          )
+        }
+
+        <h1
+          class="font-serif text-4xl sm:text-5xl lg:text-6xl leading-[1.05] mt-6 font-normal"
+        >
+          {post.title}
+        </h1>
+
+        {
+          post.excerpt && (
+            <p class="font-serif italic text-xl lg:text-2xl leading-snug mt-6 text-ink/80">
+              {post.excerpt}
+            </p>
+          )
+        }
+
+        {
+          formattedDate && (
+            <div class="meta mt-8">{formattedDate}</div>
+          )
+        }
+
+        <div class="mx-auto mt-8 w-16 h-px bg-ink/30"></div>
+      </header>
+
+      {/* Imagem de abertura */}
+      {
+        heroImage && (
+          <figure class="max-w-4xl mx-auto px-6">
+            <img
+              src={heroImage}
+              alt={post.mainImage?.alt ?? post.title}
+              class="w-full aspect-[3/2] object-cover"
+              loading="eager"
+              fetchpriority="high"
+            />
+            {post.mainImage?.alt && (
+              <figcaption class="meta mt-3 text-center">
+                {post.mainImage.alt}
+              </figcaption>
+            )}
+          </figure>
+        )
+      }
+
+      {/* Corpo do ensaio · coluna única 680px, serif 19px, leading 1.75 */}
+      <div
+        class="max-w-2xl mx-auto px-6 py-16 lg:py-24 font-serif text-[19px] leading-[1.75] space-y-6"
+      >
+        <PortableText value={post.body} components={components} />
+      </div>
+
+      {/* Fim do artigo */}
+      <div class="max-w-2xl mx-auto px-6 pb-24 text-center">
+        <div class="mx-auto w-16 h-px bg-ink/30 mb-10"></div>
+        {
+          category && (
+            <a href={category.href} class="meta link-ed text-amber">
+              ← Mais em {category.title}
+            </a>
+          )
+        }
+      </div>
+    </article>
+  </main>
+
+  <Footer />
+</Layout>
