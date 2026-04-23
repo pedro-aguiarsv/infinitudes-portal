@@ -16,6 +16,7 @@ import { getCategory } from "../lib/categories";
 export interface Props {
   post: PostPreview;
   category?: string;      // Sobrescreve o label da categoria (opcional)
+  meta?: string;          // Sobrescreve o rodapé (ex.: "Marina Pires · 6 min")
   imageRatio?: string;    // Ex.: "aspect-[4/3]" (default) ou "aspect-[4/5]"
   size?: "sm" | "md" | "lg"; // Escala tipográfica do título
 }
@@ -23,6 +24,7 @@ export interface Props {
 const {
   post,
   category,
+  meta,
   imageRatio = "aspect-[4/3]",
   size = "md",
 } = Astro.props;
@@ -93,8 +95,10 @@ const titleSize = {
     }
 
     {
-      formattedDate && (
-        <div class="meta mt-5">{formattedDate}</div>
+      meta ? (
+        <div class="meta mt-5">{meta}</div>
+      ) : (
+        formattedDate && <div class="meta mt-5">{formattedDate}</div>
       )
     }
   </a>

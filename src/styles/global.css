@@ -101,4 +101,15 @@
   .link-ed:hover::after {
     transform: scaleX(1);
   }
+
+  /* Capitular clássica: primeira letra flutua à esquerda, serif grande.
+     Usada no primeiro parágrafo de ensaios longos. */
+  .dropcap::first-letter {
+    font-family: var(--font-serif);
+    font-size: 4.75rem;
+    float: left;
+    line-height: 0.9;
+    padding: 0.25rem 0.75rem 0 0;
+    color: var(--color-ink);
+  }
 }
