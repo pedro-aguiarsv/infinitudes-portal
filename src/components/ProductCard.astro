@@ -1,0 +1,68 @@
+---
+// =============================================================
+// ProductCard.astro · Miniatura de produto da Loja
+// -------------------------------------------------------------
+// Layout:
+//   ┌─────────────────┐
+//   │     IMAGEM      │   (fundo neutro, produto centralizado)
+//   ├─────────────────┤
+//   │ "Título" italic │
+//   │ autor / linha 2 │
+//   │ $ preço italic  │
+//   └─────────────────┘
+// =============================================================
+export interface Props {
+  title: string;
+  byline?: string; // ex.: "by Patrick Radden Keefe"
+  price: string; // ex.: "R$ 35,00"
+  href: string;
+  imageUrl?: string | null;
+  imageAlt?: string;
+  bg?: string; // tailwind bg-* — placeholder
+}
+
+const {
+  title,
+  byline,
+  price,
+  href,
+  imageUrl,
+  imageAlt,
+  bg = "bg-paper",
+} = Astro.props;
+---
+
+<a href={href} class="group block">
+  <div
+    class={`w-full aspect-square ${bg} flex items-center justify-center overflow-hidden`}
+  >
+    {
+      imageUrl ? (
+        <img
+          src={imageUrl}
+          alt={imageAlt ?? title}
+          class="w-3/4 h-3/4 object-contain transition-transform duration-300 group-hover:scale-105"
+          loading="lazy"
+        />
+      ) : (
+        <div
+          class="w-3/4 h-3/4 border border-rule/40 flex items-center justify-center text-muted/60 text-[10px] tracking-[0.20em] uppercase"
+        >
+          Produto
+        </div>
+      )
+    }
+  </div>
+
+  <h3
+    class="font-display italic text-[16px] lg:text-[17px] leading-[1.25] mt-4 font-normal text-ink group-hover:text-rouge transition-colors"
+  >
+    "{title}"{byline && <span class="not-italic"> {byline}</span>}
+  </h3>
+
+  <p
+    class="font-display italic text-[15px] mt-1 text-ink/80"
+  >
+    {price}
+  </p>
+</a>

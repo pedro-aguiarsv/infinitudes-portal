@@ -1,0 +1,40 @@
+---
+// =============================================================
+// RelatedPosts.astro · Grid "Leia Mais" no final de posts v1
+// -------------------------------------------------------------
+// Renderiza um grid de 4 colunas (mobile: 2) com posts
+// relacionados, cada um com imagem, categoria e título.
+//
+// Recebe array de PostPreview do Sanity (ou fake data).
+// Título "Leia Mais" centralizado acima.
+// =============================================================
+import type { PostPreview } from "../lib/sanity";
+import PostCard from "./PostCard.astro";
+
+export interface Props {
+  title?: string;
+  posts: PostPreview[];
+  categoryLabels?: Record<string, string>; // map de category value → label customizado
+}
+
+const { title = "Leia Mais", posts } = Astro.props;
+---
+
+<section class="bg-paper">
+  <div class="max-w-7xl mx-auto px-6 lg:px-12 py-20 lg:py-24">
+    <header class="text-center mb-12">
+      <div class="rouge-line max-w-md mx-auto mb-8"></div>
+      <h2
+        class="font-display text-[32px] lg:text-[40px] font-normal tracking-[-0.005em]"
+      >
+        {title}
+      </h2>
+    </header>
+
+    <div
+      class="grid grid-cols-2 lg:grid-cols-4 gap-y-12 gap-x-6 lg:gap-x-8"
+    >
+      {posts.map((post) => <PostCard post={post} size="sm" />)}
+    </div>
+  </div>
+</section>

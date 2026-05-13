@@ -1,97 +1,190 @@
 ---
 // =============================================================
-// Footer.astro · Rodapé editorial minimalista
-//   · Bloco de newsletter sóbrio (sem linguagem publicitária)
-//   · Linha com as 7 páginas do projeto
-//   · Linha institucional final (copyright + redes)
+// Footer.astro · Rodapé institucional (IN)Finitudes
+//   · Linha de links das seções (em creme, antes do rodapé preto)
+//   · Bloco preto com logo, patrocínio, realização, redes sociais
+//   · Copyright em sans uppercase
+//
+// Patrocinadores e realizadores ficam em /public/footer/ como
+// imagens monocromáticas (PNG ou SVG). Veja FOOTER_LOGOS abaixo.
 // =============================================================
+import { NAV_ITEMS } from "../lib/categories";
 
-import { CATEGORIES } from "../lib/categories";
-const nav = CATEGORIES.map((c) => ({ label: c.title, href: c.href }));
+// Patrocínio + Realização — quando você tiver os PNGs/SVGs monocromáticos,
+// jogue em /public/footer/ e troque o `label` por `src` no <img />.
+const SPONSORS = [{ label: "Lei Rouanet" }, { label: "Itaú" }];
+const REALIZATION = [
+  { label: "Ministério da Cultura" },
+  { label: "Governo do Brasil" },
+];
 
-const social = [
-  { label: "Instagram", href: "#" },
-  { label: "LinkedIn", href: "#" },
-  { label: "Spotify", href: "#" },
-  { label: "Contato", href: "/contato" },
+const SOCIAL = [
+  { label: "Instagram", href: "https://instagram.com", icon: "instagram" },
+  { label: "LinkedIn", href: "https://linkedin.com", icon: "linkedin" },
+  { label: "Spotify", href: "https://spotify.com", icon: "spotify" },
+  { label: "Contato", href: "/contato", icon: "mail" },
 ];
 
 const year = new Date().getFullYear();
 ---
 
-<footer class="border-t border-rule bg-paper">
-  <!-- Bloco newsletter · convite autoral, zero hype -->
-  <section id="newsletter" class="border-b border-rule">
-    <div class="max-w-3xl mx-auto px-6 py-20 text-center">
-      <span class="meta text-amber">Carta semanal</span>
-      <h3
-        class="font-serif text-3xl sm:text-4xl lg:text-5xl leading-tight mt-5 font-normal"
-      >
-        Um ensaio, toda quinta-feira. Sem ruído.
-      </h3>
-      <p class="text-[15px] leading-relaxed mt-5 text-ink/75 max-w-xl mx-auto">
-        Assine nossa carta e receba um texto autoral sobre humanização,
-        cuidado e finitude, direto no seu e-mail.
-      </p>
-
-      <!-- Form (integração MailerLite/Brevo entra no Bloco 4) -->
-      <form
-        class="mt-10 flex flex-col sm:flex-row gap-3 max-w-lg mx-auto"
-        onsubmit="event.preventDefault();"
-      >
-        <label for="newsletter-email" class="sr-only">Seu e-mail</label>
-        <input
-          id="newsletter-email"
-          type="email"
-          required
-          placeholder="seu@email.com"
-          class="flex-1 bg-transparent border border-rule px-5 py-4 text-[15px] placeholder:text-muted/70 focus:outline-none focus:border-ink transition-colors"
-        />
-        <button
-          type="submit"
-          class="border border-ink bg-ink text-paper px-8 py-4 text-[12px] font-medium tracking-[0.16em] uppercase hover:bg-transparent hover:text-ink transition-colors"
+{/* Linha com nav das seções (fundo creme, mesma tipografia da topbar) */}
+<div class="bg-paper border-t border-rule/60">
+  <nav
+    aria-label="Rodapé · seções"
+    class="max-w-7xl mx-auto px-6 lg:px-12 py-6 flex flex-wrap items-center justify-center gap-x-8 md:gap-x-10 lg:gap-x-12 gap-y-3"
+  >
+    {
+      NAV_ITEMS.map((item) => (
+        <a
+          href={item.href}
+          class="font-sans text-[10px] font-medium uppercase tracking-[0.22em] text-ink/70 link-ed hover:text-rouge"
         >
-          Assinar
-        </button>
-      </form>
-      <p class="meta mt-4">Grátis · cancele quando quiser</p>
-    </div>
-  </section>
+          {item.title}
+        </a>
+      ))
+    }
+  </nav>
+</div>
 
-  <!-- Linha de categorias -->
-  <div class="max-w-7xl mx-auto px-6 lg:px-12 py-12">
-    <nav
-      aria-label="Rodapé"
-      class="flex flex-wrap justify-center gap-x-8 gap-y-3"
+{/* Rodapé preto institucional */}
+<footer class="bg-black text-paper">
+  <div
+    class="max-w-7xl mx-auto px-6 lg:px-12 py-12 grid grid-cols-1 md:grid-cols-12 gap-10 items-center"
+  >
+    {/* Logo à esquerda · monocromático claro */}
+    <div class="md:col-span-3 flex justify-center md:justify-start">
+      <a href="/" class="inline-block" aria-label="(IN)Finitudes">
+        <div
+          class="font-display leading-[0.95] tracking-[-0.01em] text-[28px] font-medium text-paper"
+        >
+          <div><span class="text-rouge">(IN)</span></div>
+          <div class="-mt-1">FINI</div>
+          <div class="-mt-1">TUDES</div>
+        </div>
+        <p
+          class="mt-2 font-sans text-[8px] tracking-[0.42em] uppercase text-paper/60"
+        >
+          Divã Infinito
+        </p>
+      </a>
+    </div>
+
+    {/* Patrocínio e Realização · logos em monocromia */}
+    <div
+      class="md:col-span-6 grid grid-cols-2 gap-8 items-start text-center"
     >
-      {
-        nav.map((item) => (
-          <a href={item.href} class="meta link-ed hover:text-ink">
-            {item.label}
-          </a>
-        ))
-      }
-    </nav>
+      <div>
+        <p
+          class="font-sans text-[9px] tracking-[0.30em] uppercase text-paper/55 mb-4"
+        >
+          Patrocínio
+        </p>
+        <div class="flex items-center justify-center gap-6">
+          {
+            SPONSORS.map((s) => (
+              <span class="text-paper/85 font-display text-sm">{s.label}</span>
+            ))
+          }
+        </div>
+      </div>
+      <div>
+        <p
+          class="font-sans text-[9px] tracking-[0.30em] uppercase text-paper/55 mb-4"
+        >
+          Realização
+        </p>
+        <div class="flex items-center justify-center gap-6">
+          {
+            REALIZATION.map((s) => (
+              <span class="text-paper/85 font-display text-sm">{s.label}</span>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+
+    {/* Redes sociais à direita */}
+    <div class="md:col-span-3 flex justify-center md:justify-end">
+      <div class="flex flex-col items-center md:items-end gap-3">
+        <p
+          class="font-sans text-[9px] tracking-[0.30em] uppercase text-paper/55"
+        >
+          {SOCIAL.map((s) => s.label).join(" · ")}
+        </p>
+        <div class="flex items-center gap-4">
+          {
+            SOCIAL.map((s) => (
+              <a
+                href={s.href}
+                aria-label={s.label}
+                class="w-9 h-9 rounded-full border border-paper/40 flex items-center justify-center text-paper/85 hover:text-rouge hover:border-rouge transition-colors"
+              >
+                {s.icon === "instagram" && (
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="14"
+                    height="14"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  >
+                    <rect x="3" y="3" width="18" height="18" rx="5" />
+                    <circle cx="12" cy="12" r="4" />
+                    <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" />
+                  </svg>
+                )}
+                {s.icon === "linkedin" && (
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="14"
+                    height="14"
+                    fill="currentColor"
+                  >
+                    <path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.06c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.77 2.65 4.77 6.1V21h-4v-5.34c0-1.27-.03-2.9-1.77-2.9-1.77 0-2.04 1.38-2.04 2.81V21H9z" />
+                  </svg>
+                )}
+                {s.icon === "spotify" && (
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="14"
+                    height="14"
+                    fill="currentColor"
+                  >
+                    <path d="M12 0a12 12 0 1 0 0 24A12 12 0 0 0 12 0zm5.52 17.34a.75.75 0 0 1-1.03.25c-2.82-1.72-6.38-2.11-10.56-1.16a.75.75 0 1 1-.33-1.46c4.57-1.04 8.5-.6 11.66 1.34.36.22.47.69.26 1.03zm1.47-3.29a.94.94 0 0 1-1.29.31c-3.23-1.98-8.15-2.56-11.97-1.4a.94.94 0 1 1-.55-1.8c4.37-1.33 9.78-.69 13.5 1.6.45.27.59.86.31 1.29zm.13-3.43c-3.87-2.3-10.27-2.51-13.97-1.39a1.13 1.13 0 1 1-.66-2.16c4.24-1.29 11.3-1.04 15.76 1.6a1.13 1.13 0 1 1-1.13 1.95z" />
+                  </svg>
+                )}
+                {s.icon === "mail" && (
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="14"
+                    height="14"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  >
+                    <rect x="3" y="5" width="18" height="14" rx="2" />
+                    <path d="m3 7 9 6 9-6" />
+                  </svg>
+                )}
+              </a>
+            ))
+          }
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- Linha institucional -->
-  <div class="border-t border-rule">
+  {/* Linha de copyright */}
+  <div class="border-t border-paper/15">
     <div
-      class="max-w-7xl mx-auto px-6 lg:px-12 py-8 flex flex-col md:flex-row items-center justify-between gap-4"
+      class="max-w-7xl mx-auto px-6 lg:px-12 py-4 flex justify-end"
     >
-      <p class="font-serif text-lg">
-        <span class="italic">In</span><span class="font-semibold">Finitudes</span>
+      <p
+        class="font-sans text-[10px] tracking-[0.22em] uppercase text-paper/55"
+      >
+        © {year} · Todos os direitos reservados
       </p>
-      <p class="meta">© {year} · Todos os direitos reservados</p>
-      <div class="flex items-center gap-6">
-        {
-          social.map((item) => (
-            <a href={item.href} class="meta link-ed hover:text-ink">
-              {item.label}
-            </a>
-          ))
-        }
-      </div>
     </div>
   </div>
 </footer>

@@ -1,0 +1,51 @@
+---
+// =============================================================
+// NewsletterSection.astro
+// -------------------------------------------------------------
+// Bloco de captura de e-mail no estilo do design (page-01 / 02):
+//   · Fundo creme, centralizado
+//   · Eyebrow bordô "CARTA DO EDITOR"
+//   · Título display em duas linhas
+//   · Input + botão bordô lado a lado
+//
+// Pode ser inserido em qualquer página antes do Footer.
+// =============================================================
+---
+
+<section id="newsletter" class="border-t border-rule/60 bg-paper">
+  <div class="max-w-3xl mx-auto px-6 py-20 lg:py-24 text-center">
+    <span class="eyebrow">Carta do Editor</span>
+    <h3
+      class="font-display text-3xl sm:text-4xl lg:text-[44px] leading-[1.1] mt-4 font-normal"
+    >
+      Um ensaio, toda quinta-feira.
+      <br />
+      <span class="italic font-light">Sem ruído.</span>
+    </h3>
+    <p class="font-serif text-[17px] leading-relaxed mt-5 text-ink/75 max-w-xl mx-auto">
+      Assine nossa newsletter e receba textos autorais sobre humanização,
+      cuidado e finitude direto no seu e-mail.
+    </p>
+
+    <form
+      class="mt-10 flex flex-col sm:flex-row gap-3 max-w-lg mx-auto"
+      onsubmit="event.preventDefault();"
+    >
+      <label for="newsletter-email" class="sr-only">Seu e-mail</label>
+      <input
+        id="newsletter-email"
+        type="email"
+        required
+        placeholder="seu@email.com"
+        class="flex-1 bg-transparent border border-rule px-5 py-3.5 text-[14px] placeholder:text-muted/70 focus:outline-none focus:border-rouge transition-colors"
+      />
+      <button
+        type="submit"
+        class="bg-rouge text-paper px-8 py-3.5 text-[11px] font-medium tracking-[0.20em] uppercase hover:bg-rouge-deep transition-colors"
+      >
+        Assinar
+      </button>
+    </form>
+    <p class="meta mt-4">Grátis · cancele quando quiser</p>
+  </div>
+</section>

@@ -1,17 +1,25 @@
 ---
 // =============================================================
-// [category].astro · Listagem por categoria
+// [category].astro · Listagem por categoria (page-03)
 // -------------------------------------------------------------
-// Gera uma página estática para cada uma das 7 seções do portal.
-// Cada página carrega os posts vinculados àquela categoria via
-// getPostsByCategory() e renderiza em um grid editorial 3-col.
+// Gera uma página estática para cada uma das categorias do portal.
+// Layout do design:
+//   1. SectionTitle ("SEÇÃO" / nome / subtítulo italic)
+//   2. Linha vermelha fina + lista vertical de posts (PostListItem)
+//      separados por linha vermelha fina
+//   3. NewsletterSection
+//   4. Footer
 // =============================================================
 import Layout from "../layouts/Layout.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
-import PostCard from "../components/PostCard.astro";
+import SectionTitle from "../components/SectionTitle.astro";
+import PostListItem from "../components/PostListItem.astro";
+import NewsletterSection from "../components/NewsletterSection.astro";
+import Divider from "../components/Divider.astro";
 import { CATEGORIES, getCategory } from "../lib/categories";
 import { getPostsByCategory } from "../lib/sanity";
+import type { PostPreview } from "../lib/sanity";
 
 export async function getStaticPaths() {
   return CATEGORIES.map((cat) => ({
@@ -23,50 +31,105 @@ export async function getStaticPaths() {
 const { categoryValue } = Astro.props as { categoryValue: string };
 const category = getCategory(categoryValue)!;
 const posts = await getPostsByCategory(categoryValue);
+
+// Fake list editorial (estado "vazio apresentável") usado quando ainda
+// não há posts cadastrados na categoria. Reproduz o tom da page-03.
+const FAKE_POSTS: Array<{ post: PostPreview; author: string }> = [
+  {
+    post: {
+      _id: "fake-1",
+      title: "Shutfalo: Wednesday, May 6, 2026",
+      slug: "shutfalo-may-6",
+      publishedAt: "2026-05-06",
+      mainImage: null,
+      category: categoryValue,
+      excerpt: "Can you make a longer word with each new letter?",
+    },
+    author: "",
+  },
+  {
+    post: {
+      _id: "fake-2",
+      title: "Muriel Spark, the Double Agent",
+      slug: "muriel-spark-double-agent",
+      publishedAt: "2026-05-06",
+      mainImage: null,
+      category: categoryValue,
+      excerpt:
+        "A new biography claims that novelist fabricated her origin story — but that secret codes lie at the heart of her genius.",
+    },
+    author: "Por Eleonora Cruz Santos",
+  },
+  {
+    post: {
+      _id: "fake-3",
+      title: "How the Iran War Is Shifting Power Toward China",
+      slug: "iran-war-china",
+      publishedAt: "2026-05-06",
+      mainImage: null,
+      category: categoryValue,
+      excerpt:
+        "As the U.K.'s credibility and military capacity are tested abroad, China has gained leverage by staying out the fight and learning from it.",
+    },
+    author: "Por Eleonora Cruz Santos",
+  },
+  {
+    post: {
+      _id: "fake-4",
+      title: "The Crossword Wednesday, May 6, 2026",
+      slug: "crossword-may-6",
+      publishedAt: "2026-05-06",
+      mainImage: null,
+      category: categoryValue,
+      excerpt: "Earth's driest and coldest continent: ten letters.",
+    },
+    author: "Por Eleonora Cruz Santos",
+  },
+];
+
+const hasRealPosts = posts.length > 0;
 ---
 
 <Layout
-  title={`${category.title} — InFinitudes`}
+  title={`${category.title} — (IN)Finitudes`}
   description={category.description}
 >
   <Header />
 
   <main>
-    {/* Cabeçalho editorial da categoria */}
-    <section class="max-w-7xl mx-auto px-6 lg:px-12 pt-16 lg:pt-24 pb-12">
-      <div class="max-w-3xl mx-auto text-center">
-        <span class="meta text-amber">Seção</span>
-        <h1
-          class="font-serif text-5xl sm:text-6xl lg:text-7xl leading-[1.02] mt-6 font-normal"
-        >
-          {category.title}
-        </h1>
-        <p class="font-serif italic text-xl lg:text-2xl leading-snug mt-6 text-ink/80">
-          {category.description}
-        </p>
-        <div class="mx-auto mt-10 w-16 h-px bg-ink/30"></div>
-      </div>
+    {/* 1 · Cabeçalho de seção (eyebrow + título + subtítulo italic) */}
+    <section class="max-w-5xl mx-auto px-6 lg:px-12">
+      <SectionTitle
+        eyebrow="Seção"
+        title={category.title}
+        subtitle={category.description}
+      />
     </section>
 
-    {/* Grid de posts da categoria */}
-    <section class="max-w-7xl mx-auto px-6 lg:px-12">
+    {/* 2 · Lista vertical com hairlines bordô entre os itens */}
+    <section class="max-w-5xl mx-auto px-6 lg:px-12 pb-16 lg:pb-24">
+      <Divider variant="rouge" />
       {
-        posts.length > 0 ? (
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-y-14 md:gap-x-10 lg:gap-x-16 pb-20 lg:pb-24">
-            {posts.map((post) => (
-              <PostCard post={post} />
-            ))}
-          </div>
+        hasRealPosts ? (
+          posts.map((post) => (
+            <>
+              <PostListItem post={post} />
+              <Divider variant="rouge" />
+            </>
+          ))
         ) : (
-          <div class="py-16 text-center">
-            <p class="font-serif italic text-xl text-ink/70">
-              Esta seção está sendo preparada.
-            </p>
-            <p class="meta mt-4">Volte em breve</p>
-          </div>
+          FAKE_POSTS.map((item) => (
+            <>
+              <PostListItem post={item.post} author={item.author} />
+              <Divider variant="rouge" />
+            </>
+          ))
         )
       }
     </section>
+
+    {/* 3 · Newsletter */}
+    <NewsletterSection />
   </main>
 
   <Footer />

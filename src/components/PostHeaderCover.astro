@@ -1,0 +1,85 @@
+---
+// =============================================================
+// PostHeaderCover.astro · Header de post v1 (page-04)
+// -------------------------------------------------------------
+// "Hero capa" em banner bordô full-width:
+//   · LEFT: título italic serif em creme + subtítulo curto +
+//           byline em creme uppercase
+//   · RIGHT: imagem ilustrativa (hero) com borda ou ilustração
+//
+// Pensado pra posts curatoriais/literários onde o título tem
+// peso visual forte (ex: "Gwendoline Riley's new novel...").
+// =============================================================
+
+export interface Props {
+  title: string;
+  dek?: string | null;
+  authors?: string | null;
+  date?: string | null;
+  imageUrl?: string | null;
+  imageAlt?: string | null;
+}
+
+const { title, dek, authors, date, imageUrl, imageAlt } = Astro.props;
+---
+
+<header class="bg-rouge text-paper">
+  <div class="max-w-6xl mx-auto px-6 lg:px-12 py-14 lg:py-20">
+    <div
+      class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center"
+    >
+      {/* Coluna esquerda · título italic + dek + bylines */}
+      <div class="lg:col-span-6 text-center lg:text-center">
+        <h1
+          class="font-display italic font-medium text-[32px] sm:text-[40px] lg:text-[44px] leading-[1.1] text-paper"
+        >
+          {title}
+        </h1>
+
+        {
+          dek && (
+            <p class="font-serif italic text-[16px] lg:text-[17px] leading-[1.5] mt-5 text-paper/85 max-w-md mx-auto">
+              {dek}
+            </p>
+          )
+        }
+
+        {
+          (authors || date) && (
+            <div class="mt-6 flex flex-col items-center gap-1">
+              {authors && (
+                <span class="font-sans text-[10px] font-medium tracking-[0.22em] uppercase text-paper/90">
+                  {authors}
+                </span>
+              )}
+              {date && (
+                <span class="font-sans text-[10px] font-medium tracking-[0.22em] uppercase text-paper/65">
+                  {date}
+                </span>
+              )}
+            </div>
+          )
+        }
+      </div>
+
+      {/* Coluna direita · imagem hero */}
+      <div class="lg:col-span-6 flex justify-center">
+        {
+          imageUrl ? (
+            <img
+              src={imageUrl}
+              alt={imageAlt ?? title}
+              class="w-full max-w-md aspect-[4/3] object-cover"
+              loading="eager"
+              fetchpriority="high"
+            />
+          ) : (
+            <div
+              class="w-full max-w-md aspect-[4/3] bg-paper/10 border border-paper/20"
+            />
+          )
+        }
+      </div>
+    </div>
+  </div>
+</header>

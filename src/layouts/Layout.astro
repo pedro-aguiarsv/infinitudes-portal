@@ -1,7 +1,9 @@
 ---
 // =============================================================
 // Layout.astro · Shell base de todas as páginas
-// Carrega tokens do Tailwind, fontes do Google e meta tags.
+// Carrega tokens (global.css) e fontes do Google (Bodoni Moda
+// para títulos display, Cormorant Garamond para body editorial
+// e Inter para UI/metadados).
 // =============================================================
 import "../styles/global.css";
 
@@ -11,7 +13,7 @@ export interface Props {
 }
 
 const {
-  title = "InFinitudes — Humanização na saúde e cuidados paliativos",
+  title = "(IN)Finitudes — Diva Infinito",
   description = "Ensaios, relatos e curadoria sobre humanização na saúde, cuidados paliativos e a arte de acompanhar.",
 } = Astro.props;
 ---
@@ -26,17 +28,11 @@ const {
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-    <!--
-      Google Fonts · Playfair Display (serif editorial) + Inter (sans UI).
-      Preconnect acelera o handshake com o CDN e melhora o LCP.
-      Os tokens font-serif e font-sans estão registrados em global.css (@theme)
-      e ficam disponíveis como utilitários Tailwind.
-    -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;0,6..96,700;1,6..96,400;1,6..96,500&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap"
     />
 
     <title>{title}</title>

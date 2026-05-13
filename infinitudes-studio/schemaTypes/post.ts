@@ -58,6 +58,38 @@ export const postType = defineType({
       rows: 3,
       description: 'Subtítulo editorial que aparece abaixo do título (1–2 frases).',
     }),
+    // =============================================================
+    // authors · texto livre da linha de bylines (ex.: "Por Eleonora
+    // Cruz Santos" ou "Por A, B e C"). Mais flexível que referência
+    // a um schema de autores neste estágio.
+    // =============================================================
+    defineField({
+      name: 'authors',
+      title: 'Bylines (autores)',
+      type: 'string',
+      description:
+        'Linha de assinatura do post. Ex.: "Por Eleonora Cruz Santos".',
+    }),
+    // =============================================================
+    // layoutVariant · escolhe o template da página de post detalhe.
+    //   · classic → page-10: cabeçalho centralizado, coluna única
+    //   · cover   → page-04: hero bordô full-width + 2 colunas + Leia Mais
+    // =============================================================
+    defineField({
+      name: 'layoutVariant',
+      title: 'Layout do post',
+      type: 'string',
+      options: {
+        list: [
+          {title: 'Clássico (centralizado, coluna única)', value: 'classic'},
+          {title: 'Capa (banner bordô + 2 colunas + Leia Mais)', value: 'cover'},
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'classic',
+      description:
+        'Use "Capa" para destaques editoriais especiais. Padrão: "Clássico".',
+    }),
     defineField({
       name: 'publishedAt',
       title: 'Data de Publicação',

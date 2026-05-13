@@ -1,0 +1,197 @@
+---
+// =============================================================
+// /recomenda · Página "Recomendamos" (page-09)
+// -------------------------------------------------------------
+// Sobrescreve a rota dinâmica `[category].astro` para `/recomenda`.
+// Estrutura editorial:
+//   1. SectionTitle "Recomendamos" / "O que lemos, assistimos, ouvimos."
+//   2. Divider rouge
+//   3. Hero: imagem grande à esquerda + texto à direita (1 destaque)
+//   4. Divider rule + "OUTRAS RECOMENDAÇÕES"
+//   5. Grid 4 colunas × 3 linhas de cards (imagem topo + meta)
+//   6. Newsletter + Footer
+//
+// Pega os posts da categoria "recomenda" do Sanity. Se vazio, usa fake.
+// =============================================================
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import SectionTitle from "../components/SectionTitle.astro";
+import PostCard from "../components/PostCard.astro";
+import NewsletterSection from "../components/NewsletterSection.astro";
+import Divider from "../components/Divider.astro";
+import { getPostsByCategory, urlFor, type PostPreview } from "../lib/sanity";
+
+const posts = await getPostsByCategory("recomenda");
+
+// Fake para preview quando ainda não há conteúdo cadastrado.
+type FakeCard = {
+  title: string;
+  excerpt: string;
+  category: string;
+  author?: string;
+  imageBg: string; // cor de placeholder
+};
+
+const FAKE_HERO: FakeCard = {
+  title: "Gwendoline Riley’s new novel surveys the wreckage of middle age",
+  excerpt:
+    "“The Palm House is haunted by stubborn male egos and sharp-edged women whose honesty is often ineffectual in the face of life.”",
+  category: "Outras Histórias",
+  author: "Por Eleonora Cruz Santos",
+  imageBg: "bg-[#9b3a2a]",
+};
+
+const FAKE_GRID: FakeCard[] = Array.from({ length: 12 }).map((_, i) => ({
+  title: "A Reading List from the Director of the Noguchi Museum",
+  excerpt:
+    "Amy Hau discusses some books by Marilyn Chase, Karin Higa, and Edmund de Waal that have guided her work as a curator.",
+  category: ["Outras Histórias", "Hub Infinito", "Curadoria", "Divã Infinito"][
+    i % 4
+  ],
+  author: "Por Eleonora C. Santos",
+  imageBg: "bg-paper-soft",
+}));
+
+// Se houver posts reais, separa o primeiro como hero
+const hasReal = posts.length > 0;
+const hero = hasReal ? posts[0] : null;
+const grid = hasReal ? posts.slice(1, 13) : [];
+
+const heroImage = hero?.mainImage
+  ? urlFor(hero.mainImage).width(1200).height(900).fit("crop").auto("format").url()
+  : null;
+
+const heroDate = hero?.publishedAt
+  ? new Intl.DateTimeFormat("pt-BR", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    }).format(new Date(hero.publishedAt))
+  : null;
+---
+
+<Layout
+  title="Recomendamos — (IN)Finitudes"
+  description="O que lemos, assistimos, ouvimos."
+>
+  <Header />
+
+  <main>
+    {/* 1 · Cabeçalho da seção */}
+    <section class="max-w-5xl mx-auto px-6 lg:px-12">
+      <SectionTitle
+        eyebrow="Seção"
+        title="Recomendamos"
+        subtitle="O que lemos, assistimos, ouvimos."
+      />
+    </section>
+
+    {/* 2 · Divider */}
+    <div class="max-w-6xl mx-auto px-6 lg:px-12">
+      <Divider variant="rouge" gap="my-2" />
+    </div>
+
+    {/* 3 · HERO RECOMENDAÇÃO */}
+    <section class="max-w-6xl mx-auto px-6 lg:px-12 py-12 lg:py-16">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+        <div class="lg:col-span-7">
+          {
+            hasReal && heroImage ? (
+              <a href={`/${hero!.category}/${hero!.slug}`} class="block group">
+                <img
+                  src={heroImage}
+                  alt={hero!.mainImage?.alt ?? hero!.title}
+                  class="w-full aspect-[4/3] object-cover transition-[filter] duration-300 group-hover:brightness-95"
+                  loading="eager"
+                />
+              </a>
+            ) : (
+              <div
+                class={`w-full aspect-[4/3] ${FAKE_HERO.imageBg}`}
+                aria-hidden="true"
+              />
+            )
+          }
+        </div>
+
+        <div class="lg:col-span-5">
+          <p class="eyebrow text-rouge">
+            {hasReal ? hero!.category : FAKE_HERO.category}
+          </p>
+          <h2
+            class="font-display text-[28px] sm:text-[32px] lg:text-[38px] leading-[1.1] mt-3 font-normal tracking-[-0.01em]"
+          >
+            {hasReal ? hero!.title : FAKE_HERO.title}
+          </h2>
+          <p
+            class="font-serif italic text-[16px] lg:text-[17px] leading-[1.5] mt-5 text-ink/80"
+          >
+            {hasReal ? hero!.excerpt : FAKE_HERO.excerpt}
+          </p>
+          {
+            (hasReal ? hero!.authors : FAKE_HERO.author) && (
+              <div class="mt-5 font-sans text-[10px] font-medium tracking-[0.20em] uppercase text-rouge">
+                {hasReal
+                  ? `Por ${hero!.authors ?? "Eleonora Cruz Santos"}`
+                  : FAKE_HERO.author}
+              </div>
+            )
+          }
+          {heroDate && <div class="meta mt-2">{heroDate}</div>}
+        </div>
+      </div>
+    </section>
+
+    {/* 4 · "OUTRAS RECOMENDAÇÕES" */}
+    <section class="max-w-6xl mx-auto px-6 lg:px-12">
+      <div class="text-center mb-10">
+        <Divider variant="rule" gap="mb-8" />
+        <p
+          class="font-sans text-[11px] font-medium tracking-[0.30em] uppercase text-ink/80"
+        >
+          Outras recomendações
+        </p>
+      </div>
+    </section>
+
+    {/* 5 · GRID 4×3 */}
+    <section class="max-w-6xl mx-auto px-6 lg:px-12 pb-16 lg:pb-24">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-y-12 gap-x-6 lg:gap-x-8">
+        {
+          hasReal
+            ? grid.map((p: PostPreview) => (
+                <PostCard
+                  post={p}
+                  author={p.authors ? `Por ${p.authors}` : undefined}
+                  size="sm"
+                />
+              ))
+            : FAKE_GRID.map((c) => (
+                <article class="group">
+                  <a href="#" class="block">
+                    <div class={`w-full aspect-[4/3] ${c.imageBg}`} />
+                    <span class="eyebrow mt-4 block">{c.category}</span>
+                    <h3 class="font-display text-[16px] lg:text-[18px] leading-[1.2] mt-2 font-medium tracking-[-0.005em] transition-colors group-hover:text-rouge">
+                      {c.title}
+                    </h3>
+                    <p class="font-serif text-[13px] lg:text-[14px] leading-[1.45] mt-2 text-ink/75">
+                      {c.excerpt}
+                    </p>
+                    {c.author && (
+                      <div class="mt-3 font-sans text-[10px] font-medium tracking-[0.20em] uppercase text-rouge">
+                        {c.author}
+                      </div>
+                    )}
+                  </a>
+                </article>
+              ))
+        }
+      </div>
+    </section>
+
+    <NewsletterSection />
+  </main>
+
+  <Footer />
+</Layout>

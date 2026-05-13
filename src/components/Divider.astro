@@ -1,0 +1,21 @@
+---
+// =============================================================
+// Divider.astro
+// -------------------------------------------------------------
+// Linha divisória horizontal — duas variantes:
+//   · variant="rouge" (padrão) → linha bordô fina (assinatura visual)
+//   · variant="rule"           → linha creme neutra (separação suave)
+//
+// Pode receber margens via prop `gap` (Tailwind classes).
+// =============================================================
+export interface Props {
+  variant?: "rouge" | "rule";
+  gap?: string;
+}
+
+const { variant = "rouge", gap = "my-0" } = Astro.props;
+const cls =
+  variant === "rouge" ? "bg-rouge-line" : "bg-rule";
+---
+
+<div class={`h-px w-full ${cls} ${gap}`} role="separator"></div>

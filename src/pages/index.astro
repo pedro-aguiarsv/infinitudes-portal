@@ -1,68 +1,67 @@
 ---
 // =============================================================
-// index.astro · Home do portal InFinitudes
+// index.astro · Home do portal (IN)Finitudes (page-01)
 // -------------------------------------------------------------
-// Reproduz o wireframe editorial (benchmark: newyorker.com):
+// Composição editorial:
 //   1. Header
-//   2. HeroFeatured         ← ensaio de capa
-//   3. Grid "Relatos & Podcasts da semana" (faixa com título)
-//   4. BookSection          ← destaque do livro
-//   5. LongEssayHighlight   ← amostra de ensaio longo
-//   6. Footer (com newsletter)
+//   2. HeroFeatured        ← "capa de revista" com headline + masthead
+//   3. FeaturedEssay       ← ensaio de capa com aquarela preta
+//   4. Grid de 3 posts     ← Outras Histórias (faixa sem título)
+//   5. BookSection         ← banner bordô do livro
+//   6. LongEssayHighlight  ← ensaio longo com capitular
+//   7. NewsletterSection   ← captura de e-mail
+//   8. Footer
 //
-// Dados vêm do Sanity. Enquanto o Studio está sendo alimentado,
-// cada bloco cai em fake data editorial coerente (estado "vazio"
-// tratado como estado apresentável).
+// Dados vêm do Sanity quando disponível; senão, cada componente
+// usa fake data editorial coerente (estado "vazio apresentável").
 // =============================================================
 import Layout from "../layouts/Layout.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import HeroFeatured from "../components/HeroFeatured.astro";
+import FeaturedEssay from "../components/FeaturedEssay.astro";
 import PostCard from "../components/PostCard.astro";
-import HeroFeatured, {
-  type HeroContent,
-} from "../components/HeroFeatured.astro";
 import BookSection from "../components/BookSection.astro";
 import LongEssayHighlight from "../components/LongEssayHighlight.astro";
-import { getAllPosts, urlFor, type PostPreview } from "../lib/sanity";
+import NewsletterSection from "../components/NewsletterSection.astro";
+import { getAllPosts, type PostPreview } from "../lib/sanity";
 import { getCategory } from "../lib/categories";
 
 const posts = await getAllPosts();
-
 const [featured, ...rest] = posts;
 const gridPosts = rest.slice(0, 3);
 
-// Hero: se houver post publicado, usa ele; senão, HeroFeatured cai no fake
-const heroContent: HeroContent | undefined = featured
+// Hero · headline aponta para o post mais recente
+const heroContent = featured
   ? {
-      eyebrow: `${getCategory(featured.category ?? "")?.title ?? "Ensaio de capa"} · InFinitudes`,
-      title: featured.title,
-      dek: featured.excerpt,
-      byline: null,
-      readingTime: null,
+      headline: featured.title,
       href: featured.category
         ? `/${featured.category}/${featured.slug}`
         : `/${featured.slug}`,
-      imageUrl: featured.mainImage
-        ? urlFor(featured.mainImage)
-            .width(1400)
-            .height(1750)
-            .fit("crop")
-            .auto("format")
-            .url()
-        : null,
-      imageAlt: featured.mainImage?.alt ?? null,
-      imageCaption: null,
+      edition: "Alunos · Santos",
     }
   : undefined;
 
-// Fake data editorial para o grid (fiel ao wireframe). Os labels ricos
-// ("Divã Infinito · Relato", "Hub Infinito · Podcast · Ep. 14") e o
-// rodapé com autor+duração ("Marina Pires · 6 min") são passados via
-// props do PostCard — por isso precisam ficar fora da struct de post.
+// Ensaio de capa (segundo post mais recente ou featured se for único)
+const featuredEssay = posts[1] ?? posts[0];
+const essayContent = featuredEssay
+  ? {
+      eyebrow: `${getCategory(featuredEssay.category ?? "")?.title ?? "Ensaio"} · Cuidados Paliativos`,
+      title: featuredEssay.title,
+      dek: featuredEssay.excerpt,
+      byline: null,
+      readingTime: null,
+      href: featuredEssay.category
+        ? `/${featuredEssay.category}/${featuredEssay.slug}`
+        : `/${featuredEssay.slug}`,
+    }
+  : undefined;
+
+// Fake data para o grid de 3 posts (estado "vazio apresentável")
 type FakeCard = {
   post: PostPreview;
   categoryLabel: string;
-  metaLabel: string;
+  author: string;
 };
 
 const FAKE_GRID: FakeCard[] = [
@@ -77,8 +76,8 @@ const FAKE_GRID: FakeCard[] = [
       excerpt:
         "Quando a cura deixa de ser o objetivo, descobrimos que presença é a forma mais honesta de amor.",
     },
-    categoryLabel: "Divã Infinito · Relato",
-    metaLabel: "Marina Pires · 6 min",
+    categoryLabel: "Divã Infinito",
+    author: "Por Marina Pires",
   },
   {
     post: {
@@ -91,13 +90,13 @@ const FAKE_GRID: FakeCard[] = [
       excerpt:
         "Conversa com a enfermeira e pesquisadora Ana Lúcia Freire sobre o conceito que fundou o movimento hospice moderno.",
     },
-    categoryLabel: "Hub Infinito · Podcast · Ep. 14",
-    metaLabel: "Redação · 38 min de áudio",
+    categoryLabel: "Hub Infinito",
+    author: "Por Eleonora Cruz Santos",
   },
   {
     post: {
       _id: "fake-3",
-      title: "Cartas de uma enfermeira de hospice nos anos 70",
+      title: "Cartas de uma enfermeira de cuidado intensivo",
       slug: "cartas-de-hospice",
       publishedAt: new Date().toISOString(),
       mainImage: null,
@@ -105,31 +104,28 @@ const FAKE_GRID: FakeCard[] = [
       excerpt:
         "Cinco documentos resgatados que revelam como o cuidado ao fim da vida mudou — e o que permanece intacto.",
     },
-    categoryLabel: "Curadoria · Arquivo",
-    metaLabel: "Arquivo InFinitudes · 12 min",
+    categoryLabel: "Curadoria",
+    author: "Por Eleonora Cruz Santos",
   },
 ];
 
 const hasRealPosts = gridPosts.length > 0;
 ---
 
-<Layout title="InFinitudes — Humanização na saúde e cuidados paliativos">
+<Layout title="(IN)Finitudes — Divã Infinito">
   <Header />
 
   <main>
-    {/* 1 · Ensaio de capa · hero assimétrico 7/5 */}
+    {/* 1 · Capa de revista · headline + masthead + aquarela vermelha */}
     <HeroFeatured hero={heroContent} />
 
-    {/* 2 · Faixa "Relatos & Podcasts da semana" + grid de 3 colunas */}
-    <section class="max-w-7xl mx-auto px-6 lg:px-12 border-t border-rule">
-      <div class="py-10 flex items-center gap-6">
-        <span class="flex-1 h-px bg-rule"></span>
-        <h2 class="meta">Relatos &amp; Podcasts da semana</h2>
-        <span class="flex-1 h-px bg-rule"></span>
-      </div>
+    {/* 2 · Ensaio de capa · aquarela preta + título + dek */}
+    <FeaturedEssay essay={essayContent} />
 
+    {/* 3 · Grid de 3 posts · sem título de seção (faixa direta) */}
+    <section class="max-w-6xl mx-auto px-6 lg:px-12 py-16 lg:py-24">
       <div
-        class="grid grid-cols-1 md:grid-cols-3 gap-y-14 md:gap-x-10 lg:gap-x-16 pb-20 lg:pb-24"
+        class="grid grid-cols-1 md:grid-cols-3 gap-y-14 md:gap-x-10 lg:gap-x-14"
       >
         {
           hasRealPosts
@@ -138,18 +134,21 @@ const hasRealPosts = gridPosts.length > 0;
                 <PostCard
                   post={item.post}
                   category={item.categoryLabel}
-                  meta={item.metaLabel}
+                  author={item.author}
                 />
               ))
         }
       </div>
     </section>
 
-    {/* 3 · Box do livro · CTA → Lojinha */}
+    {/* 4 · Banner bordô · livro */}
     <BookSection />
 
-    {/* 4 · Ensaio longo em destaque · amostra do padrão editorial interno */}
+    {/* 5 · Ensaio longo destacado · capitular */}
     <LongEssayHighlight />
+
+    {/* 6 · Newsletter */}
+    <NewsletterSection />
   </main>
 
   <Footer />

@@ -1,0 +1,39 @@
+---
+// =============================================================
+// SectionTitle.astro
+// -------------------------------------------------------------
+// Cabeçalho padrão de página de listagem (page-03, page-07, etc.):
+//   · Eyebrow bordô "SEÇÃO"
+//   · Título display em serif
+//   · Subtítulo opcional em itálico
+//
+// Uso:
+//   <SectionTitle eyebrow="SEÇÃO" title="Outras Histórias"
+//                 subtitle="Relatos e ensaios autorais." />
+// =============================================================
+export interface Props {
+  eyebrow?: string;
+  title: string;
+  subtitle?: string;
+  align?: "center" | "left";
+}
+
+const { eyebrow = "Seção", title, subtitle, align = "center" } = Astro.props;
+const alignCls = align === "center" ? "text-center" : "text-left";
+---
+
+<header class={`py-12 lg:py-16 ${alignCls}`}>
+  <p class="eyebrow">{eyebrow}</p>
+  <h1
+    class="font-display text-[40px] sm:text-[52px] lg:text-[64px] leading-[1.05] font-normal mt-3 tracking-[-0.01em]"
+  >
+    {title}
+  </h1>
+  {
+    subtitle && (
+      <p class="font-serif italic text-[18px] lg:text-[20px] text-ink/75 mt-4">
+        {subtitle}
+      </p>
+    )
+  }
+</header>

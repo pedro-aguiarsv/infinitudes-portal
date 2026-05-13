@@ -1,0 +1,47 @@
+---
+// =============================================================
+// PostFavorites.astro · Bloco "Favoritos (In)Finitudes"
+// -------------------------------------------------------------
+// Aparece ao final de posts longos. Estrutura:
+//   · Linha bordô + título "Favoritos (In)Finitudes" (display)
+//   · Linha bordô fina abaixo do título
+//   · Lista de parágrafos curtos (recomendações soltas)
+//
+// Mesmo bloco usado em v1 e v2 do post detalhe.
+// =============================================================
+
+export interface Props {
+  title?: string;
+  items?: string[];
+}
+
+const {
+  title = "Favoritos (In)Finitudes",
+  items = [
+    "A scientist with a Ph.D. from Harvard family shot three of her colleagues. Then revelations about her family history came to light.",
+    "The luxury liner that sailed into a hurricane.",
+    "How a transgender teen gang punctured the image of an upscale community.",
+    "Kanye West bought an architectural treasure — then gave it a violent remix.",
+    "Why so many people are going 'no contact' with their parents.",
+    "Ina Garten and the age of abundance.",
+    "Sign up for our daily newsletter to receive the best stories from The New Yorker.",
+  ],
+} = Astro.props;
+---
+
+<aside class="mt-12 lg:mt-16">
+  <div class="border-t border-rouge-line pt-4">
+    <h2
+      class="font-display italic text-[22px] lg:text-[26px] font-normal text-ink mb-3"
+    >
+      {title}
+    </h2>
+    <div class="border-t border-rouge-line"></div>
+  </div>
+
+  <div
+    class="font-serif text-[16px] lg:text-[17px] leading-[1.55] text-ink/85 space-y-4 mt-6"
+  >
+    {items.map((p) => <p>{p}</p>)}
+  </div>
+</aside>

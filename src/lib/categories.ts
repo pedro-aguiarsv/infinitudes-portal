@@ -70,3 +70,25 @@ export const CATEGORIES: Category[] = [
 // Helper: encontra uma categoria pelo value (usado em páginas de categoria)
 export const getCategory = (value: string): Category | undefined =>
   CATEGORIES.find((c) => c.value === value);
+
+// =============================================================
+// NAV_ITEMS · ordem e composição do menu principal no Header/Footer.
+// -------------------------------------------------------------
+// Inclui categorias do CMS + páginas estáticas (como "Livro") que
+// não são tipos de conteúdo no Sanity. Mantemos a ordem do design.
+// =============================================================
+export interface NavItem {
+  title: string;
+  href: string;
+}
+
+export const NAV_ITEMS: NavItem[] = [
+  { title: "Outras Histórias", href: "/outras-historias" },
+  { title: "Livro (In)Finitudes", href: "/livro" },
+  { title: "Hub Infinito", href: "/hub-infinito" },
+  { title: "Divã Infinito", href: "/diva-infinito" },
+  { title: "Curadoria", href: "/curadoria" },
+  { title: "Loja", href: "/loja" },
+  { title: "Sobre", href: "/sobre" },
+  { title: "Recomenda", href: "/recomenda" },
+];

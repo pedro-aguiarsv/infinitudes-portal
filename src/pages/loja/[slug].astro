@@ -1,0 +1,190 @@
+---
+// =============================================================
+// /loja/[slug] · Página do produto (page-06)
+// -------------------------------------------------------------
+// Estrutura:
+//   1. Top section (12 cols)
+//      LEFT (7): imagem grande + thumbnails de variantes
+//      RIGHT (5): título · preço · qty · termos · "Add to cart"
+//                 · shipping · descrição · dimensions
+//   2. Produtos relacionados (h2 serif centralizado) + grid 3
+//   3. Footer (sem newsletter)
+// =============================================================
+import Layout from "../../layouts/Layout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import ProductCard from "../../components/ProductCard.astro";
+import { PRODUCTS, getProductBySlug, getRelatedProducts } from "../../lib/products";
+
+export async function getStaticPaths() {
+  return PRODUCTS.map((p) => ({
+    params: { slug: p.slug },
+    props: { product: p },
+  }));
+}
+
+const { product } = Astro.props;
+const related = getRelatedProducts(product.slug, 3);
+
+// 5 swatches (variantes) — fake: branco + 4 pretos como mostra o mock.
+const swatches = ["#fefcf3", "#0c0d0c", "#0c0d0c", "#0c0d0c", "#0c0d0c"];
+---
+
+<Layout title={`${product.title} — Loja (IN)Finitudes`}>
+  <Header />
+
+  <main>
+    {/* 1 · TOP SECTION */}
+    <section class="max-w-6xl mx-auto px-6 lg:px-12 py-12 lg:py-16">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+
+        {/* LEFT · imagem + thumbnails */}
+        <div class="lg:col-span-7">
+          <div
+            class={`w-full aspect-square ${product.bg} flex items-center justify-center`}
+          >
+            {
+              product.imageUrl ? (
+                <img
+                  src={product.imageUrl}
+                  alt={product.imageAlt ?? product.title}
+                  class="w-3/4 h-3/4 object-contain"
+                  loading="eager"
+                />
+              ) : (
+                <div
+                  class="w-3/4 h-3/4 border border-rule/40 flex items-center justify-center text-muted/60 text-[11px] tracking-[0.20em] uppercase"
+                >
+                  {product.title}
+                </div>
+              )
+            }
+          </div>
+
+          {/* Variantes (placeholders) */}
+          <div class="flex gap-3 mt-5">
+            {
+              swatches.map((color, idx) => (
+                <button
+                  type="button"
+                  aria-label={`Variante ${idx + 1}`}
+                  class={`w-14 h-14 border ${idx === 0 ? "border-rouge" : "border-rule/60"} hover:border-rouge transition-colors`}
+                  style={`background-color: ${color}`}
+                />
+              ))
+            }
+          </div>
+        </div>
+
+        {/* RIGHT · info + CTA */}
+        <div class="lg:col-span-5">
+          <h1
+            class="font-display text-[26px] sm:text-[30px] lg:text-[34px] leading-[1.1] font-normal tracking-[-0.005em]"
+          >
+            {product.title}
+          </h1>
+
+          <p
+            class="font-display italic text-[18px] lg:text-[20px] mt-3 text-ink/85"
+          >
+            {product.price}
+          </p>
+
+          {/* Quantidade */}
+          <div class="mt-5 flex items-center gap-3">
+            <button
+              type="button"
+              class="w-8 h-8 border border-rule flex items-center justify-center text-[16px] leading-none hover:border-rouge hover:text-rouge transition-colors"
+              aria-label="Diminuir quantidade"
+            >
+              −
+            </button>
+            <span class="font-sans text-[14px] min-w-[20px] text-center">1</span>
+            <button
+              type="button"
+              class="w-8 h-8 border border-rule flex items-center justify-center text-[16px] leading-none hover:border-rouge hover:text-rouge transition-colors"
+              aria-label="Aumentar quantidade"
+            >
+              +
+            </button>
+          </div>
+
+          {/* Termos */}
+          <label
+            class="mt-5 flex items-start gap-2 cursor-pointer text-[12px] leading-[1.4] text-ink/75"
+          >
+            <input
+              type="checkbox"
+              class="mt-0.5 accent-rouge"
+            />
+            <span>
+              Ao marcar esta caixa, você concorda com os <a href="#" class="underline">Termos &amp; Condições</a> e entende que produtos sinalizados como "Edição Final" ou "Final Sale" não são elegíveis para devolução, reembolso ou troca.
+            </span>
+          </label>
+
+          {/* Add to cart */}
+          <button
+            type="button"
+            class="mt-5 w-full bg-rouge text-paper py-3 text-[11px] font-medium tracking-[0.24em] uppercase hover:bg-rouge-deep transition-colors"
+          >
+            Adicionar ao carrinho
+          </button>
+
+          {/* Shipping */}
+          {
+            product.shipsOn && (
+              <p class="mt-4 font-sans text-[11px] font-medium tracking-[0.18em] uppercase text-ink/80">
+                Envio a partir de: <span class="text-rouge">{product.shipsOn}</span>
+              </p>
+            )
+          }
+
+          {/* Descrição longa */}
+          <p
+            class="font-serif text-[15px] lg:text-[16px] leading-[1.55] mt-5 text-ink/85"
+          >
+            {product.longDescription}
+          </p>
+
+          {/* Dimensions */}
+          {
+            product.dimensions && (
+              <p
+                class="font-serif italic text-[14px] mt-4 text-ink/70"
+              >
+                Dimensões: {product.dimensions}
+              </p>
+            )
+          }
+        </div>
+      </div>
+    </section>
+
+    {/* 2 · PRODUTOS RELACIONADOS */}
+    <section class="max-w-6xl mx-auto px-6 lg:px-12 py-12 lg:py-20">
+      <h2
+        class="font-display text-[28px] lg:text-[34px] font-normal text-center mb-10 lg:mb-14"
+      >
+        Produtos relacionados
+      </h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-x-6 lg:gap-x-12 gap-y-10">
+        {
+          related.map((p) => (
+            <ProductCard
+              title={p.title}
+              byline={p.byline}
+              price={p.price}
+              href={`/loja/${p.slug}`}
+              bg={p.bg}
+              imageUrl={p.imageUrl}
+              imageAlt={p.imageAlt}
+            />
+          ))
+        }
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>

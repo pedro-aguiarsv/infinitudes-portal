@@ -1,30 +1,61 @@
 @import "tailwindcss";
 
 /* =================================================================
-   THEME · InFinitudes
-   Tailwind v4 expõe estas variáveis como utilitários automaticamente:
-   --font-serif     → font-serif
-   --font-sans      → font-sans
-   --color-paper    → bg-paper / text-paper
-   --color-ink      → text-ink / border-ink
-   --color-muted    → text-muted
-   --color-amber    → text-amber
-   --color-rule     → border-rule / bg-rule
+   THEME · (IN)Finitudes — Sistema de design v2
+   -----------------------------------------------------------------
+   Identidade: revista cultural / literária (benchmark: The New Yorker).
+   Paleta limitada (creme + bordô + preto), tipografia editorial em três
+   famílias e aquarelas como assinatura gráfica.
+
+   Tokens disponíveis como utilitários Tailwind v4:
+     --font-display  → font-display  (Bodoni Moda — títulos grandes)
+     --font-serif    → font-serif    (Cormorant Garamond — body editorial)
+     --font-sans     → font-sans     (Inter — UI, labels, metadados)
+
+     --color-paper   → bg-paper / text-paper       (fundo creme)
+     --color-ink     → text-ink / border-ink       (texto principal)
+     --color-rouge   → text-rouge / bg-rouge       (bordô / aquarela)
+     --color-muted   → text-muted                  (texto secundário)
+     --color-rule    → border-rule / bg-rule       (linhas finas)
+     --color-rouge-line → border-rouge-line        (linha vermelha fina)
    ================================================================= */
 @theme {
-  --font-serif: "Playfair Display", Georgia, serif;
-  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  /* --- Famílias tipográficas --- */
+  --font-display:
+    "Bodoni Moda", "Bodoni 72", "Didot", "Times New Roman", serif;
+  --font-serif:
+    "Cormorant Garamond", "Garamond", "Times New Roman", serif;
+  --font-sans:
+    "Inter", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
 
-  --color-paper: #faf7f2;
-  --color-ink: #1c1c1c;
-  --color-muted: #6b6558;
-  --color-amber: #8c6a3f;
-  --color-rule: #e2e1dc;
+  /* --- Cores --- */
+  --color-paper: #faf5e8; /* fundo creme dominante */
+  --color-paper-soft: #f5efde; /* fundo banner sutil */
+  --color-ink: #1a1a1a; /* texto principal */
+  --color-ink-soft: #2b2b2b; /* texto body */
+  --color-muted: #6b6558; /* metadados, captions */
+  --color-rouge: #b8252b; /* bordô principal (aquarela / CTA) */
+  --color-rouge-deep: #8f1a1f; /* hover / variação escura */
+  --color-rule: #e7e1d0; /* linha fina padrão (off-white quente) */
+  --color-rouge-line: #b8252b; /* linha vermelha decorativa */
+  --color-black: #0c0c0c; /* footer preto profundo */
 
-  --tracking-meta: 0.16em;
+  /* Alias temporário · componentes antigos usam `amber`. Será removido
+     conforme a Fase 2 reescreve cada componente. */
+  --color-amber: #b8252b;
+
+  /* --- Tipografia: tracking --- */
+  --tracking-meta: 0.18em;
+  --tracking-eyebrow: 0.22em;
+
+  /* --- Sombras suaves --- */
+  --shadow-card:
+    0 1px 2px rgba(28, 28, 28, 0.04), 0 8px 24px rgba(28, 28, 28, 0.06);
 }
 
-/* Base editorial: fundo off-white quente, texto grafite, fonte sans padrão */
+/* =================================================================
+   Base
+   ================================================================= */
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -36,11 +67,19 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+
+  /* Seleção de texto em bordô discreto */
+  ::selection {
+    background-color: var(--color-rouge);
+    color: var(--color-paper);
+  }
 }
 
-/* Utilitários editoriais reutilizáveis */
+/* =================================================================
+   Componentes utilitários reutilizáveis
+   ================================================================= */
 @layer components {
-  /* Metadados (categoria, data, autor) — padrão editorial clássico */
+  /* ---- Metadados (categoria, data, autor) — UPPERCASE espaçado ---- */
   .meta {
     font-family: var(--font-sans);
     font-size: 11px;
@@ -50,38 +89,25 @@
     color: var(--color-muted);
   }
 
-  /* Placeholder de imagem para wireframe — será substituído por <Image /> do Sanity */
-  .ph {
-    position: relative;
-    overflow: hidden;
-    background: linear-gradient(135deg, #ece9e3 0%, #d9d5cc 100%);
-  }
-  .ph::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(to right, rgba(255, 255, 255, 0.35) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255, 255, 255, 0.35) 1px, transparent 1px);
-    background-size: 48px 48px;
-    pointer-events: none;
-  }
-  .ph::after {
-    content: attr(data-label);
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--color-muted);
+  /* Variação bordô para eyebrows de seção */
+  .eyebrow {
     font-family: var(--font-sans);
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 500;
-    letter-spacing: 0.22em;
+    letter-spacing: var(--tracking-eyebrow);
     text-transform: uppercase;
+    color: var(--color-rouge);
   }
 
-  /* Link editorial com sublinhado animado sutil */
+  /* ---- Linha vermelha decorativa (assinatura visual) ---- */
+  .rouge-line {
+    height: 1px;
+    background-color: var(--color-rouge-line);
+    width: 100%;
+    display: block;
+  }
+
+  /* ---- Link com sublinhado animado sutil ---- */
   .link-ed {
     position: relative;
     display: inline-block;
@@ -102,14 +128,34 @@
     transform: scaleX(1);
   }
 
-  /* Capitular clássica: primeira letra flutua à esquerda, serif grande.
-     Usada no primeiro parágrafo de ensaios longos. */
+  /* ---- Capitular (drop cap) para abertura de ensaios ---- */
   .dropcap::first-letter {
-    font-family: var(--font-serif);
+    font-family: var(--font-display);
     font-size: 4.75rem;
     float: left;
     line-height: 0.9;
     padding: 0.25rem 0.75rem 0 0;
     color: var(--color-ink);
+  }
+
+  /* ---- Placeholder editorial enquanto não há imagem ---- */
+  .ph {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #ece7d4 0%, #ddd6c0 100%);
+  }
+  .ph::after {
+    content: attr(data-label);
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
   }
 }

@@ -1,97 +1,124 @@
 ---
 // =============================================================
-// BookSection.astro · Box editorial de destaque do livro
+// BookSection.astro · Banner bordô do Livro (page-01, bloco 4)
 // -------------------------------------------------------------
-// Segue o DNA New Yorker: sem cards, sem sombras. Apenas
-// capa + tipografia hierárquica + hairline 1px + CTA sóbrio.
-// O botão "Comprar" aponta para a Lojinha (categoria comercial).
+// Fundo bordô, duas colunas:
+//   · Esquerda: capa do livro — composição com o branding
+//     "(IN)FINITUDES" + aquarela vermelha (replica o design).
+//     Se `coverUrl` for passado, usa a imagem real.
+//   · Direita: título display em creme + dek + lista de features
+//     com hairlines em paper/30 + CTA bordô-escuro pill.
+//
+// CTA aponta para a página do livro (/livro).
 // =============================================================
-import { getCategory } from "../lib/categories";
+import WatercolorAccent from "./WatercolorAccent.astro";
 
 export interface Props {
   title?: string;
-  subtitle?: string;
   dek?: string;
-  price?: string;
-  coverUrl?: string | null;     // Se null → placeholder de wireframe
   features?: Array<{ label: string; meta: string }>;
+  coverUrl?: string | null;
+  href?: string;
 }
 
-// A rota da "Comprar" vem da fonte única de categorias:
-// se um dia o slug da Lojinha mudar, o link se atualiza sozinho.
-const lojinhaHref = getCategory("lojinha")?.href ?? "/lojinha";
-
 const {
-  title = "InFinitudes: ensaios sobre o tempo que resta",
-  subtitle = "Livro · Edição de 2026",
-  dek = "Vinte e quatro ensaios reunidos sobre presença, escuta e a gramática silenciosa dos cuidados paliativos.",
-  price = "R$ 98,00",
-  coverUrl = null,
+  title = "InFinitudes: ensaios sobre a dor e a fé",
+  dek = "Uma coletânea de ensaios sobre presença, escuta e a gramática silenciosa dos cuidados paliativos.",
   features = [
     { label: "Edição impressa com acabamento artesanal", meta: "320 páginas" },
     { label: "Prefácio de Dra. Ana Claudia Quintana Arantes", meta: "Exclusivo" },
     { label: "Inclui acesso ao áudio-livro narrado pelo autor", meta: "8h 40min" },
   ],
+  coverUrl = null,
+  href = "/livro",
 } = Astro.props;
 ---
 
-<section class="border-t border-b border-rule bg-[#f2ede4]">
-  <div class="max-w-7xl mx-auto px-6 lg:px-12 py-20 lg:py-28">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
-      {/* Capa do livro · proporção 3:4 */}
-      <figure class="lg:col-span-5 max-w-sm mx-auto lg:mx-0">
+<section class="bg-rouge text-paper">
+  <div class="max-w-6xl mx-auto px-6 lg:px-12 py-16 lg:py-20">
+    <div
+      class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center"
+    >
+      {/* Capa do livro · composição (IN)FINITUDES + aquarela */}
+      <figure class="lg:col-span-4 max-w-[260px] mx-auto lg:mx-0">
         {
           coverUrl ? (
             <img
               src={coverUrl}
               alt={`Capa do livro ${title}`}
-              class="w-full aspect-[3/4] object-cover border border-rule"
+              class="w-full aspect-[3/4] object-cover shadow-2xl"
               loading="lazy"
               decoding="async"
             />
           ) : (
-            <div class="ph aspect-[3/4] w-full border border-rule" data-label="Capa do livro · 3:4" />
+            <div
+              class="relative w-full aspect-[3/4] bg-paper text-ink shadow-2xl flex flex-col"
+            >
+              {/* "(IN)FINITUDES" stacked em 3 linhas no topo da capa */}
+              <div class="px-6 pt-6 font-display leading-[0.95] tracking-[-0.01em] text-[26px] font-medium">
+                <div><span class="text-rouge">(IN)</span></div>
+                <div class="-mt-0.5">FINI</div>
+                <div class="-mt-0.5">TUDES</div>
+                <p
+                  class="mt-2 font-sans text-[7px] tracking-[0.42em] uppercase text-ink/70"
+                >
+                  Divã Infinito
+                </p>
+              </div>
+              {/* Aquarela vermelha cobrindo a metade inferior */}
+              <div class="flex-1 relative overflow-hidden">
+                <WatercolorAccent
+                  variant="rouge-blob"
+                  class="absolute -bottom-6 -right-6 w-[105%] h-[105%] object-cover"
+                />
+              </div>
+            </div>
           )
         }
       </figure>
 
-      {/* Texto de venda · 7/12 */}
-      <div class="lg:col-span-7">
-        <span class="meta text-amber">{subtitle}</span>
-
+      {/* Texto + lista + CTA */}
+      <div class="lg:col-span-8">
         <h2
-          class="font-serif text-4xl sm:text-5xl lg:text-[56px] leading-[1.05] mt-6 font-normal"
+          class="font-display text-[36px] sm:text-[44px] lg:text-[52px] leading-[1.05] font-normal tracking-[-0.01em] text-paper"
         >
           {title}
         </h2>
 
-        <p class="font-serif italic text-xl leading-snug mt-6 text-ink/80">
+        <p
+          class="font-serif italic text-[18px] lg:text-[20px] leading-[1.45] mt-5 text-paper/85"
+        >
           {dek}
         </p>
 
-        {/* Reforços de valor · hairlines 1px, sem ícones */}
-        <ul
-          class="mt-10 divide-y divide-rule border-t border-b border-rule"
-        >
+        {/* Features · hairlines em paper/30 */}
+        <ul class="mt-10 border-t border-paper/30">
           {
             features.map((f) => (
-              <li class="py-4 flex justify-between items-baseline gap-6">
-                <span class="text-[15px]">{f.label}</span>
-                <span class="meta">{f.meta}</span>
+              <li class="py-4 flex justify-between items-baseline gap-6 border-b border-paper/30">
+                <span class="font-serif text-[15px] lg:text-[16px] text-paper">
+                  {f.label}
+                </span>
+                <span class="font-sans text-[10px] font-medium tracking-[0.20em] uppercase text-paper/70 whitespace-nowrap">
+                  {f.meta}
+                </span>
               </li>
             ))
           }
         </ul>
 
-        {/* CTAs · principal aponta para a Lojinha */}
-        <div class="mt-10 flex flex-wrap items-center gap-x-10 gap-y-4">
+        {/* CTA · botão em creme com texto bordô */}
+        <div class="mt-8 flex flex-wrap items-center gap-x-8 gap-y-4">
           <a
-            href={lojinhaHref}
-            class="inline-flex items-center gap-3 border border-ink bg-ink text-paper px-8 py-4 text-[12px] font-medium tracking-[0.18em] uppercase hover:bg-transparent hover:text-ink transition-colors"
+            href={href}
+            class="inline-flex items-center gap-2 bg-paper text-rouge px-8 py-3.5 text-[11px] font-medium tracking-[0.22em] uppercase hover:bg-paper/90 transition-colors"
           >
-            Comprar na Lojinha — {price}
+            Conheça o livro
           </a>
-          <a href={`${lojinhaHref}#trecho`} class="meta link-ed text-amber">
+          <a
+            href={`${href}#trecho`}
+            class="font-sans text-[10px] font-medium tracking-[0.22em] uppercase text-paper/85 hover:text-paper link-ed"
+          >
             Ler um trecho grátis →
           </a>
         </div>

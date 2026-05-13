@@ -45,10 +45,14 @@ export type PostPreview = {
   mainImage: SanityImage | null;
   category: string | null;
   excerpt: string | null;
+  authors?: string | null; // Linha de bylines (ex.: "Eleonora Cruz Santos")
 };
 
 export type PostFull = PostPreview & {
   body: unknown[]; // Portable Text blocks — tipagem mínima para não acoplar o template
+  // Layout do post detalhe: "classic" (padrão, estilo NYer) ou "cover"
+  // (banner bordô full-width com ilustração à direita).
+  layoutVariant?: "classic" | "cover" | null;
 };
 
 // =============================================================
@@ -64,11 +68,14 @@ export const postsQuery = groq`
     publishedAt,
     mainImage,
     category,
-    excerpt
+    excerpt,
+    authors
   }
 `;
 
 // Post individual · consulta pelo slug (rota dinâmica)
+// Campos `layoutVariant` e `authors` são opcionais — só serão usados
+// se estiverem definidos no schema do Sanity.
 export const postBySlugQuery = groq`
   *[_type == "post" && slug.current == $slug][0] {
     _id,
@@ -78,7 +85,9 @@ export const postBySlugQuery = groq`
     mainImage,
     category,
     excerpt,
-    body
+    body,
+    layoutVariant,
+    authors
   }
 `;
 
@@ -91,7 +100,8 @@ export const postsByCategoryQuery = groq`
     publishedAt,
     mainImage,
     category,
-    excerpt
+    excerpt,
+    authors
   }
 `;
 

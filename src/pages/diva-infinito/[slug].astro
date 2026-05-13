@@ -1,0 +1,248 @@
+---
+// =============================================================
+// /diva-infinito/[slug] · Episódio individual (page-08)
+// -------------------------------------------------------------
+// Rota dinâmica que renderiza um episódio. Pega o post pelo slug
+// (posts com category="diva-infinito" são episódios) e mostra:
+//   1. SectionTitle "Videocast Divã Infinito"
+//   2. Botão pequeno bordô (ouvir / assinar)
+//   3. "Episódio N" título centralizado
+//   4. Descrição curta centralizada
+//   5. Player de vídeo 16:9 (placeholder ou videoUrl do Sanity)
+//   6. "TODOS OS EPISÓDIOS" header + lista à esquerda +
+//      aquarela decorativa à direita
+//   7. Newsletter + Footer
+//
+// Quando não houver post real, cai em fake editorial.
+// =============================================================
+import Layout from "../../layouts/Layout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import NewsletterSection from "../../components/NewsletterSection.astro";
+import SectionTitle from "../../components/SectionTitle.astro";
+import Divider from "../../components/Divider.astro";
+import WatercolorAccent from "../../components/WatercolorAccent.astro";
+import { getPostsByCategory, urlFor, type PostPreview } from "../../lib/sanity";
+
+export async function getStaticPaths() {
+  const eps = await getPostsByCategory("diva-infinito");
+  if (eps.length === 0) {
+    // Gera 3 rotas fake só pra dev preview (episodio-1, 2, 3)
+    return [1, 2, 3].map((n) => ({
+      params: { slug: `episodio-${n}` },
+      props: { episodeNumber: n, post: null },
+    }));
+  }
+  return eps.map((ep, idx) => ({
+    params: { slug: ep.slug },
+    props: { episodeNumber: idx + 1, post: ep },
+  }));
+}
+
+const { episodeNumber, post } = Astro.props as {
+  episodeNumber: number;
+  post: PostPreview | null;
+};
+
+const all = await getPostsByCategory("diva-infinito");
+
+// Lista de "outros episódios" — exclui o atual
+const otherEps = all
+  .filter((e) => e._id !== post?._id)
+  .slice(0, 4);
+
+// Fallback fake quando não há posts reais
+type FakeEp = {
+  title: string;
+  excerpt: string;
+  date: string;
+  href: string;
+};
+const FAKE_OTHERS: FakeEp[] = [
+  {
+    title: "Shutfalo: Wednesday, May 6, 2026",
+    excerpt: "Can you make a longer word with each new letter?",
+    date: "5 de Maio de 2026",
+    href: "/diva-infinito/episodio-2",
+  },
+  {
+    title: "Muriel Spark, the Double Agent",
+    excerpt:
+      "A new biography claims that novelist fabricated her origin story — but that secret codes lie at the heart of her genius.",
+    date: "5 de Maio de 2026",
+    href: "/diva-infinito/episodio-3",
+  },
+  {
+    title: "How the Iran War Is Shifting Power Toward China",
+    excerpt:
+      "As the U.K.'s credibility and military capacity are tested abroad, China has gained leverage by staying out the fight and learning from it.",
+    date: "5 de Maio de 2026",
+    href: "/diva-infinito/episodio-1",
+  },
+  {
+    title: "The Crossword Wednesday, May 6, 2026",
+    excerpt: "Earth's driest and coldest continent: ten letters.",
+    date: "5 de Maio de 2026",
+    href: "/diva-infinito/episodio-2",
+  },
+];
+
+const showFakeOthers = !post && otherEps.length === 0;
+
+const heroImage = post?.mainImage
+  ? urlFor(post.mainImage).width(1600).height(900).fit("crop").auto("format").url()
+  : null;
+
+const epTitle = post?.title ?? `Episódio ${episodeNumber}`;
+const epDek =
+  post?.excerpt ??
+  "The New Yorker's editor, David Remnick, presents interviews, profiles, and humor, in a co-production with WNYC Studios.";
+---
+
+<Layout title={`${epTitle} — Divã Infinito`}>
+  <Header />
+
+  <main>
+    {/* 1 · Header da seção */}
+    <section class="max-w-5xl mx-auto px-6 lg:px-12">
+      <SectionTitle
+        eyebrow="Seção"
+        title="Videocast Divã Infinito"
+        subtitle="Relatos e ensaios autorais."
+      />
+      <div class="text-center -mt-6 mb-2">
+        <a
+          href="/diva-infinito"
+          class="inline-block bg-rouge text-paper px-4 py-1.5 text-[10px] font-medium tracking-[0.22em] uppercase hover:bg-rouge-deep transition-colors"
+        >
+          Ouvir
+        </a>
+      </div>
+    </section>
+
+    <div class="max-w-5xl mx-auto px-6 lg:px-12">
+      <Divider variant="rouge" gap="my-8" />
+    </div>
+
+    {/* 2 · Título "Episódio N" + descrição */}
+    <section class="max-w-3xl mx-auto px-6 text-center">
+      <h2
+        class="font-display text-[36px] sm:text-[44px] lg:text-[52px] leading-[1.05] font-normal tracking-[-0.01em]"
+      >
+        {epTitle}
+      </h2>
+      <p
+        class="font-serif text-[16px] lg:text-[17px] leading-[1.55] mt-4 text-ink/80"
+      >
+        {epDek}
+      </p>
+    </section>
+
+    {/* 3 · Video player 16:9 */}
+    <section class="max-w-4xl mx-auto px-6 lg:px-12 mt-10 lg:mt-12">
+      <figure class="w-full aspect-video bg-ink/85 overflow-hidden relative">
+        {
+          heroImage ? (
+            <img
+              src={heroImage}
+              alt={post?.mainImage?.alt ?? epTitle}
+              class="w-full h-full object-cover"
+              loading="eager"
+            />
+          ) : (
+            <div
+              class="ph w-full h-full"
+              data-label="Player de vídeo · 16:9"
+            />
+          )
+        }
+        {/* Play button overlay */}
+        <button
+          type="button"
+          class="absolute inset-0 flex items-center justify-center group"
+          aria-label="Reproduzir episódio"
+        >
+          <span
+            class="w-20 h-20 rounded-full bg-rouge/90 group-hover:bg-rouge text-paper flex items-center justify-center transition-colors"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="32"
+              height="32"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </span>
+        </button>
+      </figure>
+    </section>
+
+    {/* 4 · "TODOS OS EPISÓDIOS" + lista + aquarela decorativa */}
+    <section class="max-w-6xl mx-auto px-6 lg:px-12 py-16 lg:py-20">
+      <header class="text-center mb-10">
+        <div class="rouge-line max-w-md mx-auto mb-6"></div>
+        <p
+          class="font-sans text-[11px] font-medium tracking-[0.30em] uppercase text-ink/80"
+        >
+          Todos os Episódios
+        </p>
+      </header>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+        {/* Lista de outros episódios · 7 colunas */}
+        <div class="lg:col-span-7">
+          {
+            (showFakeOthers ? FAKE_OTHERS : otherEps).map((ep, idx) => (
+              <>
+                {idx > 0 && <Divider variant="rule" />}
+                <a
+                  href={showFakeOthers ? (ep as FakeEp).href : `/diva-infinito/${(ep as PostPreview).slug}`}
+                  class="group grid grid-cols-12 gap-4 py-5 items-start"
+                >
+                  <div class="col-span-12 sm:col-span-8">
+                    <h4 class="font-display text-[18px] lg:text-[20px] leading-[1.2] font-medium group-hover:text-rouge transition-colors">
+                      {showFakeOthers ? (ep as FakeEp).title : (ep as PostPreview).title}
+                    </h4>
+                    <p class="font-serif text-[14px] lg:text-[15px] leading-[1.5] mt-2 text-ink/75">
+                      {showFakeOthers
+                        ? (ep as FakeEp).excerpt
+                        : (ep as PostPreview).excerpt}
+                    </p>
+                    <div class="meta mt-2">
+                      {showFakeOthers
+                        ? (ep as FakeEp).date
+                        : (ep as PostPreview).publishedAt
+                          ? new Intl.DateTimeFormat("pt-BR", {
+                              day: "numeric",
+                              month: "long",
+                              year: "numeric",
+                            }).format(new Date((ep as PostPreview).publishedAt))
+                          : ""}
+                    </div>
+                  </div>
+                  <div class="col-span-12 sm:col-span-4">
+                    <div class="ph w-full aspect-square" data-label="Thumb" />
+                  </div>
+                </a>
+              </>
+            ))
+          }
+        </div>
+
+        {/* Aquarela decorativa · 5 colunas */}
+        <div class="hidden lg:flex lg:col-span-5 justify-center items-start">
+          <WatercolorAccent
+            variant="black-blob"
+            class="w-full max-w-[420px] h-auto sticky top-10"
+          />
+        </div>
+      </div>
+    </section>
+
+    <NewsletterSection />
+  </main>
+
+  <Footer />
+</Layout>

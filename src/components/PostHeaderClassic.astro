@@ -1,0 +1,52 @@
+---
+// =============================================================
+// PostHeaderClassic.astro · Header de post v2 (page-10)
+// -------------------------------------------------------------
+// Layout centralizado clássico no DNA do The New Yorker:
+//   · Eyebrow bordô (categoria ou subseção)
+//   · Título display serif grande (até 2 linhas)
+//   · Subtítulo italic explicativo
+//   · Bylines (autor ou lista de autores)
+//   · Data
+//   · Divisor bordô curto e centralizado
+// =============================================================
+
+export interface Props {
+  eyebrow?: string;
+  title: string;
+  dek?: string | null;
+  authors?: string | null; // Pode ser "Por Fulano" ou "Por A, B e C"
+  date?: string | null;
+}
+
+const { eyebrow = "Seção", title, dek, authors, date } = Astro.props;
+---
+
+<header class="max-w-3xl mx-auto px-6 pt-12 lg:pt-20 pb-10 text-center">
+  <p class="eyebrow">{eyebrow}</p>
+
+  <h1
+    class="font-display text-[36px] sm:text-[48px] lg:text-[60px] leading-[1.05] mt-5 font-normal tracking-[-0.01em]"
+  >
+    {title}
+  </h1>
+
+  {
+    dek && (
+      <p class="font-serif italic text-[18px] lg:text-[21px] leading-[1.45] mt-5 text-ink/80">
+        {dek}
+      </p>
+    )
+  }
+
+  {
+    (authors || date) && (
+      <div class="mt-8 flex flex-col items-center gap-1">
+        {authors && <span class="meta">{authors}</span>}
+        {date && <span class="meta text-muted/70">{date}</span>}
+      </div>
+    )
+  }
+
+  <div class="mx-auto mt-8 w-24 h-px bg-rouge-line"></div>
+</header>

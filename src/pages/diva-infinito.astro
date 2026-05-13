@@ -1,0 +1,107 @@
+---
+// =============================================================
+// /diva-infinito · Listagem do videocast (page-07)
+// -------------------------------------------------------------
+// Substitui a rota dinâmica `[category].astro` para `/diva-infinito`.
+// Mostra episódios com aquarela + 2 CTAs.
+// Quando houver "post" com category "diva-infinito" no Sanity,
+// cada um vira um episódio.
+// =============================================================
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import SectionTitle from "../components/SectionTitle.astro";
+import EpisodeListItem from "../components/EpisodeListItem.astro";
+import NewsletterSection from "../components/NewsletterSection.astro";
+import Divider from "../components/Divider.astro";
+import { getPostsByCategory, type PostPreview } from "../lib/sanity";
+
+const episodes = await getPostsByCategory("diva-infinito");
+
+// Fake editorial enquanto o Sanity não tem episódios cadastrados.
+type FakeEp = {
+  number: number;
+  title: string;
+  description: string;
+  slug: string;
+  variant: "rouge" | "black";
+};
+
+const FAKE_EPS: FakeEp[] = [
+  {
+    number: 1,
+    title: "Divã Infinito Episódio 1",
+    description:
+      "The New Yorker editor David Remnick presents interviews, profiles, and humor, in a co-participation with WYNC Studios.",
+    slug: "episodio-1",
+    variant: "rouge",
+  },
+  {
+    number: 2,
+    title: "Divã Infinito Episódio 2",
+    description:
+      "The New Yorker editor David Remnick presents interviews, profiles, and humor, in a co-participation with WYNC Studios.",
+    slug: "episodio-2",
+    variant: "black",
+  },
+  {
+    number: 3,
+    title: "Divã Infinito Episódio 3",
+    description:
+      "The New Yorker editor David Remnick presents interviews, profiles, and humor, in a co-participation with WYNC Studios.",
+    slug: "episodio-3",
+    variant: "rouge",
+  },
+];
+
+// Quando há posts reais, mapeia pra estrutura de episódios.
+const hasReal = episodes.length > 0;
+const realMapped = episodes.map((ep: PostPreview, idx: number) => ({
+  number: idx + 1,
+  title: ep.title,
+  description: ep.excerpt ?? "",
+  slug: ep.slug,
+  variant: (idx % 2 === 0 ? "rouge" : "black") as "rouge" | "black",
+}));
+
+const list = hasReal ? realMapped : FAKE_EPS;
+---
+
+<Layout
+  title="Divã Infinito — (IN)Finitudes"
+  description="Conversas em torno dos episódios do podcast."
+>
+  <Header />
+
+  <main>
+    <section class="max-w-5xl mx-auto px-6 lg:px-12">
+      <SectionTitle
+        eyebrow="Seção"
+        title="Videocast Divã Infinito"
+        subtitle="Relatos e ensaios autorais."
+      />
+    </section>
+
+    <section class="max-w-5xl mx-auto px-6 lg:px-12 pb-16 lg:pb-24">
+      <Divider variant="rouge" />
+      {
+        list.map((ep) => (
+          <>
+            <EpisodeListItem
+              number={ep.number}
+              title={ep.title}
+              description={ep.description}
+              href={`/diva-infinito/${ep.slug}`}
+              variant={ep.variant}
+            />
+            <Divider variant="rule" />
+          </>
+        ))
+      }
+    </section>
+
+    <NewsletterSection />
+  </main>
+
+  <Footer />
+</Layout>

@@ -1,0 +1,96 @@
+---
+// =============================================================
+// FeaturedEssay.astro · "Ensaio de capa" da home (page-01, bloco 2)
+// -------------------------------------------------------------
+// Layout em duas colunas:
+//   · Esquerda: aquarela preta (silhueta) — peça gráfica
+//   · Direita: eyebrow bordô + título display + dek serif italic
+//             + byline (autor · tempo de leitura) + CTA bordô
+//
+// Pode receber dados do Sanity ou cair em fake editorial.
+// Fundo paper-soft (creme um pouco mais quente) para se destacar.
+// =============================================================
+import WatercolorAccent from "./WatercolorAccent.astro";
+
+export interface FeaturedContent {
+  eyebrow: string; // Ex.: "Ensaio de capa · Cuidados paliativos"
+  title: string;
+  dek?: string | null;
+  byline?: string | null;
+  readingTime?: string | null;
+  href: string;
+}
+
+export interface Props {
+  essay?: FeaturedContent;
+}
+
+const FAKE: FeaturedContent = {
+  eyebrow: "Ensaio de capa · Cuidados paliativos",
+  title: "Quando o cuidado se torna a última linguagem do amor",
+  dek: "Uma reflexão sobre presença, escuta e os silêncios que sustentam a dignidade no fim da vida — e o que a medicina aprende com eles.",
+  byline: "Por Dra. Helena Brandão",
+  readingTime: "14 min de leitura",
+  href: "/outras-historias/ultima-linguagem-do-amor",
+};
+
+const { essay = FAKE } = Astro.props;
+---
+
+<section class="bg-paper-soft border-y border-rule/60">
+  <div class="max-w-6xl mx-auto px-6 lg:px-12 py-20 lg:py-28">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
+      {/* Coluna esquerda · aquarela preta silhueta */}
+      <div class="lg:col-span-6 flex justify-center">
+        <WatercolorAccent
+          variant="black-figure"
+          class="w-[320px] sm:w-[400px] lg:w-[460px] h-auto"
+        />
+      </div>
+
+      {/* Coluna direita · texto */}
+      <div class="lg:col-span-6">
+        <p class="eyebrow">{essay.eyebrow}</p>
+        <h2
+          class="font-display text-[40px] sm:text-[48px] lg:text-[56px] leading-[1.05] mt-4 font-normal tracking-[-0.01em]"
+        >
+          <a
+            href={essay.href}
+            class="transition-colors hover:text-rouge"
+          >
+            {essay.title}
+          </a>
+        </h2>
+
+        {
+          essay.dek && (
+            <p class="font-serif italic text-[19px] lg:text-[21px] leading-[1.45] mt-6 text-ink/80">
+              {essay.dek}
+            </p>
+          )
+        }
+
+        {
+          (essay.byline || essay.readingTime) && (
+            <div class="mt-8 flex flex-wrap items-center gap-x-3 gap-y-1">
+              {essay.byline && <span class="meta">{essay.byline}</span>}
+              {essay.byline && essay.readingTime && (
+                <span class="meta text-muted/50">·</span>
+              )}
+              {essay.readingTime && (
+                <span class="meta">{essay.readingTime}</span>
+              )}
+            </div>
+          )
+        }
+
+        <a
+          href={essay.href}
+          class="inline-block mt-8 font-sans text-[11px] font-medium tracking-[0.20em] uppercase text-rouge link-ed"
+        >
+          Ler o ensaio completo →
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

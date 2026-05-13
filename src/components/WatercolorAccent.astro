@@ -1,0 +1,42 @@
+---
+// =============================================================
+// WatercolorAccent.astro
+// -------------------------------------------------------------
+// Renderiza uma das aquarelas da identidade visual (IN)Finitudes.
+// Os assets vivem em /public/watercolors/ (webp + png fallback).
+//
+// Variantes:
+//   · "rouge-blob"   → aquarela vermelha redonda (hero, banner livro)
+//   · "black-blob"   → aquarela preta em "C" (decoração de seção)
+//   · "black-figure" → aquarela preta tipo silhueta (post destaque)
+//
+// Uso:
+//   <WatercolorAccent variant="rouge-blob" class="w-[480px]" />
+//
+// Aceita qualquer classe Tailwind para tamanho/posição, e a prop
+// `alt` para acessibilidade (padrão: vazio, pois é decorativa).
+// =============================================================
+export interface Props {
+  variant: "rouge-blob" | "black-blob" | "black-figure";
+  alt?: string;
+  class?: string;
+  loading?: "lazy" | "eager";
+}
+
+const {
+  variant,
+  alt = "",
+  class: className = "",
+  loading = "lazy",
+} = Astro.props;
+---
+
+<img
+  src={`/watercolors/${variant}.webp`}
+  alt={alt}
+  role={alt ? undefined : "presentation"}
+  aria-hidden={alt ? undefined : "true"}
+  loading={loading}
+  decoding="async"
+  class={`pointer-events-none select-none ${className}`}
+/>

@@ -1,0 +1,377 @@
+---
+// =============================================================
+// /livro · Página de venda do livro "(IN)Finitudes"
+// -------------------------------------------------------------
+// Página estática que apresenta o livro e leva à compra na loja
+// (/loja/livro-finitudes). Sobrescreve nada (slug "livro" não é
+// uma categoria do Sanity).
+//
+// Estrutura (scroll vertical, sem navegação interna):
+//   1. Hero · capa + título + subtítulo + autor + CTA "Comprar"
+//   2. Sinopse · parágrafo principal
+//   3. O que você vai encontrar · 4 destaques em grid
+//   4. Trecho · passagem do livro com drop cap
+//   5. Sobre a autora · mini bio com aquarela + link
+//   6. Depoimentos · 3 quotes
+//   7. CTA final · banner bordô com "Adicionar ao carrinho"
+//   8. Newsletter + Footer
+//
+// Conteúdo é todo placeholder — pronto pra ser substituído quando
+// o lead/Eleonora passar a sinopse, trechos e depoimentos reais.
+// =============================================================
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import NewsletterSection from "../components/NewsletterSection.astro";
+import WatercolorAccent from "../components/WatercolorAccent.astro";
+import Divider from "../components/Divider.astro";
+import { getProductBySlug } from "../lib/products";
+
+const livro = getProductBySlug("livro-finitudes");
+const cartHref = `/loja/${livro?.slug ?? "livro-finitudes"}`;
+
+const destaques = [
+  {
+    label: "Ensaios",
+    value: "24",
+    desc: "Textos curtos sobre presença, escuta e cuidado.",
+  },
+  {
+    label: "Páginas",
+    value: "192",
+    desc: "Papel pólen 80g, capa em hot stamping.",
+  },
+  {
+    label: "Formato",
+    value: "14 × 21 cm",
+    desc: "Físico (com envio nacional) ou e-book.",
+  },
+  {
+    label: "Lançamento",
+    value: "21 / 05",
+    desc: "Pré-venda aberta · primeira tiragem limitada.",
+  },
+];
+
+const depoimentos = [
+  {
+    quote:
+      "Eleonora costura entrevista, leitura e memória como quem cuida de uma ferida que ainda precisa ser olhada. Um livro raro.",
+    author: "Vanessa Bárbara",
+    role: "Crítica · Folha de S.Paulo",
+  },
+  {
+    quote:
+      "Cada ensaio é uma pequena janela. Olhei por cada uma sem pressa, e em todas vi alguma coisa que eu já tinha esquecido de sentir.",
+    author: "Marina Pires",
+    role: "Leitora · Belo Horizonte",
+  },
+  {
+    quote:
+      "Não conheço outro título recente em português que enfrente o tabu da finitude com tanta delicadeza e tanto rigor.",
+    author: "Dr. Ricardo Caponero",
+    role: "Médico paliativista · HCFMUSP",
+  },
+];
+
+const trecho = `Há um silêncio depois da escuta que não é vazio — é cheio de tudo
+aquilo que a outra pessoa acabou de dizer e que, agora, atravessa o
+meu corpo. É o silêncio do quarto de hospital depois de a porta
+fechar, da cozinha depois do telefonema, da carona depois da
+notícia. É um silêncio que pede atenção, não palavras. Foi para
+nomear esse silêncio que comecei a escrever este livro.`;
+---
+
+<Layout
+  title="Livro (IN)Finitudes — Eleonora Cruz Santos"
+  description="(IN)Finitudes reúne 24 ensaios sobre presença, escuta e a gramática silenciosa dos cuidados paliativos. Garanta seu exemplar."
+>
+  <Header />
+
+  <main>
+    {/* ============================================================
+        1 · HERO · capa + título + CTA
+        ============================================================ */}
+    <section class="bg-paper">
+      <div class="max-w-6xl mx-auto px-6 lg:px-12 py-14 lg:py-20">
+        <div
+          class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center"
+        >
+          {/* Capa do livro · placeholder estilizado */}
+          <div class="lg:col-span-6 flex justify-center order-2 lg:order-1">
+            <div class="relative w-[280px] sm:w-[320px] lg:w-[360px] aspect-[3/4]">
+              {/* Sombra */}
+              <div
+                class="absolute inset-0 translate-x-3 translate-y-3 bg-ink/10"
+                aria-hidden="true"
+              >
+              </div>
+              {/* Capa */}
+              <div
+                class="relative w-full h-full bg-paper border border-rule/60 shadow-2xl overflow-hidden"
+              >
+                <div
+                  class="px-6 pt-8 font-display leading-[0.95] tracking-[-0.01em] text-[32px] sm:text-[36px] lg:text-[40px] font-medium"
+                >
+                  <div><span class="text-rouge">(IN)</span></div>
+                  <div class="-mt-1">FINI</div>
+                  <div class="-mt-1">TUDES</div>
+                </div>
+                <p
+                  class="px-6 mt-3 font-sans text-[9px] tracking-[0.42em] uppercase text-ink/70"
+                >
+                  por Eleonora Cruz Santos
+                </p>
+                <WatercolorAccent
+                  variant="rouge-blob"
+                  class="absolute -bottom-8 -right-8 w-[115%] h-[65%] object-cover"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Headline + CTA · 6 cols */}
+          <div class="lg:col-span-6 order-1 lg:order-2 text-center lg:text-left">
+            <p class="eyebrow">Edição 2026 · Pré-venda</p>
+            <h1
+              class="font-display text-[44px] sm:text-[56px] lg:text-[72px] leading-[1.02] mt-3 font-normal tracking-[-0.01em]"
+            >
+              <span class="text-rouge">(IN)</span>Finitudes
+            </h1>
+            <p
+              class="font-serif italic text-[19px] lg:text-[22px] leading-[1.45] mt-5 text-ink/80"
+            >
+              Vinte e quatro ensaios sobre presença, escuta e a gramática
+              silenciosa dos cuidados paliativos.
+            </p>
+            <p
+              class="mt-4 font-sans text-[11px] font-medium tracking-[0.22em] uppercase text-rouge"
+            >
+              por Eleonora Cruz Santos
+            </p>
+
+            {/* Bloco preço + CTAs */}
+            <div
+              class="mt-8 flex flex-col sm:flex-row sm:items-center sm:justify-center lg:justify-start gap-4"
+            >
+              <span class="font-display italic text-[26px] lg:text-[28px] text-ink">
+                {livro?.price ?? "R$ 65,00"}
+              </span>
+              <a
+                href={cartHref}
+                class="inline-block text-center bg-rouge text-paper px-8 py-3.5 text-[11px] font-medium tracking-[0.22em] uppercase hover:bg-rouge-deep transition-colors"
+              >
+                Comprar agora
+              </a>
+            </div>
+            <p class="meta mt-4">
+              Frete nacional · envio a partir de 21 de maio de 2026
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ============================================================
+        2 · SINOPSE
+        ============================================================ */}
+    <section class="bg-paper-soft border-y border-rule/60">
+      <div class="max-w-3xl mx-auto px-6 py-16 lg:py-20 text-center">
+        <p class="eyebrow">Sobre o livro</p>
+        <p
+          class="font-serif text-[19px] lg:text-[21px] leading-[1.55] mt-6 text-ink-soft"
+        >
+          <span class="font-display italic text-rouge">(IN)Finitudes</span>{" "}
+          reúne textos escritos ao longo de cinco anos de escuta — em
+          enfermarias, salas de espera, rodas de cuidadores e cozinhas onde a
+          notícia ainda não tinha sido dada. Eleonora costura entrevista,
+          leitura e memória para investigar o que se diz (e o que se silencia)
+          ao redor da finitude. Não é um livro sobre a morte: é um livro sobre
+          o tempo que sobra de presença quando a gente decide ficar.
+        </p>
+      </div>
+    </section>
+
+    {/* ============================================================
+        3 · DESTAQUES · 4 colunas
+        ============================================================ */}
+    <section class="max-w-6xl mx-auto px-6 lg:px-12 py-16 lg:py-20">
+      <header class="text-center mb-12">
+        <Divider variant="rouge" gap="mb-8 max-w-md mx-auto" />
+        <p
+          class="font-sans text-[11px] font-medium tracking-[0.30em] uppercase text-ink/80"
+        >
+          O que você vai encontrar
+        </p>
+      </header>
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
+        {
+          destaques.map((d) => (
+            <div class="text-center px-2">
+              <p class="font-display text-[44px] lg:text-[52px] leading-[1] font-normal text-rouge">
+                {d.value}
+              </p>
+              <p class="mt-3 font-sans text-[10px] font-medium tracking-[0.22em] uppercase text-ink/80">
+                {d.label}
+              </p>
+              <p class="font-serif text-[14px] lg:text-[15px] leading-[1.5] mt-3 text-ink/75">
+                {d.desc}
+              </p>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    {/* ============================================================
+        4 · TRECHO · com drop cap e aquarela
+        ============================================================ */}
+    <section class="bg-paper border-y border-rule/60">
+      <div class="max-w-3xl mx-auto px-6 py-20 lg:py-24 relative">
+        <WatercolorAccent
+          variant="rouge-blob"
+          class="absolute right-0 top-0 w-[280px] h-auto opacity-25 pointer-events-none -translate-y-1/4 translate-x-1/4 hidden lg:block"
+        />
+
+        <p class="eyebrow text-center">Um trecho</p>
+        <div class="mt-8 font-serif text-[18px] lg:text-[20px] leading-[1.65] text-ink-soft">
+          <p>
+            <span
+              class="font-display float-left text-[68px] lg:text-[88px] leading-[0.85] mr-3 mt-1 text-rouge"
+            >
+              {trecho.trim().charAt(0)}
+            </span>
+            {trecho.trim().substring(1)}
+          </p>
+        </div>
+        <p
+          class="mt-8 font-sans text-[10px] font-medium tracking-[0.22em] uppercase text-rouge text-center"
+        >
+          — Ensaio 03 · "Silêncios atentos"
+        </p>
+      </div>
+    </section>
+
+    {/* ============================================================
+        5 · SOBRE A AUTORA
+        ============================================================ */}
+    <section class="max-w-5xl mx-auto px-6 lg:px-12 py-16 lg:py-24">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-10 lg:gap-16 items-center">
+        <div class="md:col-span-5 flex justify-center md:justify-end">
+          <div class="relative w-[240px] sm:w-[280px] aspect-[3/4]">
+            <WatercolorAccent
+              variant="black-blob"
+              class="absolute -top-6 -left-6 w-[60%] h-[60%] opacity-80"
+            />
+            <div
+              class="relative w-full h-full ph border border-rule/60"
+              data-label="Foto · Eleonora C. Santos"
+            >
+            </div>
+          </div>
+        </div>
+        <div class="md:col-span-7">
+          <p class="eyebrow">Sobre a autora</p>
+          <h2
+            class="font-display text-[32px] lg:text-[40px] leading-[1.1] mt-3 font-normal tracking-[-0.005em]"
+          >
+            Eleonora Cruz Santos
+          </h2>
+          <p
+            class="font-serif text-[16px] lg:text-[17px] leading-[1.6] mt-5 text-ink/85"
+          >
+            Jornalista, escritora e curadora de conteúdos sobre humanização em
+            saúde e cuidados paliativos. Fundou o projeto (IN)Finitudes em 2024
+            como um espaço de escuta e elaboração coletiva sobre o fim da vida.
+            Trabalhou por uma década na cobertura cultural da Folha de S. Paulo
+            e da Piauí.
+          </p>
+          <a
+            href="/sobre"
+            class="inline-block mt-6 font-sans text-[11px] font-medium tracking-[0.22em] uppercase text-rouge link-ed"
+          >
+            Conheça a história do projeto →
+          </a>
+        </div>
+      </div>
+    </section>
+
+    {/* ============================================================
+        6 · DEPOIMENTOS · 3 colunas
+        ============================================================ */}
+    <section class="bg-paper-soft border-y border-rule/60">
+      <div class="max-w-6xl mx-auto px-6 lg:px-12 py-16 lg:py-24">
+        <header class="text-center mb-12">
+          <Divider variant="rouge" gap="mb-8 max-w-md mx-auto" />
+          <p
+            class="font-sans text-[11px] font-medium tracking-[0.30em] uppercase text-ink/80"
+          >
+            Sobre o livro, disseram
+          </p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-12">
+          {
+            depoimentos.map((d) => (
+              <figure class="text-center">
+                <span class="font-display text-[48px] lg:text-[56px] leading-[1] text-rouge block">
+                  “
+                </span>
+                <blockquote class="font-serif italic text-[16px] lg:text-[17px] leading-[1.55] mt-2 text-ink-soft">
+                  {d.quote}
+                </blockquote>
+                <figcaption class="mt-5">
+                  <span class="block font-sans text-[10px] font-medium tracking-[0.22em] uppercase text-rouge">
+                    {d.author}
+                  </span>
+                  <span class="meta block mt-1">{d.role}</span>
+                </figcaption>
+              </figure>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    {/* ============================================================
+        7 · CTA FINAL · banner bordô
+        ============================================================ */}
+    <section class="bg-rouge text-paper">
+      <div class="max-w-5xl mx-auto px-6 lg:px-12 py-16 lg:py-24 text-center">
+        <p
+          class="font-sans text-[11px] font-medium tracking-[0.30em] uppercase text-paper/80"
+        >
+          Edição 2026 · Pré-venda aberta
+        </p>
+        <h2
+          class="font-display text-[36px] sm:text-[44px] lg:text-[56px] leading-[1.05] mt-4 font-normal tracking-[-0.01em] text-paper"
+        >
+          Garanta seu exemplar.
+        </h2>
+        <p
+          class="font-serif italic text-[18px] lg:text-[20px] leading-[1.5] mt-5 text-paper/85 max-w-xl mx-auto"
+        >
+          Primeira tiragem limitada a 800 exemplares numerados. Envio nacional a
+          partir de 21 de maio.
+        </p>
+        <div
+          class="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center"
+        >
+          <span class="font-display italic text-[28px] text-paper">
+            {livro?.price ?? "R$ 65,00"}
+          </span>
+          <a
+            href={cartHref}
+            class="inline-block bg-paper text-rouge px-10 py-4 text-[11px] font-medium tracking-[0.22em] uppercase hover:bg-paper-soft transition-colors"
+          >
+            Adicionar ao carrinho
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <NewsletterSection />
+  </main>
+
+  <Footer />
+</Layout>

@@ -1,0 +1,64 @@
+---
+// =============================================================
+// /preview/post-classic · Preview do post layout "classic"
+// -------------------------------------------------------------
+// Replica o layout v2 (page-10) com dados fake.
+// =============================================================
+import Layout from "../../layouts/Layout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import NewsletterSection from "../../components/NewsletterSection.astro";
+import PostHeaderClassic from "../../components/PostHeaderClassic.astro";
+import PostFavorites from "../../components/PostFavorites.astro";
+import Divider from "../../components/Divider.astro";
+
+const paragraphs = [
+  "The weekend in 1932, in Edinburgh, Scotland, a red-headed little girl named Nita McEwen was on a walk with her parents when she saw her double. The doppelgänger was another child, walking with her own mother. Each girl stared into the mirror of the other, but kept moving. At school the next fall, the double, named Muriel Camberg, appeared in the first grade, a year below Nita, and it turned out that she lived around the corner from Nita, too, although Muriel's street was slightly nicer.",
+  "After school, Nita lost track of her lookalike. She married young, and in her early twenties she and her husband moved to Southern Rhodesia, which had recently been annexed by the British Empire. In late 1939, they were staying in a boarding house near Victoria Falls, where, in a surreal coincidence, their housemates were none other than Muriel Camberg and her new husband, Sidney Oswald Spark.",
+  "The likeness between the two women remained uncanny, their twinship emphasized by the fact that they had crossed paths again, halfway around the world. One night, Nita's husband pulled a gun on her in their room.",
+  "This event occurred eighteen years before that ghost would begin writing novels, twenty-two in total between 1957 and 2004, each sly, glinting volume contributing to the becoming of Dame Muriel Spark, genius of our time.",
+];
+---
+
+<Layout title="Preview · Post Classic">
+  <Header />
+
+  <main>
+    <article>
+      <PostHeaderClassic
+        eyebrow="Ensaio"
+        title={`"Heated Rivalry" and Its Wine-Mom Fans Reunite`}
+        dek="Plus: the radiant pop of MUNA, the visceral paintings of Jaunita McNeely, a “Beaches” musical, and more."
+        authors="By Dan Stahl, Sheldon Pearce, Jane Bua, Jillian Steinhauer, Richard Brody, Marina Harss, and Yasin Engel"
+        date="May 1, 2026"
+      />
+
+      <figure class="max-w-4xl mx-auto px-6 mt-2">
+        <div class="ph w-full aspect-[3/2]" data-label="Imagem editorial · 3:2"></div>
+      </figure>
+
+      <div class="max-w-2xl mx-auto px-6 py-14 lg:py-20">
+        <div
+          class="font-serif text-[18px] lg:text-[19px] leading-[1.75] space-y-5 text-ink-soft"
+        >
+          {paragraphs.map((p) => <p>{p}</p>)}
+        </div>
+        <PostFavorites />
+      </div>
+
+      <div class="max-w-2xl mx-auto px-6 pb-16 lg:pb-20 text-center">
+        <Divider variant="rouge" gap="mb-10" />
+        <a
+          href="/outras-historias"
+          class="font-sans text-[11px] font-medium tracking-[0.22em] uppercase text-rouge link-ed"
+        >
+          ← Mais em Outras Histórias
+        </a>
+      </div>
+    </article>
+
+    <NewsletterSection />
+  </main>
+
+  <Footer />
+</Layout>

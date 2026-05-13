@@ -1,0 +1,97 @@
+---
+// =============================================================
+// PostListItem.astro · Item de listagem horizontal (page-03)
+// -------------------------------------------------------------
+// Layout:
+//   ┌──────────────────────────────────────┬──────────┐
+//   │ Título serif (até 2 linhas)          │  IMAGEM  │
+//   │ Descrição curta em body              │   1:1    │
+//   │ POR AUTOR  (uppercase bordô)         │          │
+//   │ DATA       (uppercase muted)         │          │
+//   └──────────────────────────────────────┴──────────┘
+//
+// Pode ser usado em qualquer página de listagem (Outras Histórias,
+// Curadoria, Recomenda, etc.). Divisores vermelhos finos são
+// renderizados pelo container (PostList), não aqui.
+// =============================================================
+import { urlFor, type PostPreview } from "../lib/sanity";
+
+export interface Props {
+  post: PostPreview;
+  author?: string; // Ex.: "Por Eleonora Cruz Santos"
+  imageRatio?: string; // Tailwind aspect, default "aspect-[4/3]"
+}
+
+const { post, author, imageRatio = "aspect-[4/3]" } = Astro.props;
+
+const postHref = post.category
+  ? `/${post.category}/${post.slug}`
+  : `/${post.slug}`;
+
+const imageUrl = post.mainImage
+  ? urlFor(post.mainImage).width(700).height(525).fit("crop").auto("format").url()
+  : null;
+
+const formattedDate = post.publishedAt
+  ? new Intl.DateTimeFormat("pt-BR", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }).format(new Date(post.publishedAt))
+  : null;
+---
+
+<article class="group">
+  <a
+    href={postHref}
+    class="grid grid-cols-12 gap-6 lg:gap-12 py-10 lg:py-12 items-center"
+  >
+    {/* Texto · 7-8 colunas */}
+    <div class="col-span-12 sm:col-span-8 order-2 sm:order-1">
+      <h3
+        class="font-display text-[24px] sm:text-[28px] lg:text-[32px] leading-[1.15] font-medium tracking-[-0.005em] transition-colors group-hover:text-rouge"
+      >
+        {post.title}
+      </h3>
+
+      {
+        post.excerpt && (
+          <p class="font-serif text-[15px] lg:text-[16px] leading-[1.5] mt-3 text-ink/80 max-w-prose">
+            {post.excerpt}
+          </p>
+        )
+      }
+
+      {
+        author && (
+          <div class="mt-5 font-sans text-[10px] font-medium tracking-[0.20em] uppercase text-rouge">
+            {author}
+          </div>
+        )
+      }
+
+      {
+        formattedDate && (
+          <div class="meta mt-2">{formattedDate}</div>
+        )
+      }
+    </div>
+
+    {/* Imagem · 4-5 colunas à direita */}
+    <div class="col-span-12 sm:col-span-4 order-1 sm:order-2">
+      {
+        imageUrl ? (
+          <img
+            src={imageUrl}
+            alt={post.mainImage?.alt ?? post.title}
+            class={`w-full ${imageRatio} object-cover transition-[filter] duration-300 group-hover:brightness-95`}
+            loading="lazy"
+            decoding="async"
+          />
+        ) : (
+          <div class={`ph w-full ${imageRatio}`} data-label="Imagem" />
+        )
+      }
+    </div>
+  </a>
+</article>

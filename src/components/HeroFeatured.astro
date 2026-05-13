@@ -1,34 +1,28 @@
 ---
 // =============================================================
-// HeroFeatured.astro · Primeira seção da home (ensaio de capa)
+// HeroFeatured.astro · "Capa de revista" da home (page-01)
 // -------------------------------------------------------------
-// Layout assimétrico inspirado no wireframe editorial:
+// Layout do mock:
+//   ┌───────────────────────────────────────────────┐
+//   │  Gwendoline Riley's            ╭───────╮     │
+//   │  new novel surveys             │ aqua  │     │
+//   │  the wreckage of               │ rouge │     │
+//   │  middle age                    │       │     │
+//   │                                ╰───────╯     │
+//   │  (IN)FINITUDES ◄─── horizontal, "(IN)" red,  │
+//   │  Alunos · Santos     "FINITUDES" preto.       │
+//   │                      Pode sobrepor a aquarela.│
+//   └───────────────────────────────────────────────┘
 //
-//   ┌──────────────────────┬─────────────────┐
-//   │                      │  EYEBROW (meta) │
-//   │                      │                 │
-//   │   IMAGEM EDITORIAL   │  Título serif   │
-//   │        (4:5)         │  muito grande   │
-//   │                      │                 │
-//   │                      │  Dek itálico    │
-//   │                      │  Byline meta    │
-//   │                      │  CTA            │
-//   └──────────────────────┴─────────────────┘
-//
-// Componente autossuficiente: sem props, renderiza com fake data
-// editorial; com props, usa os dados reais do Sanity.
+// A aquarela fica posicionada absolutamente à direita
+// (entra ATRÁS do masthead com z-index 0 vs z-index 10).
 // =============================================================
+import WatercolorAccent from "./WatercolorAccent.astro";
 
 export interface HeroContent {
-  eyebrow: string;   // Ex.: "Ensaio de capa · Cuidados paliativos"
-  title: string;
-  dek?: string | null;
-  byline?: string | null;  // Ex.: "Por Dra. Helena Brandão"
-  readingTime?: string | null;
+  headline: string;
   href: string;
-  imageUrl?: string | null;
-  imageAlt?: string | null;
-  imageCaption?: string | null;
+  edition?: string;
 }
 
 export interface Props {
@@ -36,89 +30,69 @@ export interface Props {
 }
 
 const FAKE: HeroContent = {
-  eyebrow: "Ensaio de capa · Cuidados paliativos",
-  title: "Quando o cuidado se torna a última linguagem do amor",
-  dek:
-    "Uma reflexão sobre presença, escuta e os silêncios que sustentam a dignidade no fim da vida — e o que a medicina aprende com eles.",
-  byline: "Por Dra. Helena Brandão",
-  readingTime: "14 min de leitura",
-  href: "/outras-historias/ultima-linguagem-do-amor",
-  imageUrl: null,
-  imageAlt: "Fotografia editorial",
-  imageCaption: "Fotografia · Rafael Mendes / Arquivo InFinitudes",
+  headline: "Gwendoline Riley's new novel surveys the wreckage of middle age",
+  href: "/outras-historias/gwendoline-riley",
+  edition: "Alunos · Santos",
 };
 
 const { hero = FAKE } = Astro.props;
 ---
 
-<section class="max-w-7xl mx-auto px-6 lg:px-12 py-16 lg:py-24">
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
-    {/* Imagem vertical 4:5 · coluna esquerda (7/12 ≈ 58%) */}
-    <figure class="lg:col-span-7 order-1">
-      {
-        hero.imageUrl ? (
-          <img
-            src={hero.imageUrl}
-            alt={hero.imageAlt ?? hero.title}
-            class="w-full aspect-[4/5] object-cover"
-            loading="eager"
-            fetchpriority="high"
-          />
-        ) : (
-          <div
-            class="ph w-full aspect-[4/5]"
-            data-label="Imagem editorial · 4:5"
-          />
-        )
-      }
-      {
-        hero.imageCaption && (
-          <figcaption class="meta mt-3">{hero.imageCaption}</figcaption>
-        )
-      }
-    </figure>
-
-    {/* Texto · coluna direita (5/12 ≈ 42%) */}
-    <div class="lg:col-span-5 order-2 lg:pl-4">
-      <span class="meta text-amber">{hero.eyebrow}</span>
-
-      <h1
-        class="font-serif text-4xl sm:text-5xl lg:text-6xl leading-[1.05] mt-6 font-normal"
-      >
+<section class="relative">
+  <div
+    class="relative max-w-7xl mx-auto px-6 lg:px-12 pt-10 lg:pt-12 pb-16 lg:pb-20"
+  >
+    <div class="grid grid-cols-12 gap-6 items-start">
+      {/* Coluna esquerda · headline + masthead horizontal */}
+      <div class="col-span-12 lg:col-span-7 order-2 lg:order-1 relative z-10">
+        {/* Headline pequena italic bordô — coluna curta */}
         <a
           href={hero.href}
-          class="transition-colors hover:text-amber"
+          class="block group max-w-[15rem] lg:max-w-[16rem] lg:pl-12"
         >
-          {hero.title}
-        </a>
-      </h1>
-
-      {
-        hero.dek && (
-          <p class="font-serif italic text-xl lg:text-2xl leading-snug mt-6 text-ink/80">
-            {hero.dek}
+          <p
+            class="font-display italic text-rouge text-[18px] sm:text-[20px] lg:text-[22px] leading-[1.18] group-hover:text-rouge-deep transition-colors"
+          >
+            {hero.headline}
           </p>
-        )
-      }
+        </a>
 
-      {
-        (hero.byline || hero.readingTime) && (
-          <div class="mt-8 flex flex-wrap items-center gap-x-3 gap-y-1">
-            {hero.byline && <span class="meta">{hero.byline}</span>}
-            {hero.byline && hero.readingTime && (
-              <span class="meta">·</span>
-            )}
-            {hero.readingTime && <span class="meta">{hero.readingTime}</span>}
-          </div>
-        )
-      }
+        {/* Masthead horizontal — "(IN)" red menor + "FINITUDES" preto grande */}
+        <div class="mt-8 lg:mt-12">
+          <h2
+            class="font-display leading-[0.95] tracking-[-0.02em] font-medium flex items-baseline gap-0 whitespace-nowrap"
+          >
+            <span
+              class="text-rouge text-[34px] sm:text-[48px] lg:text-[60px] xl:text-[70px]"
+            >
+              (IN)
+            </span>
+            <span
+              class="text-ink text-[44px] sm:text-[64px] lg:text-[84px] xl:text-[100px]"
+            >
+              FINITUDES
+            </span>
+          </h2>
+          {
+            hero.edition && (
+              <p class="mt-1 lg:mt-2 font-sans text-[10px] tracking-[0.34em] uppercase text-ink/70">
+                {hero.edition}
+              </p>
+            )
+          }
+        </div>
+      </div>
 
-      <a
-        href={hero.href}
-        class="inline-block mt-8 meta link-ed text-amber"
+      {/* Coluna direita · aquarela */}
+      <div
+        class="col-span-12 lg:col-span-5 order-1 lg:order-2 flex justify-center lg:justify-end"
       >
-        Ler o ensaio completo →
-      </a>
+        <WatercolorAccent
+          variant="rouge-blob"
+          loading="eager"
+          class="w-[260px] sm:w-[340px] lg:w-[400px] xl:w-[440px] h-auto -mt-4 lg:-mt-8"
+        />
+      </div>
     </div>
   </div>
 </section>

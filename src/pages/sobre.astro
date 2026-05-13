@@ -1,0 +1,191 @@
+---
+// =============================================================
+// /sobre · Página "Sobre" (page-02)
+// -------------------------------------------------------------
+// Rota estática que sobrescreve a dinâmica `[category].astro`
+// para o slug `sobre`. Apresenta a autora Eleonora C. Santos e
+// o livro (IN)Finitudes, com seções:
+//   1. Hero · título grande + dek + composição do livro
+//   2. Bio inicial (3 parágrafos)
+//   3. Aquarela preta + foto da autora lado a lado
+//   4. Continuação da bio
+//   5. Teaser "Galeria de fotos · Entrevistados"
+//   6. Newsletter + Footer
+//
+// Foto da autora e fotos extras devem ser colocadas em
+// /public/about/ — quando estiverem disponíveis, basta trocar
+// os caminhos hardcoded abaixo.
+// =============================================================
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import NewsletterSection from "../components/NewsletterSection.astro";
+import WatercolorAccent from "../components/WatercolorAccent.astro";
+import Divider from "../components/Divider.astro";
+
+const introParagraphs = [
+  "Eleonora Cruz Santos é jornalista, escritora e curadora de conteúdos sobre humanização na saúde e cuidados paliativos. Fundou o projeto (IN)Finitudes em 2024 como um espaço de escuta e elaboração coletiva sobre o fim da vida — um tema que, segundo ela, ainda carece de linguagem.",
+  "Formada em Letras pela USP e mestre em Comunicação pela ECA-USP, trabalhou por uma década na cobertura cultural de jornais como Folha de S.Paulo e Piauí, antes de mergulhar na área de cuidados como pesquisadora associada ao Hospital Israelita Albert Einstein.",
+  "Seu primeiro livro, “(IN)Finitudes: ensaios sobre a dor e a fé”, reúne vinte e quatro textos curtos sobre presença, escuta e a gramática silenciosa dos cuidados paliativos. É também apresentadora do videocast Divã Infinito.",
+];
+
+const moreParagraphs = [
+  "Ao longo dos últimos cinco anos, Eleonora coordenou rodas de escuta em hospitais públicos e privados, formou redes de cuidadores e escreveu reportagens premiadas sobre a saúde do morrer no Brasil. Acredita que cada conversa difícil acolhida tira o tabu de cima — e que o jornalismo cultural pode (e deve) ocupar esse lugar.",
+  "Sua coluna semanal “Carta do Editor” é lida por mais de 12 mil assinantes. As entrevistas que conduz se aproximam mais do gênero ensaístico do que da entrevista clássica: ela escuta, espera, deixa as pausas existirem.",
+];
+---
+
+<Layout
+  title="Sobre — (IN)Finitudes"
+  description="Conheça Eleonora Cruz Santos e o projeto (IN)Finitudes."
+>
+  <Header />
+
+  <main>
+    {/* ============================================================
+        1 · HERO · Título + dek + foto do livro centralizada
+        ============================================================ */}
+    <section class="max-w-5xl mx-auto px-6 lg:px-12 pt-12 lg:pt-16 pb-10">
+      <div class="text-center">
+        <h1
+          class="font-display text-[32px] sm:text-[42px] lg:text-[52px] leading-[1.05] font-normal tracking-[-0.01em]"
+        >
+          <span class="text-rouge">(IN)</span>FINITUDES <span class="font-light">por</span> Eleonora C. Santos
+        </h1>
+        <p class="font-serif italic text-[18px] lg:text-[20px] text-ink/75 mt-4">
+          Conheça a autora e o projeto.
+        </p>
+        <p class="meta mt-4 text-muted/80">
+          Jornalista · Editora · Curadora — Maio de 2026
+        </p>
+      </div>
+
+      {/* Composição visual do livro (placeholder até receber foto real) */}
+      <figure class="mt-12 lg:mt-16 max-w-3xl mx-auto">
+        <div
+          class="relative bg-[#ece7d4] py-10 lg:py-16 px-6 flex items-center justify-center"
+        >
+          {/* "Pilha" de dois livros estilizada */}
+          <div class="relative w-full max-w-lg">
+            {/* Livro de baixo · spine vertical */}
+            <div
+              class="absolute left-2 top-6 w-[140px] h-[280px] bg-paper border border-rule/60 rotate-[-6deg] origin-bottom-left shadow-lg flex items-end justify-center pb-6"
+            >
+              <p
+                class="font-display text-[14px] tracking-[0.06em] -rotate-90 whitespace-nowrap origin-center"
+              >
+                <span class="text-rouge">(IN)</span>FINITUDES
+              </p>
+            </div>
+
+            {/* Livro de cima · capa com (IN)FINITUDES + aquarela */}
+            <div
+              class="relative ml-32 w-[200px] h-[280px] bg-paper border border-rule/60 shadow-2xl rotate-[3deg] overflow-hidden"
+            >
+              <div
+                class="px-4 pt-5 font-display leading-[0.95] tracking-[-0.01em] text-[20px] font-medium"
+              >
+                <div><span class="text-rouge">(IN)</span></div>
+                <div class="-mt-0.5">FINI</div>
+                <div class="-mt-0.5">TUDES</div>
+                <p
+                  class="mt-1 font-sans text-[6px] tracking-[0.42em] uppercase text-ink/70"
+                >
+                  Divã Infinito
+                </p>
+              </div>
+              <WatercolorAccent
+                variant="rouge-blob"
+                class="absolute -bottom-4 -right-4 w-[105%] h-[70%] object-cover"
+              />
+            </div>
+          </div>
+        </div>
+      </figure>
+    </section>
+
+    {/* ============================================================
+        2 · BIO INICIAL · coluna única, serif body
+        ============================================================ */}
+    <section
+      class="max-w-2xl mx-auto px-6 py-10 lg:py-14 font-serif text-[17px] lg:text-[18px] leading-[1.7] space-y-5 text-ink-soft"
+    >
+      {introParagraphs.map((p) => <p>{p}</p>)}
+    </section>
+
+    {/* ============================================================
+        3 · AQUARELA PRETA + FOTO DA AUTORA
+        ============================================================ */}
+    <section class="max-w-5xl mx-auto px-6 lg:px-12 py-10 lg:py-14">
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-12 items-center"
+      >
+        <div class="flex justify-center md:justify-end">
+          <WatercolorAccent
+            variant="black-blob"
+            class="w-[260px] sm:w-[320px] lg:w-[380px] h-auto"
+          />
+        </div>
+        <div class="flex justify-center md:justify-start">
+          <div
+            class="w-full max-w-[320px] aspect-[3/4] ph border border-rule/60"
+            data-label="Foto · Eleonora C. Santos"
+          >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ============================================================
+        4 · MAIS BIO
+        ============================================================ */}
+    <section
+      class="max-w-2xl mx-auto px-6 py-10 lg:py-14 font-serif text-[17px] lg:text-[18px] leading-[1.7] space-y-5 text-ink-soft"
+    >
+      {moreParagraphs.map((p) => <p>{p}</p>)}
+    </section>
+
+    {/* ============================================================
+        5 · TEASER GALERIA · banner com bloco bordô + foto
+        ============================================================ */}
+    <section class="max-w-5xl mx-auto px-6 lg:px-12 py-12 lg:py-16">
+      <a
+        href="/galeria"
+        class="group block grid grid-cols-1 md:grid-cols-2 overflow-hidden"
+      >
+        {/* Bloco bordô · label */}
+        <div
+          class="bg-rouge text-paper p-10 lg:p-12 flex flex-col justify-center min-h-[280px]"
+        >
+          <p class="eyebrow text-paper/80">Conheça os bastidores</p>
+          <h3
+            class="font-display text-[28px] lg:text-[36px] leading-[1.1] mt-3 text-paper"
+          >
+            Galeria de fotos
+            <br />
+            <span class="italic font-light">Entrevistados</span>
+          </h3>
+          <span
+            class="mt-6 font-sans text-[10px] font-medium tracking-[0.22em] uppercase text-paper/90 link-ed inline-block"
+          >
+            Ver galeria →
+          </span>
+        </div>
+
+        {/* Foto · placeholder */}
+        <div
+          class="ph aspect-[4/3] md:aspect-auto md:min-h-[280px] transition-[filter] duration-300 group-hover:brightness-95"
+          data-label="Foto · Entrevistado em estúdio"
+        >
+        </div>
+      </a>
+    </section>
+
+    {/* ============================================================
+        6 · Newsletter
+        ============================================================ */}
+    <NewsletterSection />
+  </main>
+
+  <Footer />
+</Layout>

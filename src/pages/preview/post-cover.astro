@@ -1,0 +1,86 @@
+---
+// =============================================================
+// /preview/post-cover · Página de preview do post layout "cover"
+// -------------------------------------------------------------
+// Rota auxiliar criada apenas para revisão visual enquanto não há
+// posts reais no Sanity. Replica o layout v1 (page-04) com dados
+// fake e renderiza os componentes finais.
+// =============================================================
+import Layout from "../../layouts/Layout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import NewsletterSection from "../../components/NewsletterSection.astro";
+import PostHeaderCover from "../../components/PostHeaderCover.astro";
+import PostFavorites from "../../components/PostFavorites.astro";
+import RelatedPosts from "../../components/RelatedPosts.astro";
+import WatercolorAccent from "../../components/WatercolorAccent.astro";
+import Divider from "../../components/Divider.astro";
+import type { PostPreview } from "../../lib/sanity";
+
+const paragraphs = [
+  "The weekend in 1932, in Edinburgh, Scotland, a red-headed little girl named Nita McEwen was on a walk with her parents when she saw her double. The doppelgänger was another child, walking with her own mother. Each girl stared into the mirror of the other, but kept moving. At school the next fall, the double, named Muriel Camberg, appeared in the first grade, a year below Nita, and it turned out that she lived around the corner from Nita, too, although Muriel's street was slightly nicer.",
+  "After school, Nita lost track of her lookalike. She married young, and in her early twenties she and her husband moved to Southern Rhodesia, which had recently been annexed by the British Empire. In late 1939, they were staying in a boarding house near Victoria Falls, where, in a surreal coincidence, their housemates were none other than Muriel Camberg and her new husband, Sidney Oswald Spark.",
+  "The likeness between the two women remained uncanny, their twinship emphasized by the fact that they had crossed paths again, halfway around the world. One night, Nita's husband pulled a gun on her in their room. She screamed twice before he shot her and then himself, the sound slicing through the padded rumble of the falls.",
+  "This event occurred eighteen years before that ghost would begin writing novels, twenty-two in total between 1957 and 2004, each sly, glinting volume contributing to the becoming of Dame Muriel Spark, genius of our time.",
+];
+
+const FAKE_RELATED: PostPreview[] = Array.from({ length: 8 }).map((_, i) => ({
+  _id: `fake-${i}`,
+  title: "A Reading List from the Director of the Noguchi Museum",
+  slug: `reading-list-${i}`,
+  publishedAt: new Date().toISOString(),
+  mainImage: null,
+  category: "outras-historias",
+  excerpt:
+    "Amy Hau discusses some books by Marilyn Chase, Karin Higa, and Edmund de Waal that have guided her work as a curator.",
+}));
+---
+
+<Layout title="Preview · Post Cover">
+  <Header />
+
+  <main>
+    <article>
+      <PostHeaderCover
+        title="Gwendoline Riley's new novel surveys the wreckage of middle age"
+        dek="“My Phantoms is haunted by stubborn male egos and sharp-edged women whose honesty is often heightened in the face of life’s indignities.”"
+        authors="Por Eleonora Cruz Santos"
+        date="6 de Maio de 2026"
+        imageUrl={null}
+      />
+
+      <div class="max-w-6xl mx-auto px-6 lg:px-12 py-14 lg:py-20">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+          <div
+            class="lg:col-span-6 font-serif text-[17px] lg:text-[18px] leading-[1.7] space-y-5 text-ink-soft"
+          >
+            {paragraphs.map((p) => <p>{p}</p>)}
+            <PostFavorites />
+          </div>
+
+          <div class="lg:col-span-6 flex justify-center lg:justify-end">
+            <WatercolorAccent
+              variant="black-blob"
+              class="w-[280px] sm:w-[380px] lg:w-[460px] h-auto sticky top-10"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="max-w-2xl mx-auto px-6 pb-16 lg:pb-20 text-center">
+        <Divider variant="rouge" gap="mb-10" />
+        <a
+          href="/outras-historias"
+          class="font-sans text-[11px] font-medium tracking-[0.22em] uppercase text-rouge link-ed"
+        >
+          ← Mais em Outras Histórias
+        </a>
+      </div>
+    </article>
+
+    <RelatedPosts posts={FAKE_RELATED} />
+    <NewsletterSection />
+  </main>
+
+  <Footer />
+</Layout>
