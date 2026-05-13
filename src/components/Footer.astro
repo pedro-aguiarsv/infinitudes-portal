@@ -11,12 +11,15 @@
 import { NAV_ITEMS } from "../lib/categories";
 import Logo from "./Logo.astro";
 
-// Patrocínio + Realização — quando você tiver os PNGs/SVGs monocromáticos,
-// jogue em /public/footer/ e troque o `label` por `src` no <img />.
-const SPONSORS = [{ label: "Lei Rouanet" }, { label: "Itaú" }];
+// Patrocínio + Realização — logos oficiais em /public/footer/sponsors/
+// (PNG + WebP, fundo preto pra combinar com o footer escuro).
+const SPONSORS = [
+  { label: "Lei Rouanet", src: "/footer/sponsors/lei-rouanet", h: "h-10" },
+  { label: "Itaú", src: "/footer/sponsors/itau", h: "h-12" },
+];
 const REALIZATION = [
-  { label: "Ministério da Cultura" },
-  { label: "Governo do Brasil" },
+  { label: "Ministério da Cultura", src: "/footer/sponsors/min-cultura", h: "h-8" },
+  { label: "Governo do Brasil", src: "/footer/sponsors/governo-brasil", h: "h-12" },
 ];
 
 const SOCIAL = [
@@ -81,7 +84,17 @@ const year = new Date().getFullYear();
         <div class="flex items-center justify-center gap-6">
           {
             SPONSORS.map((s) => (
-              <span class="text-paper/85 font-display text-sm">{s.label}</span>
+              <picture>
+                <source srcset={`${s.src}.webp`} type="image/webp" />
+                <img
+                  src={`${s.src}.png`}
+                  alt={s.label}
+                  class={`${s.h} w-auto object-contain select-none`}
+                  loading="lazy"
+                  decoding="async"
+                  draggable="false"
+                />
+              </picture>
             ))
           }
         </div>
@@ -95,7 +108,17 @@ const year = new Date().getFullYear();
         <div class="flex items-center justify-center gap-6">
           {
             REALIZATION.map((s) => (
-              <span class="text-paper/85 font-display text-sm">{s.label}</span>
+              <picture>
+                <source srcset={`${s.src}.webp`} type="image/webp" />
+                <img
+                  src={`${s.src}.png`}
+                  alt={s.label}
+                  class={`${s.h} w-auto object-contain select-none`}
+                  loading="lazy"
+                  decoding="async"
+                  draggable="false"
+                />
+              </picture>
             ))
           }
         </div>
