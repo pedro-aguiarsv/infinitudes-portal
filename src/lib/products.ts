@@ -28,7 +28,7 @@ export type Product = {
 export const PRODUCTS: Product[] = [
   {
     slug: "livro-finitudes",
-    title: "(IN)Finitudes",
+    title: "(In)finitudes",
     byline: "por Eleonora Cruz Santos",
     price: "R$ 65,00",
     shortDescription:
@@ -45,16 +45,16 @@ export const PRODUCTS: Product[] = [
     byline: "edição limitada",
     price: "R$ 48,00",
     shortDescription:
-      "Cinco textos inéditos compilados pela equipe (IN)Finitudes durante o segundo semestre de 2025.",
+      "Cinco textos inéditos compilados pela equipe (In)finitudes durante o segundo semestre de 2025.",
     longDescription:
-      "Cinco textos inéditos compilados pela equipe (IN)Finitudes durante o segundo semestre de 2025. Capa em papel kraft com colagem manual e folhas em fontes Cormorant e Inter.",
+      "Cinco textos inéditos compilados pela equipe (In)finitudes durante o segundo semestre de 2025. Capa em papel kraft com colagem manual e folhas em fontes Cormorant e Inter.",
     dimensions: "16 × 22 cm · 88 páginas",
     shipsOn: "21 de maio de 2026",
     bg: "bg-paper",
   },
   {
     slug: "caderno-finitudes",
-    title: "Caderno (IN)Finitudes",
+    title: "Caderno (In)finitudes",
     byline: "edição 2026",
     price: "R$ 38,00",
     shortDescription:
@@ -67,7 +67,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     slug: "caneca-finitudes",
-    title: "Caneca (IN)Finitudes",
+    title: "Caneca (In)finitudes",
     byline: "porcelana branca",
     price: "R$ 55,00",
     shortDescription:
@@ -80,11 +80,11 @@ export const PRODUCTS: Product[] = [
   },
   {
     slug: "tote-bag-finitudes",
-    title: "Tote Bag (IN)Finitudes",
+    title: "Tote Bag (In)finitudes",
     byline: "algodão cru",
     price: "R$ 42,00",
     shortDescription:
-      "Tote em algodão cru com estampa exclusiva (IN)Finitudes.",
+      "Tote em algodão cru com estampa exclusiva (In)finitudes.",
     longDescription:
       "Tote em algodão cru com estampa exclusiva: ciclista entre páginas. 380 g/m². Costura reforçada.",
     dimensions: "38 × 42 cm · alça 70 cm",
@@ -132,13 +132,13 @@ export const PRODUCTS: Product[] = [
   },
   {
     slug: "caneca-finitudes-grande",
-    title: "Caneca (IN)Finitudes · grande",
+    title: "Caneca (In)finitudes · grande",
     byline: "porcelana branca",
     price: "R$ 65,00",
     shortDescription:
-      "Versão de 500 ml da caneca (IN)Finitudes em porcelana branca.",
+      "Versão de 500 ml da caneca (In)finitudes em porcelana branca.",
     longDescription:
-      "Versão de 500 ml da caneca (IN)Finitudes em porcelana branca. Inscrição em traço fino preto. Vai ao microondas e à máquina de lavar louças.",
+      "Versão de 500 ml da caneca (In)finitudes em porcelana branca. Inscrição em traço fino preto. Vai ao microondas e à máquina de lavar louças.",
     dimensions: "Ø 9 cm · alt. 11 cm · 500 ml",
     shipsOn: "29 de maio de 2026",
     bg: "bg-paper-soft",
