@@ -83,12 +83,12 @@ export interface NavItem {
 }
 
 export const NAV_ITEMS: NavItem[] = [
-  { title: "Outras Histórias", href: "/outras-historias" },
-  { title: "Livro (In)Finitudes", href: "/livro" },
-  { title: "Hub Infinito", href: "/hub-infinito" },
+  { title: "Livro (In)finitudes", href: "/livro" },
   { title: "Divã Infinito", href: "/diva-infinito" },
+  { title: "Hub Infinito", href: "/hub-infinito" },
+  { title: "Outras Histórias", href: "/outras-historias" },
   { title: "Curadoria", href: "/curadoria" },
   { title: "Loja", href: "/loja" },
-  { title: "Sobre", href: "/sobre" },
   { title: "Recomenda", href: "/recomenda" },
+  { title: "Sobre", href: "/sobre" },
 ];
