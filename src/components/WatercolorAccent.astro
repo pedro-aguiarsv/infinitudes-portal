@@ -6,18 +6,19 @@
 // Os assets vivem em /public/watercolors/ (webp + png fallback).
 //
 // Variantes:
-//   · "rouge-blob"   → aquarela vermelha redonda (hero, banner livro)
-//   · "black-blob"   → aquarela preta em "C" (decoração de seção)
-//   · "black-figure" → aquarela preta tipo silhueta (post destaque)
+//   · "rouge-blob-hero" → aquarela hero da home (vermelho + manchas pretas)
+//   · "rouge-blob"      → aquarela vermelha redonda (banner livro)
+//   · "black-blob"      → aquarela preta em "C" (decoração de seção)
+//   · "black-figure"    → aquarela preta tipo silhueta (post destaque)
 //
 // Uso:
-//   <WatercolorAccent variant="rouge-blob" class="w-[480px]" />
+//   <WatercolorAccent variant="rouge-blob-hero" class="w-[480px]" />
 //
 // Aceita qualquer classe Tailwind para tamanho/posição, e a prop
 // `alt` para acessibilidade (padrão: vazio, pois é decorativa).
 // =============================================================
 export interface Props {
-  variant: "rouge-blob" | "black-blob" | "black-figure";
+  variant: "rouge-blob-hero" | "rouge-blob" | "black-blob" | "black-figure";
   alt?: string;
   class?: string;
   loading?: "lazy" | "eager";
