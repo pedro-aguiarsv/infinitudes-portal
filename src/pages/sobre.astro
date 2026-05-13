@@ -21,6 +21,7 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import NewsletterSection from "../components/NewsletterSection.astro";
 import WatercolorAccent from "../components/WatercolorAccent.astro";
+import BookCover from "../components/BookCover.astro";
 import Divider from "../components/Divider.astro";
 import Logo from "../components/Logo.astro";
 
@@ -79,22 +80,11 @@ const moreParagraphs = [
               </p>
             </div>
 
-            {/* Livro de cima · capa com logo + aquarela */}
+            {/* Livro de cima · capa OFICIAL extraída do design */}
             <div
-              class="relative ml-32 w-[200px] h-[280px] bg-paper border border-rule/60 shadow-2xl rotate-[3deg] overflow-hidden"
+              class="relative ml-32 w-[200px] shadow-2xl rotate-[3deg]"
             >
-              <div class="px-4 pt-5 relative z-10">
-                <Logo variant="mini" class="w-[80%] h-auto" />
-                <p
-                  class="mt-2 font-sans text-[6px] tracking-[0.42em] uppercase text-ink/70"
-                >
-                  Divã Infinito
-                </p>
-              </div>
-              <WatercolorAccent
-                variant="rouge-blob"
-                class="absolute -bottom-4 -right-4 w-[105%] h-[60%] object-cover z-0"
-              />
+              <BookCover variant="sm" class="w-full" />
             </div>
           </div>
         </div>

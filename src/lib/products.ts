@@ -38,6 +38,8 @@ export const PRODUCTS: Product[] = [
     dimensions: "14 × 21 cm · 192 páginas",
     shipsOn: "21 de maio de 2026",
     bg: "bg-paper",
+    imageUrl: "/book/capa.png",
+    imageAlt: "Capa do livro (In)finitudes por Eleonora Cruz Santos",
   },
   {
     slug: "ensaio-do-campo",

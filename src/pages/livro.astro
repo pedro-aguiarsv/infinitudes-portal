@@ -24,6 +24,7 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import NewsletterSection from "../components/NewsletterSection.astro";
 import WatercolorAccent from "../components/WatercolorAccent.astro";
+import BookCover from "../components/BookCover.astro";
 import Divider from "../components/Divider.astro";
 import Logo from "../components/Logo.astro";
 import { getProductBySlug } from "../lib/products";
@@ -98,32 +99,20 @@ nomear esse silêncio que comecei a escrever este livro.`;
         <div
           class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center"
         >
-          {/* Capa do livro · composição com logo oficial + aquarela */}
+          {/* Capa oficial do livro extraída do design */}
           <div class="lg:col-span-6 flex justify-center order-2 lg:order-1">
-            <div class="relative w-[280px] sm:w-[320px] lg:w-[360px] aspect-[3/4]">
-              {/* Sombra */}
+            <div class="relative w-[280px] sm:w-[320px] lg:w-[360px]">
+              {/* Sombra projetada */}
               <div
                 class="absolute inset-0 translate-x-3 translate-y-3 bg-ink/10"
                 aria-hidden="true"
               >
               </div>
-              {/* Capa */}
-              <div
-                class="relative w-full h-full bg-paper border border-rule/60 shadow-2xl overflow-hidden"
-              >
-                <div class="px-6 pt-8 relative z-10">
-                  <Logo variant="compact" loading="eager" class="w-[80%] h-auto" />
-                  <p
-                    class="mt-4 font-sans text-[9px] tracking-[0.42em] uppercase text-ink/70"
-                  >
-                    por Eleonora Cruz Santos
-                  </p>
-                </div>
-                <WatercolorAccent
-                  variant="rouge-blob"
-                  class="absolute -bottom-8 -right-8 w-[115%] h-[55%] object-cover z-0"
-                />
-              </div>
+              <BookCover
+                variant="full"
+                loading="eager"
+                class="relative w-full shadow-2xl"
+              />
             </div>
           </div>
 

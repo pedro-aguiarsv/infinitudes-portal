@@ -1,0 +1,46 @@
+---
+// =============================================================
+// BookCover.astro · Capa oficial do livro (In)finitudes
+// -------------------------------------------------------------
+// Renderiza a capa REAL do livro (extraída do PDF de design):
+//   "(IN)FINITUDES — Eleonora C. Santos" + aquarela vermelha
+//   + selo "Literíssima Editora".
+//
+// Variantes de tamanho:
+//   · "full" → 680×1018, ideal pra hero da página /livro
+//   · "sm"   → 400×600,  ideal pra cards/seções secundárias
+//
+// Uso:
+//   <BookCover variant="full" class="w-[320px] shadow-2xl" />
+//   <BookCover variant="sm"   class="w-full aspect-[3/4]" />
+//
+// Carrega WebP por padrão (PNG como fallback).
+// =============================================================
+export interface Props {
+  variant?: "full" | "sm";
+  class?: string;
+  loading?: "eager" | "lazy";
+  alt?: string;
+}
+
+const {
+  variant = "sm",
+  class: className = "",
+  loading = "lazy",
+  alt = "(In)finitudes — capa do livro por Eleonora C. Santos",
+} = Astro.props;
+
+const base = variant === "full" ? "/book/capa" : "/book/capa-sm";
+---
+
+<picture>
+  <source srcset={`${base}.webp`} type="image/webp" />
+  <img
+    src={`${base}.png`}
+    alt={alt}
+    loading={loading}
+    decoding="async"
+    class={`select-none ${className}`}
+    draggable="false"
+  />
+</picture>
