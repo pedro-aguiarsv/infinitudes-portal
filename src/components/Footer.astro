@@ -9,6 +9,7 @@
 // imagens monocromáticas (PNG ou SVG). Veja FOOTER_LOGOS abaixo.
 // =============================================================
 import { NAV_ITEMS } from "../lib/categories";
+import Logo from "./Logo.astro";
 
 // Patrocínio + Realização — quando você tiver os PNGs/SVGs monocromáticos,
 // jogue em /public/footer/ e troque o `label` por `src` no <img />.
@@ -52,18 +53,15 @@ const year = new Date().getFullYear();
   <div
     class="max-w-7xl mx-auto px-6 lg:px-12 py-12 grid grid-cols-1 md:grid-cols-12 gap-10 items-center"
   >
-    {/* Logo à esquerda · monocromático claro */}
+    {/* Logo à esquerda · versão "paper" (creme p/ fundo escuro) */}
     <div class="md:col-span-3 flex justify-center md:justify-start">
       <a href="/" class="inline-block" aria-label="(IN)Finitudes">
-        <div
-          class="font-display leading-[0.95] tracking-[-0.01em] text-[28px] font-medium text-paper"
-        >
-          <div><span class="text-rouge">(IN)</span></div>
-          <div class="-mt-1">FINI</div>
-          <div class="-mt-1">TUDES</div>
-        </div>
+        <Logo
+          variant="paper"
+          class="h-16 w-auto"
+        />
         <p
-          class="mt-2 font-sans text-[8px] tracking-[0.42em] uppercase text-paper/60"
+          class="mt-3 font-sans text-[8px] tracking-[0.42em] uppercase text-paper/60 text-center"
         >
           Divã Infinito
         </p>

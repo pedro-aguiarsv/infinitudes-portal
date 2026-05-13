@@ -1,16 +1,18 @@
 @import "tailwindcss";
 
 /* =================================================================
-   THEME · (IN)Finitudes — Sistema de design v2
+   THEME · (IN)Finitudes — Sistema de design v3 (DIN + Myriad)
    -----------------------------------------------------------------
-   Identidade: revista cultural / literária (benchmark: The New Yorker).
-   Paleta limitada (creme + bordô + preto), tipografia editorial em três
-   famílias e aquarelas como assinatura gráfica.
+   Identidade visual oficial fornecida pela autora:
+     · Logo em DIN Alternate Bold (condensed, geométrica)
+     · Texto corrido em Myriad Variable Concept (humanista, neutra)
+     · Sem fontes serif — visual editorial moderno
+     · Paleta limitada: creme + bordô + preto + aquarelas
 
    Tokens disponíveis como utilitários Tailwind v4:
-     --font-display  → font-display  (Bodoni Moda — títulos grandes)
-     --font-serif    → font-serif    (Cormorant Garamond — body editorial)
-     --font-sans     → font-sans     (Inter — UI, labels, metadados)
+     --font-display  → font-display  (DIN Alternate Bold — títulos / logo)
+     --font-sans     → font-sans     (Myriad Variable Concept — body / UI)
+     --font-serif    → font-serif    (alias de Myriad — compatibilidade)
 
      --color-paper   → bg-paper / text-paper       (fundo creme)
      --color-ink     → text-ink / border-ink       (texto principal)
@@ -19,14 +21,36 @@
      --color-rule    → border-rule / bg-rule       (linhas finas)
      --color-rouge-line → border-rouge-line        (linha vermelha fina)
    ================================================================= */
+
+/* --- Carregamento das fontes locais --- */
+@font-face {
+  font-family: "DIN Alternate";
+  src: url("/fonts/din-alternate-bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Myriad Variable Concept";
+  src: url("/fonts/myriad-variable-concept.otf") format("opentype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
-  /* --- Famílias tipográficas --- */
+  /* --- Famílias tipográficas (oficial) --- */
   --font-display:
-    "Bodoni Moda", "Bodoni 72", "Didot", "Times New Roman", serif;
-  --font-serif:
-    "Cormorant Garamond", "Garamond", "Times New Roman", serif;
+    "DIN Alternate", "DIN Alternate Bold", "Bebas Neue",
+    "Helvetica Neue Condensed", "Impact", sans-serif;
   --font-sans:
-    "Inter", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    "Myriad Variable Concept", "Myriad Pro", "Myriad", system-ui,
+    -apple-system, "Helvetica Neue", Arial, sans-serif;
+  /* Alias mantido por compatibilidade com componentes que usam font-serif */
+  --font-serif:
+    "Myriad Variable Concept", "Myriad Pro", "Myriad", system-ui,
+    -apple-system, "Helvetica Neue", Arial, sans-serif;
 
   /* --- Cores --- */
   --color-paper: #faf5e8; /* fundo creme dominante */

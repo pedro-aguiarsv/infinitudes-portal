@@ -1,0 +1,51 @@
+---
+// =============================================================
+// Logo.astro · Marca (IN)FINITUDES oficial
+// -------------------------------------------------------------
+// Variantes:
+//   · "full"    → marca completa (IN)FINITUDES + "ELEONORA C. SANTOS"
+//                 para uso em hero / capa de livro / página de venda.
+//   · "compact" → só (IN)FINITUDES sem o subtítulo
+//                 para uso em hero secundário ou capa do livro.
+//   · "mini"    → versão compacta otimizada para o Header (até 200px).
+//   · "paper"   → versão creme/branco para fundos escuros (Footer).
+//
+// Carrega WebP por padrão com fallback PNG via <picture>. Larguras
+// alvo no servidor já estão dimensionadas:
+//   logo-full: 1400×1263
+//   logo-compact: 900×717
+//   logo-mini: 480×382
+//   logo-paper: 900×717
+//
+// Uso:
+//   <Logo variant="mini" class="h-14 w-auto" />
+//   <Logo variant="full" class="w-[420px] h-auto" />
+// =============================================================
+export interface Props {
+  variant?: "full" | "compact" | "mini" | "paper";
+  class?: string;
+  loading?: "eager" | "lazy";
+  alt?: string;
+}
+
+const {
+  variant = "compact",
+  class: className = "",
+  loading = "lazy",
+  alt = "(IN)Finitudes — Eleonora C. Santos",
+} = Astro.props;
+
+const base = `/logo/logo-${variant}`;
+---
+
+<picture>
+  <source srcset={`${base}.webp`} type="image/webp" />
+  <img
+    src={`${base}.png`}
+    alt={alt}
+    loading={loading}
+    decoding="async"
+    class={`select-none ${className}`}
+    draggable="false"
+  />
+</picture>

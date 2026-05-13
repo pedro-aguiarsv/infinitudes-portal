@@ -22,6 +22,7 @@ import Footer from "../components/Footer.astro";
 import NewsletterSection from "../components/NewsletterSection.astro";
 import WatercolorAccent from "../components/WatercolorAccent.astro";
 import Divider from "../components/Divider.astro";
+import Logo from "../components/Logo.astro";
 
 const introParagraphs = [
   "Eleonora Cruz Santos é jornalista, escritora e curadora de conteúdos sobre humanização na saúde e cuidados paliativos. Fundou o projeto (IN)Finitudes em 2024 como um espaço de escuta e elaboração coletiva sobre o fim da vida — um tema que, segundo ela, ainda carece de linguagem.",
@@ -48,9 +49,9 @@ const moreParagraphs = [
     <section class="max-w-5xl mx-auto px-6 lg:px-12 pt-12 lg:pt-16 pb-10">
       <div class="text-center">
         <h1
-          class="font-display text-[32px] sm:text-[42px] lg:text-[52px] leading-[1.05] font-normal tracking-[-0.01em]"
+          class="font-display text-[32px] sm:text-[42px] lg:text-[52px] leading-[1.05] font-normal tracking-[-0.01em] uppercase"
         >
-          <span class="text-rouge">(IN)</span>FINITUDES <span class="font-light">por</span> Eleonora C. Santos
+          <span class="text-rouge">(IN)</span>FINITUDES <span class="font-sans normal-case font-light">por</span> Eleonora C. Santos
         </h1>
         <p class="font-serif italic text-[18px] lg:text-[20px] text-ink/75 mt-4">
           Conheça a autora e o projeto.
@@ -72,31 +73,27 @@ const moreParagraphs = [
               class="absolute left-2 top-6 w-[140px] h-[280px] bg-paper border border-rule/60 rotate-[-6deg] origin-bottom-left shadow-lg flex items-end justify-center pb-6"
             >
               <p
-                class="font-display text-[14px] tracking-[0.06em] -rotate-90 whitespace-nowrap origin-center"
+                class="font-display text-[14px] tracking-[0.06em] -rotate-90 whitespace-nowrap origin-center uppercase"
               >
                 <span class="text-rouge">(IN)</span>FINITUDES
               </p>
             </div>
 
-            {/* Livro de cima · capa com (IN)FINITUDES + aquarela */}
+            {/* Livro de cima · capa com logo + aquarela */}
             <div
               class="relative ml-32 w-[200px] h-[280px] bg-paper border border-rule/60 shadow-2xl rotate-[3deg] overflow-hidden"
             >
-              <div
-                class="px-4 pt-5 font-display leading-[0.95] tracking-[-0.01em] text-[20px] font-medium"
-              >
-                <div><span class="text-rouge">(IN)</span></div>
-                <div class="-mt-0.5">FINI</div>
-                <div class="-mt-0.5">TUDES</div>
+              <div class="px-4 pt-5 relative z-10">
+                <Logo variant="mini" class="w-[80%] h-auto" />
                 <p
-                  class="mt-1 font-sans text-[6px] tracking-[0.42em] uppercase text-ink/70"
+                  class="mt-2 font-sans text-[6px] tracking-[0.42em] uppercase text-ink/70"
                 >
                   Divã Infinito
                 </p>
               </div>
               <WatercolorAccent
                 variant="rouge-blob"
-                class="absolute -bottom-4 -right-4 w-[105%] h-[70%] object-cover"
+                class="absolute -bottom-4 -right-4 w-[105%] h-[60%] object-cover z-0"
               />
             </div>
           </div>

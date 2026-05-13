@@ -25,6 +25,7 @@ import Footer from "../components/Footer.astro";
 import NewsletterSection from "../components/NewsletterSection.astro";
 import WatercolorAccent from "../components/WatercolorAccent.astro";
 import Divider from "../components/Divider.astro";
+import Logo from "../components/Logo.astro";
 import { getProductBySlug } from "../lib/products";
 
 const livro = getProductBySlug("livro-finitudes");
@@ -97,7 +98,7 @@ nomear esse silêncio que comecei a escrever este livro.`;
         <div
           class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center"
         >
-          {/* Capa do livro · placeholder estilizado */}
+          {/* Capa do livro · composição com logo oficial + aquarela */}
           <div class="lg:col-span-6 flex justify-center order-2 lg:order-1">
             <div class="relative w-[280px] sm:w-[320px] lg:w-[360px] aspect-[3/4]">
               {/* Sombra */}
@@ -110,21 +111,17 @@ nomear esse silêncio que comecei a escrever este livro.`;
               <div
                 class="relative w-full h-full bg-paper border border-rule/60 shadow-2xl overflow-hidden"
               >
-                <div
-                  class="px-6 pt-8 font-display leading-[0.95] tracking-[-0.01em] text-[32px] sm:text-[36px] lg:text-[40px] font-medium"
-                >
-                  <div><span class="text-rouge">(IN)</span></div>
-                  <div class="-mt-1">FINI</div>
-                  <div class="-mt-1">TUDES</div>
+                <div class="px-6 pt-8 relative z-10">
+                  <Logo variant="compact" loading="eager" class="w-[80%] h-auto" />
+                  <p
+                    class="mt-4 font-sans text-[9px] tracking-[0.42em] uppercase text-ink/70"
+                  >
+                    por Eleonora Cruz Santos
+                  </p>
                 </div>
-                <p
-                  class="px-6 mt-3 font-sans text-[9px] tracking-[0.42em] uppercase text-ink/70"
-                >
-                  por Eleonora Cruz Santos
-                </p>
                 <WatercolorAccent
                   variant="rouge-blob"
-                  class="absolute -bottom-8 -right-8 w-[115%] h-[65%] object-cover"
+                  class="absolute -bottom-8 -right-8 w-[115%] h-[55%] object-cover z-0"
                 />
               </div>
             </div>
@@ -134,9 +131,9 @@ nomear esse silêncio que comecei a escrever este livro.`;
           <div class="lg:col-span-6 order-1 lg:order-2 text-center lg:text-left">
             <p class="eyebrow">Edição 2026 · Pré-venda</p>
             <h1
-              class="font-display text-[44px] sm:text-[56px] lg:text-[72px] leading-[1.02] mt-3 font-normal tracking-[-0.01em]"
+              class="font-display text-[44px] sm:text-[56px] lg:text-[72px] leading-[1.02] mt-3 font-normal tracking-[-0.01em] uppercase"
             >
-              <span class="text-rouge">(IN)</span>Finitudes
+              <span class="text-rouge">(IN)</span>FINITUDES
             </h1>
             <p
               class="font-serif italic text-[19px] lg:text-[22px] leading-[1.45] mt-5 text-ink/80"
