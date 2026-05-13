@@ -22,7 +22,7 @@ export interface Props {
 }
 
 const {
-  title = "InFinitudes: ensaios sobre a dor e a fé",
+  title = "(In)finitudes: ensaios sobre a dor e a fé",
   dek = "Uma coletânea de ensaios sobre presença, escuta e a gramática silenciosa dos cuidados paliativos.",
   features = [
     { label: "Edição impressa com acabamento artesanal", meta: "320 páginas" },
@@ -32,6 +32,11 @@ const {
   coverUrl = null,
   href = "/livro",
 } = Astro.props;
+
+// Quebra o título para destacar parênteses em preto sobre o fundo bordô.
+// Captura grupos do tipo "(In)" e os renderiza com parênteses em text-black,
+// mantendo o restante da palavra (e do título) em creme/paper.
+const titleParts = title.split(/(\([^)]+\))/);
 ---
 
 <section class="bg-rouge text-paper">
@@ -64,9 +69,15 @@ const {
       <div class="lg:col-span-8">
         <h2
           class="font-display text-[36px] sm:text-[44px] lg:text-[52px] leading-[1.05] font-normal tracking-[-0.01em] text-paper"
-        >
-          {title}
-        </h2>
+        >{
+          titleParts.map((part) =>
+            /^\(.+\)$/.test(part) ? (
+              <Fragment><span style="color:#000">{part.charAt(0)}</span>{part.slice(1, -1)}<span style="color:#000">{part.charAt(part.length - 1)}</span></Fragment>
+            ) : (
+              part
+            )
+          )
+        }</h2>
 
         <p
           class="font-serif italic text-[18px] lg:text-[20px] leading-[1.45] mt-5 text-paper/85"

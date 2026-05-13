@@ -10,12 +10,18 @@ import "../styles/global.css";
 export interface Props {
   title?: string;
   description?: string;
+  image?: string;
 }
 
 const {
   title = "(In)finitudes — Divã Infinito",
   description = "Ensaios, relatos e curadoria sobre humanização na saúde, cuidados paliativos e a arte de acompanhar.",
+  image = "/og-image.png",
 } = Astro.props;
+
+// URL canônica (resolve a imagem em URL absoluta para Open Graph)
+const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
+const ogImage = new URL(image, Astro.site ?? Astro.url).toString();
 ---
 
 <!doctype html>
@@ -27,6 +33,7 @@ const {
     <meta name="description" content={description} />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonicalURL.toString()} />
 
     {/* Preload das fontes locais para evitar FOUT */}
     <link
@@ -45,6 +52,24 @@ const {
     />
 
     <title>{title}</title>
+
+    {/* Open Graph · usado pelo WhatsApp, Facebook, LinkedIn etc. */}
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:site_name" content="(In)finitudes" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL.toString()} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="(In)finitudes — capa do livro de Eleonora C. Santos" />
+
+    {/* Twitter Card */}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
   </head>
   <body class="font-sans bg-paper text-ink">
     <slot />
