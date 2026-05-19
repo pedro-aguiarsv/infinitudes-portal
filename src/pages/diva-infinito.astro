@@ -4,8 +4,7 @@
 // -------------------------------------------------------------
 // Substitui a rota dinâmica `[category].astro` para `/diva-infinito`.
 // Mostra episódios com aquarela + 2 CTAs.
-// Quando houver "post" com category "diva-infinito" no Sanity,
-// cada um vira um episódio.
+// Lê o schema `episode` do Sanity. Se vazio, cai em fake editorial.
 // =============================================================
 import Layout from "../layouts/Layout.astro";
 import Header from "../components/Header.astro";
@@ -14,9 +13,23 @@ import SectionTitle from "../components/SectionTitle.astro";
 import EpisodeListItem from "../components/EpisodeListItem.astro";
 import NewsletterSection from "../components/NewsletterSection.astro";
 import Divider from "../components/Divider.astro";
-import { getPostsByCategory, type PostPreview } from "../lib/sanity";
+import { getCategoriesMerged } from "../lib/categories";
+import { getAllEpisodes } from "../lib/sanity";
 
-const episodes = await getPostsByCategory("diva-infinito");
+const [episodes, merged] = await Promise.all([
+  getAllEpisodes(),
+  getCategoriesMerged(),
+]);
+
+const category = merged.find((c) => c.value === "diva-infinito");
+
+// Fallback editorial para o bloco "O que é?". Quando a Eleonora
+// preencher `longDescription` no Sanity (documento de categoria
+// "Divã Infinito"), esse texto é substituído automaticamente.
+const FALLBACK_LONG_DESCRIPTION =
+  "Um podcast que busca refletir sobre os efeitos dos processos de adoecimento na psique humana, na fé e na espiritualidade. Discute histórias e casos vividos por médicos e pacientes, teólogos e pessoas que adotam práticas espirituais como parte dos processos de tratamento e cura.";
+
+const longDescription = category?.longDescription ?? FALLBACK_LONG_DESCRIPTION;
 
 // Fake editorial enquanto o Sanity não tem episódios cadastrados.
 type FakeEp = {
@@ -24,47 +37,67 @@ type FakeEp = {
   title: string;
   description: string;
   slug: string;
-  variant: "rouge" | "black";
 };
 
-const FAKE_EPS: FakeEp[] = [
+const FAKE_TEMPORADAS: FakeEp[] = [
   {
     number: 1,
     title: "Divã Infinito Episódio 1",
     description:
-      "The New Yorker editor David Remnick presents interviews, profiles, and humor, in a co-participation with WYNC Studios.",
+      "Conversa de abertura sobre o que significa estar presente — em casa, no hospital e no silêncio.",
     slug: "episodio-1",
-    variant: "rouge",
   },
   {
     number: 2,
     title: "Divã Infinito Episódio 2",
     description:
-      "The New Yorker editor David Remnick presents interviews, profiles, and humor, in a co-participation with WYNC Studios.",
+      "O cuidado como linguagem: entrevistas com profissionais e familiares que acompanharam fins de vida.",
     slug: "episodio-2",
-    variant: "black",
   },
   {
     number: 3,
     title: "Divã Infinito Episódio 3",
     description:
-      "The New Yorker editor David Remnick presents interviews, profiles, and humor, in a co-participation with WYNC Studios.",
+      "Espiritualidade laica e o lugar do sagrado nas equipes de cuidados paliativos.",
     slug: "episodio-3",
-    variant: "rouge",
   },
 ];
 
-// Quando há posts reais, mapeia pra estrutura de episódios.
 const hasReal = episodes.length > 0;
-const realMapped = episodes.map((ep: PostPreview, idx: number) => ({
-  number: idx + 1,
-  title: ep.title,
-  description: ep.excerpt ?? "",
-  slug: ep.slug,
-  variant: (idx % 2 === 0 ? "rouge" : "black") as "rouge" | "black",
-}));
 
-const list = hasReal ? realMapped : FAKE_EPS;
+// Separa por tipo. Episódios sem `type` cadastrado caem em "temporada".
+const realTemporadas = episodes.filter(
+  (ep) => (ep.type ?? "temporada") === "temporada",
+);
+const realMakingOff = episodes.filter((ep) => ep.type === "making-off");
+
+// Helper para alternar a cor do bloco (rouge/black) por índice.
+function withVariants<T>(items: T[]): (T & { variant: "rouge" | "black" })[] {
+  return items.map((item, idx) => ({
+    ...item,
+    variant: (idx % 2 === 0 ? "rouge" : "black") as "rouge" | "black",
+  }));
+}
+
+const temporadasList = hasReal
+  ? withVariants(
+      realTemporadas.map((ep) => ({
+        number: ep.number,
+        title: ep.title,
+        description: ep.description,
+        slug: ep.slug,
+      })),
+    )
+  : withVariants(FAKE_TEMPORADAS);
+
+const makingOffList = withVariants(
+  realMakingOff.map((ep) => ({
+    number: ep.number,
+    title: ep.title,
+    description: ep.description,
+    slug: ep.slug,
+  })),
+);
 ---
 
 <Layout
@@ -75,29 +108,124 @@ const list = hasReal ? realMapped : FAKE_EPS;
 
   <main>
     <section class="max-w-5xl mx-auto px-6 lg:px-12">
-      <SectionTitle
-        eyebrow="Seção"
-        title="Videocast Divã Infinito"
-        subtitle="Relatos e ensaios autorais."
-      />
+      <SectionTitle eyebrow="Videocast" title="Divã Infinito" />
     </section>
 
-    <section class="max-w-5xl mx-auto px-6 lg:px-12 pb-16 lg:pb-24">
-      <Divider variant="rouge" />
-      {
-        list.map((ep) => (
-          <>
-            <EpisodeListItem
-              number={ep.number}
-              title={ep.title}
-              description={ep.description}
-              href={`/diva-infinito/${ep.slug}`}
-              variant={ep.variant}
-            />
-            <Divider variant="rule" />
-          </>
-        ))
-      }
+    {/* O que é? */}
+    <section class="bg-paper-soft border-y border-rule/60">
+      <div class="max-w-3xl mx-auto px-6 py-14 lg:py-20 text-center">
+        <p class="eyebrow text-rouge">O que é?</p>
+        <p
+          class="font-serif text-[18px] lg:text-[20px] leading-[1.6] mt-5 text-ink-soft"
+        >
+          {longDescription}
+        </p>
+      </div>
+    </section>
+
+    <section class="max-w-5xl mx-auto px-6 lg:px-12 pt-16 lg:pt-20 pb-16 lg:pb-24">
+      {/* Tabs: Temporadas | Making-off */}
+      <div
+        class="diva-tabs flex justify-center gap-8 lg:gap-12 border-b border-rule/60 pb-1 mb-10"
+        role="tablist"
+        aria-label="Tipo de episódio"
+      >
+        <button
+          type="button"
+          role="tab"
+          id="tab-temporadas"
+          aria-controls="panel-temporadas"
+          aria-selected="true"
+          data-diva-tab="temporadas"
+          class="diva-tab is-active"
+        >
+          Temporadas
+          <span class="diva-tab-count">
+            ({temporadasList.length})
+          </span>
+        </button>
+        <button
+          type="button"
+          role="tab"
+          id="tab-making-off"
+          aria-controls="panel-making-off"
+          aria-selected="false"
+          data-diva-tab="making-off"
+          class="diva-tab"
+        >
+          Making-off
+          <span class="diva-tab-count">
+            ({makingOffList.length})
+          </span>
+        </button>
+      </div>
+
+      {/* Painel: Temporadas */}
+      <div
+        id="panel-temporadas"
+        role="tabpanel"
+        aria-labelledby="tab-temporadas"
+        data-diva-panel="temporadas"
+      >
+        <Divider variant="rouge" />
+        {
+          temporadasList.map((ep) => (
+            <>
+              <EpisodeListItem
+                number={ep.number}
+                title={ep.title}
+                description={ep.description}
+                href={`/diva-infinito/${ep.slug}`}
+                variant={ep.variant}
+              />
+              <Divider variant="rule" />
+            </>
+          ))
+        }
+        {
+          !hasReal && (
+            <p class="meta text-center mt-10 text-muted/80">
+              Episódios em pré-produção · primeiros lançamentos previstos para
+              junho de 2026.
+            </p>
+          )
+        }
+      </div>
+
+      {/* Painel: Making-off */}
+      <div
+        id="panel-making-off"
+        role="tabpanel"
+        aria-labelledby="tab-making-off"
+        data-diva-panel="making-off"
+        hidden
+      >
+        <Divider variant="rouge" />
+        {
+          makingOffList.length > 0 ? (
+            makingOffList.map((ep) => (
+              <>
+                <EpisodeListItem
+                  number={ep.number}
+                  title={ep.title}
+                  description={ep.description}
+                  href={`/diva-infinito/${ep.slug}`}
+                  variant={ep.variant}
+                />
+                <Divider variant="rule" />
+              </>
+            ))
+          ) : (
+            <div class="text-center py-16 lg:py-20">
+              <p class="eyebrow text-rouge">Em breve</p>
+              <p class="font-serif text-[17px] lg:text-[19px] leading-[1.55] mt-4 text-ink-soft max-w-xl mx-auto">
+                Bastidores das gravações chegam em breve — recortes, conversas
+                off-record e o processo por trás dos episódios.
+              </p>
+            </div>
+          )
+        }
+      </div>
     </section>
 
     <NewsletterSection />
@@ -105,3 +233,99 @@ const list = hasReal ? realMapped : FAKE_EPS;
 
   <Footer />
 </Layout>
+
+<style>
+  .diva-tab {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgb(var(--ink) / 0.55);
+    padding: 0.5rem 0.25rem 0.75rem;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition:
+      color 0.2s ease,
+      border-color 0.2s ease;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .diva-tab:hover {
+    color: rgb(var(--ink) / 0.85);
+  }
+
+  .diva-tab.is-active {
+    color: rgb(var(--rouge));
+    border-bottom-color: rgb(var(--rouge));
+  }
+
+  .diva-tab-count {
+    margin-left: 0.4em;
+    font-size: 10px;
+    opacity: 0.6;
+    letter-spacing: 0.18em;
+  }
+
+  .diva-tab:focus-visible {
+    outline: 2px solid rgb(var(--rouge));
+    outline-offset: 4px;
+  }
+</style>
+
+<script>
+  // Toggle entre as abas "Temporadas" e "Making-off".
+  // Mantém o estado na URL (?aba=making-off) para que links externos
+  // e atualização de página preservem a aba escolhida.
+  (function initDivaTabs() {
+    const tabs = document.querySelectorAll<HTMLButtonElement>("[data-diva-tab]");
+    const panels = document.querySelectorAll<HTMLElement>("[data-diva-panel]");
+
+    if (tabs.length === 0) return;
+
+    function activate(name: string, pushHistory = true) {
+      tabs.forEach((t) => {
+        const active = t.dataset.divaTab === name;
+        t.classList.toggle("is-active", active);
+        t.setAttribute("aria-selected", String(active));
+        t.tabIndex = active ? 0 : -1;
+      });
+      panels.forEach((p) => {
+        p.hidden = p.dataset.divaPanel !== name;
+      });
+      if (pushHistory) {
+        const url = new URL(window.location.href);
+        if (name === "temporadas") {
+          url.searchParams.delete("aba");
+        } else {
+          url.searchParams.set("aba", name);
+        }
+        history.replaceState(null, "", url.toString());
+      }
+    }
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const name = tab.dataset.divaTab;
+        if (name) activate(name);
+      });
+      tab.addEventListener("keydown", (e) => {
+        if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+        e.preventDefault();
+        const arr = Array.from(tabs);
+        const idx = arr.indexOf(tab);
+        const next =
+          e.key === "ArrowRight"
+            ? arr[(idx + 1) % arr.length]
+            : arr[(idx - 1 + arr.length) % arr.length];
+        next.focus();
+        const name = next.dataset.divaTab;
+        if (name) activate(name);
+      });
+    });
+
+    const initial = new URL(window.location.href).searchParams.get("aba");
+    if (initial === "making-off") activate("making-off", false);
+  })();
+</script>

@@ -1,0 +1,238 @@
+---
+// =============================================================
+// /loja/obrigado · Página de confirmação pós-checkout
+// -------------------------------------------------------------
+// Para onde o gateway de pagamento redireciona o cliente após
+// aprovação. Estrutura editorial:
+//   1. Hero · "Pedido recebido" + dek + selo de check
+//   2. Resumo (card) · número do pedido, e-mail e próximo passo
+//   3. Próximos passos · timeline de 3 etapas
+//   4. CTAs · "Voltar à loja" + "Explorar (In)finitudes"
+//   5. Footer (sem newsletter — momento de calma pós-compra)
+//
+// O número do pedido e e-mail são lidos da query string
+// (?pedido=XXX&email=XXX) — facilita integração com qualquer
+// gateway (Mercado Pago, Pagar.me, Stripe etc.).
+//
+// Não exibe dados sensíveis · só confirmação visual.
+// =============================================================
+import Layout from "../../layouts/Layout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import WatercolorAccent from "../../components/WatercolorAccent.astro";
+import Divider from "../../components/Divider.astro";
+---
+
+<Layout
+  title="Pedido confirmado — Loja (In)finitudes"
+  description="Seu pedido foi recebido com sucesso."
+>
+  <Header />
+
+  <main>
+    {/* ============================================================
+        1 · HERO · check + título + dek
+        ============================================================ */}
+    <section
+      class="relative overflow-hidden max-w-4xl mx-auto px-6 lg:px-12 pt-12 lg:pt-20 pb-10 text-center"
+    >
+      <WatercolorAccent
+        variant="rouge-blob"
+        class="absolute right-0 top-0 w-[420px] h-auto opacity-20 pointer-events-none -translate-y-1/4 translate-x-1/3 hidden lg:block"
+      />
+
+      {/* Selo de check com aquarela */}
+      <div class="relative inline-flex items-center justify-center">
+        <span
+          class="relative z-10 w-16 h-16 lg:w-20 lg:h-20 rounded-full bg-rouge text-paper flex items-center justify-center shadow-lg"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            width="32"
+            height="32"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        </span>
+      </div>
+
+      <p class="eyebrow mt-6">Pedido recebido</p>
+      <h1
+        class="font-display text-[40px] sm:text-[52px] lg:text-[64px] leading-[1.05] mt-3 font-normal tracking-[-0.01em]"
+      >
+        Obrigado.
+      </h1>
+      <p
+        class="font-serif italic text-[19px] lg:text-[22px] leading-[1.45] mt-5 text-ink/80 max-w-xl mx-auto"
+      >
+        Seu pedido foi confirmado e em breve enviaremos um e-mail com os
+        detalhes da compra e o código de rastreio.
+      </p>
+    </section>
+
+    <div class="max-w-4xl mx-auto px-6 lg:px-12">
+      <Divider variant="rouge" gap="my-2" />
+    </div>
+
+    {/* ============================================================
+        2 · CARD DE RESUMO
+        ============================================================ */}
+    <section class="max-w-2xl mx-auto px-6 lg:px-12 py-12 lg:py-16">
+      <div
+        class="bg-paper-soft border border-rule/60 px-8 py-10 text-center"
+        id="order-summary"
+      >
+        <p class="eyebrow text-rouge">Detalhes do pedido</p>
+
+        <div class="mt-6">
+          <span class="meta block">Número do pedido</span>
+          <span
+            id="order-number"
+            class="font-display text-[24px] lg:text-[28px] mt-2 block tracking-[0.04em]"
+          >
+            —
+          </span>
+        </div>
+
+        <div class="mt-6 hidden" id="order-email-wrap">
+          <span class="meta block">Confirmação enviada para</span>
+          <span
+            id="order-email"
+            class="font-serif italic text-[17px] lg:text-[18px] mt-1 block text-ink"
+          >
+            —
+          </span>
+        </div>
+      </div>
+    </section>
+
+    {/* ============================================================
+        3 · PRÓXIMOS PASSOS
+        ============================================================ */}
+    <section class="max-w-3xl mx-auto px-6 lg:px-12 pb-16 lg:pb-20">
+      <p
+        class="font-sans text-[11px] font-medium tracking-[0.30em] uppercase text-ink/80 text-center"
+      >
+        Próximos passos
+      </p>
+
+      <ol class="mt-8 space-y-5">
+        <li class="grid grid-cols-12 gap-4 items-start">
+          <span
+            class="col-span-2 sm:col-span-1 font-display text-[28px] text-rouge text-center"
+          >
+            01
+          </span>
+          <div class="col-span-10 sm:col-span-11 border-l border-rule/60 pl-5">
+            <h3 class="font-display text-[18px] lg:text-[20px] font-normal">
+              Confirmação por e-mail
+            </h3>
+            <p class="font-serif text-[15px] leading-[1.55] mt-2 text-ink/80">
+              Em até 5 minutos você recebe um e-mail com o resumo da compra,
+              valor pago e nota fiscal eletrônica.
+            </p>
+          </div>
+        </li>
+
+        <li class="grid grid-cols-12 gap-4 items-start">
+          <span
+            class="col-span-2 sm:col-span-1 font-display text-[28px] text-rouge text-center"
+          >
+            02
+          </span>
+          <div class="col-span-10 sm:col-span-11 border-l border-rule/60 pl-5">
+            <h3 class="font-display text-[18px] lg:text-[20px] font-normal">
+              Preparação e envio
+            </h3>
+            <p class="font-serif text-[15px] leading-[1.55] mt-2 text-ink/80">
+              O pedido é embalado com cuidado em até 2 dias úteis. Quando sair
+              da nossa base, você recebe outro e-mail com o código de rastreio.
+            </p>
+          </div>
+        </li>
+
+        <li class="grid grid-cols-12 gap-4 items-start">
+          <span
+            class="col-span-2 sm:col-span-1 font-display text-[28px] text-rouge text-center"
+          >
+            03
+          </span>
+          <div class="col-span-10 sm:col-span-11 border-l border-rule/60 pl-5">
+            <h3 class="font-display text-[18px] lg:text-[20px] font-normal">
+              Entrega
+            </h3>
+            <p class="font-serif text-[15px] leading-[1.55] mt-2 text-ink/80">
+              O prazo de entrega varia conforme a região. Você pode acompanhar
+              o trajeto pelo código dos Correios sempre que quiser.
+            </p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    {/* ============================================================
+        4 · CTAs
+        ============================================================ */}
+    <section class="max-w-3xl mx-auto px-6 lg:px-12 pb-20 lg:pb-28 text-center">
+      <Divider variant="rouge" gap="mb-10 max-w-md mx-auto" />
+      <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+        <a
+          href="/loja"
+          class="inline-block bg-rouge text-paper px-8 py-3.5 text-[11px] font-medium tracking-[0.22em] uppercase hover:bg-rouge-deep transition-colors"
+        >
+          Voltar à loja
+        </a>
+        <a
+          href="/"
+          class="inline-block font-sans text-[11px] font-medium tracking-[0.22em] uppercase text-rouge link-ed"
+        >
+          Explorar (In)finitudes →
+        </a>
+      </div>
+
+      <p class="meta mt-8 text-muted/80 max-w-md mx-auto">
+        Em caso de dúvidas, escreva para a redação pela página de
+        <a href="/contato" class="underline text-rouge">contato</a>.
+      </p>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+{/* Lê os parâmetros da URL (`?pedido=…&email=…`) e preenche o card.
+    Mantemos client-side puro porque a página é estática (SSG). */}
+<script is:inline>
+  (function () {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const pedido = params.get("pedido");
+      const email = params.get("email");
+
+      const numEl = document.getElementById("order-number");
+      if (pedido && numEl) {
+        numEl.textContent = "#" + pedido;
+      } else if (numEl) {
+        // Quando não há ?pedido= (acesso direto à página), gera um placeholder
+        // para indicar visualmente onde o número apareceria.
+        const random = Math.floor(Math.random() * 90000) + 10000;
+        numEl.textContent = "#" + random;
+      }
+
+      const emailWrap = document.getElementById("order-email-wrap");
+      const emailEl = document.getElementById("order-email");
+      if (email && emailWrap && emailEl) {
+        emailEl.textContent = email;
+        emailWrap.classList.remove("hidden");
+      }
+    } catch (_) {
+      // Silencioso · página deve sempre carregar
+    }
+  })();
+</script>

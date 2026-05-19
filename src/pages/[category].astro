@@ -17,19 +17,34 @@ import SectionTitle from "../components/SectionTitle.astro";
 import PostListItem from "../components/PostListItem.astro";
 import NewsletterSection from "../components/NewsletterSection.astro";
 import Divider from "../components/Divider.astro";
-import { CATEGORIES, getCategory } from "../lib/categories";
+import { CATEGORIES, getCategoriesMerged } from "../lib/categories";
 import { getPostsByCategory } from "../lib/sanity";
 import type { PostPreview } from "../lib/sanity";
 
 export async function getStaticPaths() {
-  return CATEGORIES.map((cat) => ({
-    params: { category: cat.value },
-    props: { categoryValue: cat.value },
-  }));
+  // Categorias que JÁ TÊM página dedicada (sobrescrevem a rota dinâmica).
+  // Excluímos para evitar conflito de rotas e warnings de build.
+  // OBS: precisa ficar DENTRO de getStaticPaths porque o Astro avalia
+  // essa função em isolamento (não enxerga consts do escopo do módulo).
+  const DEDICATED_ROUTES = new Set([
+    "diva-infinito",
+    "sobre",
+    "recomenda",
+    "curadoria",
+  ]);
+
+  return CATEGORIES.filter((cat) => !DEDICATED_ROUTES.has(cat.value)).map(
+    (cat) => ({
+      params: { category: cat.value },
+      props: { categoryValue: cat.value },
+    }),
+  );
 }
 
 const { categoryValue } = Astro.props as { categoryValue: string };
-const category = getCategory(categoryValue)!;
+// Busca a categoria com overrides do Sanity (longDescription, disclaimer etc.)
+const merged = await getCategoriesMerged();
+const category = merged.find((c) => c.value === categoryValue)!;
 const posts = await getPostsByCategory(categoryValue);
 
 // Fake list editorial (estado "vazio apresentável") usado quando ainda
@@ -97,17 +112,35 @@ const hasRealPosts = posts.length > 0;
   <Header />
 
   <main>
-    {/* 1 · Cabeçalho de seção (eyebrow + título + subtítulo italic) */}
+    {/* 1 · Cabeçalho de seção (eyebrow + título + subtítulo italic)
+        Quando a categoria tem bloco "O que é?" preenchido (longDescription),
+        omitimos o subtítulo italic — a explicação detalhada abaixo o substitui. */}
     <section class="max-w-5xl mx-auto px-6 lg:px-12">
       <SectionTitle
         eyebrow="Seção"
         title={category.title}
-        subtitle={category.description}
+        subtitle={category.longDescription ? undefined : category.description}
       />
     </section>
 
-    {/* 2 · Lista vertical com hairlines bordô entre os itens */}
-    <section class="max-w-5xl mx-auto px-6 lg:px-12 pb-16 lg:pb-24">
+    {/* 2 · Bloco "O que é?" — só aparece se a categoria tiver longDescription */}
+    {
+      category.longDescription && (
+        <section class="bg-paper-soft border-y border-rule/60">
+          <div class="max-w-3xl mx-auto px-6 py-14 lg:py-20 text-center">
+            <p class="eyebrow text-rouge">O que é {category.title}?</p>
+            <p class="font-serif text-[18px] lg:text-[20px] leading-[1.6] mt-5 text-ink-soft">
+              {category.longDescription}
+            </p>
+          </div>
+        </section>
+      )
+    }
+
+    {/* 3 · Lista vertical com hairlines bordô entre os itens */}
+    <section
+      class={`max-w-5xl mx-auto px-6 lg:px-12 ${category.longDescription ? "pt-16 lg:pt-20" : ""} pb-16 lg:pb-24`}
+    >
       <Divider variant="rouge" />
       {
         hasRealPosts ? (
@@ -128,7 +161,26 @@ const hasRealPosts = posts.length > 0;
       }
     </section>
 
-    {/* 3 · Newsletter */}
+    {/* 4 · Disclaimer da categoria — só aparece se preenchido */}
+    {
+      category.disclaimer && (
+        <aside
+          class="max-w-3xl mx-auto px-6 lg:px-12 pb-16 lg:pb-20"
+          aria-label="Aviso editorial"
+        >
+          <div class="border-t border-rule/50 pt-8">
+            <p class="font-sans text-[11px] font-medium tracking-[0.22em] uppercase text-rouge mb-3">
+              Aviso editorial
+            </p>
+            <p class="font-serif text-[13px] lg:text-[14px] leading-[1.6] text-ink/65">
+              {category.disclaimer}
+            </p>
+          </div>
+        </aside>
+      )
+    }
+
+    {/* 5 · Newsletter */}
     <NewsletterSection />
   </main>
 

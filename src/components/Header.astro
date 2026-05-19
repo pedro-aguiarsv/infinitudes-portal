@@ -1,13 +1,31 @@
 ---
 // =============================================================
 // Header.astro · Cabeçalho editorial (In)finitudes
-//   · Top bar: data à esquerda · Entrar + Newsletter à direita
+//   · Top bar: data à esquerda · Contato + Newsletter à direita
 //   · Logo central oficial (imagem) + tagline "DIVÃ INFINITO"
 //   · Linhas vermelhas finas demarcando a navegação
-//   · Nav horizontal com os 8 itens em sans uppercase espaçado
+//   · Nav horizontal com itens em sans uppercase espaçado
+//
+// O e-mail mostrado na top-bar (quando houver espaço) e a tagline
+// vêm de `siteSettings`. Quando o documento não existe, usa
+// fallbacks editoriais. NUNCA quebra mesmo se Sanity está vazio.
 // =============================================================
-import { NAV_ITEMS } from "../lib/categories";
+import { getNavItems } from "../lib/categories";
 import Logo from "./Logo.astro";
+import { getSiteSettings } from "../lib/sanity";
+
+const [settings, navItems] = await Promise.all([
+  getSiteSettings(),
+  getNavItems(),
+]);
+
+// Topbar: link de contato (e-mail se cadastrado, senão página)
+const contactHref = settings?.contactEmail
+  ? `mailto:${settings.contactEmail}`
+  : "/contato";
+const contactLabel = settings?.contactEmail
+  ? "Escreva para a redação"
+  : "Contato";
 
 const today = new Intl.DateTimeFormat("pt-BR", {
   weekday: "long",
@@ -25,9 +43,12 @@ const today = new Intl.DateTimeFormat("pt-BR", {
     >
       <span class="meta capitalize">{today}</span>
       <div class="flex items-center gap-8">
-        <a href="/entrar" class="meta link-ed hover:text-ink">Entrar</a>
+        <a href={contactHref} class="meta link-ed hover:text-ink">{contactLabel}</a>
         <a href="#newsletter" class="meta link-ed hover:text-ink">
           Assine a Newsletter Semanal
+        </a>
+        <a href="/apoie" class="meta link-ed hover:text-ink">
+          Quero ser um doador
         </a>
       </div>
     </div>
@@ -60,7 +81,7 @@ const today = new Intl.DateTimeFormat("pt-BR", {
       class="max-w-7xl mx-auto px-6 lg:px-12 py-5 flex flex-wrap items-center justify-center gap-x-7 md:gap-x-9 lg:gap-x-12 gap-y-3"
     >
       {
-        NAV_ITEMS.map((item) => (
+        navItems.map((item) => (
           <li>
             <a
               href={item.href}

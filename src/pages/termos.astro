@@ -1,0 +1,227 @@
+---
+// =============================================================
+// /termos · Termos de Uso e Condições
+// -------------------------------------------------------------
+// Template editorial padrão de Termos de Uso adaptado ao escopo
+// do portal:
+//   · Conteúdo editorial (artigos, ensaios, podcast)
+//   · Loja de produtos físicos
+//   · Newsletter
+//   · Comentários/envio de histórias (Curadoria)
+//
+// Texto generalista e juridicamente coerente. A cliente (e
+// idealmente um(a) advogado(a)) deve revisar antes do go-live.
+// =============================================================
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import Divider from "../components/Divider.astro";
+
+const updatedAt = new Intl.DateTimeFormat("pt-BR", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+}).format(new Date());
+
+const CONTATO_EMAIL = "contato@infinitudes.com.br";
+const CONTROLADOR = "Eleonora Cruz Santos";
+const CIDADE_FORO = "São Paulo/SP";
+---
+
+<Layout
+  title="Termos de Uso — (In)finitudes"
+  description="Termos e Condições de uso do portal (In)finitudes."
+>
+  <Header />
+
+  <main>
+    <article class="max-w-3xl mx-auto px-6 py-16 lg:py-24">
+      <header class="text-center">
+        <p class="eyebrow">Documento legal</p>
+        <h1
+          class="font-display text-[36px] sm:text-[48px] lg:text-[56px] leading-[1.05] mt-3 font-normal tracking-[-0.01em]"
+        >
+          Termos de Uso
+        </h1>
+        <p class="meta mt-4">Última atualização · {updatedAt}</p>
+        <Divider variant="rouge" gap="my-10 max-w-md mx-auto" />
+      </header>
+
+      <div
+        class="font-serif text-[16px] lg:text-[17px] leading-[1.7] text-ink-soft space-y-4 [&_h2]:font-display [&_h2]:text-[22px] [&_h2]:lg:text-[26px] [&_h2]:font-normal [&_h2]:text-ink [&_h2]:mt-12 [&_h2]:mb-3 [&_h3]:font-sans [&_h3]:text-[12px] [&_h3]:font-medium [&_h3]:tracking-[0.20em] [&_h3]:uppercase [&_h3]:text-rouge [&_h3]:mt-8 [&_h3]:mb-2 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-2 [&_a]:underline [&_a]:text-rouge [&_strong]:text-ink [&_strong]:font-medium"
+      >
+        <p>
+          Estes Termos de Uso regulam o acesso e a utilização do portal
+          <strong>(In)finitudes</strong>, disponível em
+          <strong>infinitudes.com.br</strong>. Ao acessar o site, navegar pelas
+          páginas, assinar a newsletter, comprar produtos na loja ou enviar
+          conteúdos, você concorda integralmente com estes Termos. Caso não
+          concorde, não utilize o portal.
+        </p>
+
+        <h2>1. Identificação</h2>
+        <p>
+          O portal é operado por <strong>{CONTROLADOR}</strong>, doravante
+          chamada simplesmente "(In)finitudes" ou "nós". Para qualquer assunto
+          relacionado a estes Termos, escreva para
+          <a href={`mailto:${CONTATO_EMAIL}`}>{CONTATO_EMAIL}</a>.
+        </p>
+
+        <h2>2. Conteúdo editorial</h2>
+        <p>
+          Todo o conteúdo publicado em <strong>(In)finitudes</strong> — textos,
+          imagens, áudios, vídeos, ilustrações, layout, código e marcas — é
+          protegido pela legislação brasileira de direitos autorais (Lei nº
+          9.610/1998) e pelo Código de Propriedade Industrial (Lei nº
+          9.279/1996). É permitido:
+        </p>
+        <ul>
+          <li>citar trechos curtos com a devida atribuição e link para a fonte
+          original;</li>
+          <li>compartilhar links para nossas páginas em redes sociais.</li>
+        </ul>
+        <p>É expressamente <strong>vedado</strong>, sem autorização prévia por
+          escrito:</p>
+        <ul>
+          <li>reproduzir integral ou substancialmente artigos, ensaios ou
+          episódios em outros veículos;</li>
+          <li>usar imagens, ilustrações ou aquarelas em peças comerciais ou
+          editoriais de terceiros;</li>
+          <li>treinar modelos de inteligência artificial com nosso conteúdo.</li>
+        </ul>
+
+        <h2>3. Newsletter</h2>
+        <p>
+          Ao assinar a newsletter, você consente em receber e-mails periódicos
+          com conteúdo editorial, recomendações e, eventualmente, ofertas da
+          loja. Você pode cancelar a inscrição a qualquer momento clicando no
+          link de descadastramento presente em todos os e-mails enviados.
+        </p>
+
+        <h2>4. Loja</h2>
+
+        <h3>4.1 · Disponibilidade e preços</h3>
+        <p>
+          Os preços, descrições e imagens dos produtos podem ser alterados a
+          qualquer momento sem aviso prévio. Em caso de divergência ou erro
+          aparente entre o preço exibido e o efetivamente cobrado, o pedido
+          poderá ser cancelado e o valor pago integralmente devolvido.
+        </p>
+
+        <h3>4.2 · Pagamento</h3>
+        <p>
+          O pagamento é processado por gateway terceiro (Mercado Pago ou outro,
+          a confirmar). Aceitamos cartão de crédito, débito, Pix e boleto
+          bancário, conforme disponibilidade do gateway. Pedidos só são
+          confirmados após a aprovação da operação financeira.
+        </p>
+
+        <h3>4.3 · Entrega</h3>
+        <p>
+          O prazo de envio é informado em cada produto. Os pedidos são enviados
+          via Correios (ou transportadora equivalente) para todo o território
+          brasileiro. <strong>Não nos responsabilizamos</strong> por atrasos
+          decorrentes de greves, intempéries ou problemas no endereço informado
+          pelo cliente.
+        </p>
+
+        <h3>4.4 · Direito de arrependimento</h3>
+        <p>
+          Conforme o <strong>Código de Defesa do Consumidor (Lei nº
+          8.078/1990, Art. 49)</strong>, o cliente pode desistir da compra em
+          até <strong>7 dias corridos</strong> contados do recebimento do
+          produto, sem necessidade de justificativa. Para exercer esse direito,
+          escreva para <a href={`mailto:${CONTATO_EMAIL}`}>{CONTATO_EMAIL}</a>.
+          O produto deve ser devolvido em condições adequadas (lacre intacto,
+          embalagem original, sem sinais de uso).
+        </p>
+
+        <h3>4.5 · Trocas e devoluções</h3>
+        <p>
+          Trocas por defeito de fabricação são feitas mediante registro
+          fotográfico do problema, em até 30 dias do recebimento.
+        </p>
+
+        <h2>5. Envio de histórias (Curadoria)</h2>
+        <p>
+          A seção <strong>Curadoria</strong> aceita textos enviados por leitores.
+          Ao enviar uma história, você declara:
+        </p>
+        <ul>
+          <li>ser o(a) autor(a) original e único(a) titular dos direitos
+          autorais do texto;</li>
+          <li>ter autorização das pessoas mencionadas no texto, quando for o
+          caso;</li>
+          <li>conceder a (In)finitudes <strong>licença não exclusiva</strong>
+          para publicar, editar e divulgar o texto no portal e na newsletter;</li>
+          <li>autorizar pequenas edições de copidesque para adequação ao padrão
+          editorial.</li>
+        </ul>
+        <p>
+          A (In)finitudes não é obrigada a publicar todos os textos recebidos e
+          pode recusar conteúdos sem justificativa.
+        </p>
+
+        <h2>6. Conduta do usuário</h2>
+        <p>É proibido utilizar o portal para:</p>
+        <ul>
+          <li>realizar ataques (DDoS, injeção de SQL, scraping massivo, etc.);</li>
+          <li>tentar acessar áreas restritas ou dados de outros usuários;</li>
+          <li>publicar conteúdo difamatório, obsceno, racista, homofóbico ou
+          qualquer manifestação de ódio;</li>
+          <li>infringir direitos de terceiros (autorais, de imagem ou de marca);</li>
+          <li>distribuir spam, vírus ou software malicioso.</li>
+        </ul>
+
+        <h2>7. Responsabilidades</h2>
+        <p>
+          A (In)finitudes empreende esforços razoáveis para manter o portal
+          disponível e seguro, mas <strong>não garante</strong> que o serviço
+          esteja livre de erros, indisponibilidades, falhas técnicas ou perdas
+          de dados. Não nos responsabilizamos por:
+        </p>
+        <ul>
+          <li>danos decorrentes da utilização ou impossibilidade de utilização
+          do site;</li>
+          <li>conteúdos de sites de terceiros para os quais existam links no
+          portal;</li>
+          <li>opiniões expressas em textos enviados por leitores na seção
+          Curadoria.</li>
+        </ul>
+
+        <h2>8. Privacidade</h2>
+        <p>
+          O tratamento de dados pessoais é regido pela nossa
+          <a href="/privacidade">Política de Privacidade</a>, que faz parte
+          integrante destes Termos.
+        </p>
+
+        <h2>9. Modificações</h2>
+        <p>
+          Reservamo-nos o direito de alterar estes Termos a qualquer momento. A
+          data da última atualização aparece no topo do documento. O uso
+          contínuo do portal após uma alteração implica concordância com a nova
+          versão.
+        </p>
+
+        <h2>10. Lei aplicável e foro</h2>
+        <p>
+          Estes Termos são regidos pelas leis da República Federativa do
+          Brasil. Fica eleito o foro da comarca de
+          <strong>{CIDADE_FORO}</strong> para dirimir quaisquer questões deles
+          decorrentes, com renúncia a qualquer outro, por mais privilegiado que
+          seja.
+        </p>
+
+        <Divider variant="rouge" gap="mt-12" />
+
+        <p class="meta mt-8 text-center">
+          Em caso de dúvidas sobre estes Termos, escreva para
+          <a href={`mailto:${CONTATO_EMAIL}`}>{CONTATO_EMAIL}</a>.
+        </p>
+      </div>
+    </article>
+  </main>
+
+  <Footer />
+</Layout>

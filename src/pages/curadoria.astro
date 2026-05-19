@@ -1,0 +1,343 @@
+---
+// =============================================================
+// /curadoria · Página dedicada da seção Curadoria
+// -------------------------------------------------------------
+// Sobrescreve a rota dinâmica `[category].astro` para `/curadoria`.
+// Estrutura editorial:
+//   1. Header
+//   2. SectionTitle (Eyebrow / Curadoria / subtítulo italic)
+//   3. Bloco "O que é?" — eyebrow rouge + parágrafo apresentando
+//      a seção. Texto vem de `category.longDescription` (Sanity)
+//      com fallback editorial hardcoded.
+//   4. Bloco "Envie sua história" — formulário com:
+//        · nome + e-mail
+//        · texto da história OU arquivo .doc/.docx
+//        · imagens .jpg/.png (opcional, múltiplas)
+//        · termo de cessão editorial (checkbox obrigatório)
+//   5. Lista de posts já publicados na seção
+//   6. Newsletter + Footer
+//
+// O formulário hoje é HTML puro com `event.preventDefault()` —
+// quando o destino estiver definido (Formspree / Netlify Forms /
+// e-mail próprio), basta atualizar `action` e remover o handler.
+// =============================================================
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import SectionTitle from "../components/SectionTitle.astro";
+import PostListItem from "../components/PostListItem.astro";
+import NewsletterSection from "../components/NewsletterSection.astro";
+import Divider from "../components/Divider.astro";
+import { getCategoriesMerged } from "../lib/categories";
+import { getPostsByCategory, type PostPreview } from "../lib/sanity";
+
+const [merged, posts] = await Promise.all([
+  getCategoriesMerged(),
+  getPostsByCategory("curadoria"),
+]);
+
+const category = merged.find((c) => c.value === "curadoria")!;
+
+// Fallback editorial para o bloco "O que é?". Quando a Eleonora
+// preencher `longDescription` no Sanity, esse texto é substituído.
+const FALLBACK_LONG_DESCRIPTION =
+  "A Curadoria é o espaço aberto do (In)finitudes. Recebemos relatos, depoimentos e ensaios escritos por leitores — pessoas que cuidaram, foram cuidadas, ou que acompanham processos de finitude no cotidiano. Os textos selecionados pela redação são editados em diálogo com quem escreveu e publicados nesta seção.";
+
+const longDescription = category.longDescription ?? FALLBACK_LONG_DESCRIPTION;
+
+// Histórias fake (estado "vazio apresentável") · usadas enquanto
+// a Eleonora ainda não cadastrou relatos reais no Sanity.
+const FAKE_POSTS: Array<{ post: PostPreview; author: string }> = [
+  {
+    post: {
+      _id: "fake-curadoria-1",
+      title: "A última conversa com minha avó",
+      slug: "a-ultima-conversa-com-minha-avo",
+      publishedAt: "2026-05-12",
+      mainImage: null,
+      category: "curadoria",
+      excerpt:
+        "Ela já não falava mais. Eu falei pelos dois — e descobri que isso também era escutá-la.",
+    },
+    author: "Por Marina Castro",
+  },
+  {
+    post: {
+      _id: "fake-curadoria-2",
+      title: "Carta a quem ainda virá",
+      slug: "carta-a-quem-ainda-vira",
+      publishedAt: "2026-05-04",
+      mainImage: null,
+      category: "curadoria",
+      excerpt:
+        "Escrevo do quarto onde meu marido passou os últimos quatro meses. Para quem chegar depois, deixo o que aprendi sobre tempo e ausência.",
+    },
+    author: "Por Joana Rebelo",
+  },
+  {
+    post: {
+      _id: "fake-curadoria-3",
+      title: "O caderno que minha mãe deixou",
+      slug: "o-caderno-que-minha-mae-deixou",
+      publishedAt: "2026-04-28",
+      mainImage: null,
+      category: "curadoria",
+      excerpt:
+        "Ela anotava receitas, contas, sonhos. Quando a casa ficou vazia, o caderno me devolveu uma voz que eu pensei ter perdido.",
+    },
+    author: "Por Lucas Andrade",
+  },
+  {
+    post: {
+      _id: "fake-curadoria-4",
+      title: "Quinze minutos",
+      slug: "quinze-minutos",
+      publishedAt: "2026-04-20",
+      mainImage: null,
+      category: "curadoria",
+      excerpt:
+        "É o tempo médio de uma visita médica. Aprendi a usá-lo para escutar antes de prescrever.",
+    },
+    author: "Por Dra. Helena Tavares",
+  },
+];
+
+const hasRealPosts = posts.length > 0;
+---
+
+<Layout
+  title={`${category.title} — (In)finitudes`}
+  description={category.description}
+>
+  <Header />
+
+  <main>
+    {/* ============================================================
+        1 · Cabeçalho da seção
+        ============================================================ */}
+    <section class="max-w-5xl mx-auto px-6 lg:px-12">
+      <SectionTitle
+        eyebrow="Seção"
+        title={category.title}
+        subtitle={category.description}
+      />
+    </section>
+
+    {/* ============================================================
+        2 · O que é?
+        ============================================================ */}
+    <section class="bg-paper-soft border-y border-rule/60">
+      <div class="max-w-3xl mx-auto px-6 py-14 lg:py-20 text-center">
+        <p class="eyebrow text-rouge">O que é?</p>
+        <p
+          class="font-serif text-[18px] lg:text-[20px] leading-[1.6] mt-5 text-ink-soft"
+        >
+          {longDescription}
+        </p>
+      </div>
+    </section>
+
+    {/* ============================================================
+        3 · Envie sua história
+        ============================================================ */}
+    <section class="max-w-3xl mx-auto px-6 lg:px-12 py-16 lg:py-24">
+      <header class="text-center">
+        <p class="eyebrow text-rouge">Envie sua história</p>
+        <h2
+          class="font-display text-[28px] sm:text-[32px] lg:text-[40px] leading-[1.1] mt-3 font-normal tracking-[-0.005em]"
+        >
+          Conte como você quiser.
+        </h2>
+        <p
+          class="font-serif text-[16px] lg:text-[17px] leading-[1.55] mt-5 text-ink/80"
+        >
+          Você pode escrever direto no formulário abaixo OU anexar um arquivo
+          .doc / .docx. Imagens são opcionais. Lemos cada envio com cuidado e
+          respondemos individualmente.
+        </p>
+      </header>
+
+      <form
+        id="curadoria-form"
+        action=""
+        method="POST"
+        enctype="multipart/form-data"
+        class="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-5"
+        onsubmit="event.preventDefault();"
+      >
+        {/* Hidden · marca o formulário como pertencente a Curadoria */}
+        <input type="hidden" name="subject" value="curadoria" />
+
+        {/* Nome + e-mail */}
+        <label class="flex flex-col gap-2 sm:col-span-1">
+          <span class="meta">Seu nome</span>
+          <input
+            type="text"
+            name="nome"
+            required
+            class="bg-transparent border border-rule px-4 py-3 text-[15px] focus:outline-none focus:border-rouge transition-colors"
+          />
+        </label>
+
+        <label class="flex flex-col gap-2 sm:col-span-1">
+          <span class="meta">E-mail</span>
+          <input
+            type="email"
+            name="email"
+            required
+            class="bg-transparent border border-rule px-4 py-3 text-[15px] focus:outline-none focus:border-rouge transition-colors"
+          />
+        </label>
+
+        {/* História · texto */}
+        <label class="flex flex-col gap-2 sm:col-span-2">
+          <span class="meta">Sua história · texto</span>
+          <textarea
+            id="curadoria-story"
+            name="historia"
+            rows="10"
+            placeholder="Escreva direto aqui se preferir. Sem limite de palavras."
+            class="bg-transparent border border-rule px-4 py-3 text-[15px] leading-[1.6] focus:outline-none focus:border-rouge transition-colors resize-y"
+          ></textarea>
+        </label>
+
+        {/* OU separador */}
+        <div class="sm:col-span-2 flex items-center gap-4 text-ink/40">
+          <span class="flex-1 h-px bg-rule/60"></span>
+          <span class="meta text-ink/55">OU</span>
+          <span class="flex-1 h-px bg-rule/60"></span>
+        </div>
+
+        {/* História · arquivo .doc/.docx */}
+        <label class="flex flex-col gap-2 sm:col-span-2">
+          <span class="meta">Sua história · arquivo Word</span>
+          <input
+            id="curadoria-story-file"
+            type="file"
+            name="historiaArquivo"
+            accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            class="block w-full text-[14px] file:mr-4 file:py-2 file:px-4 file:border file:border-rule file:bg-paper-soft file:font-sans file:text-[11px] file:font-medium file:tracking-[0.20em] file:uppercase file:text-rouge hover:file:bg-paper file:cursor-pointer cursor-pointer"
+          />
+          <span class="meta text-ink/55">Aceita .doc ou .docx · até 10 MB</span>
+        </label>
+
+        {/* Imagens · opcional */}
+        <label class="flex flex-col gap-2 sm:col-span-2 mt-4">
+          <span class="meta">Imagens (opcional)</span>
+          <input
+            type="file"
+            name="imagens"
+            accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+            multiple
+            class="block w-full text-[14px] file:mr-4 file:py-2 file:px-4 file:border file:border-rule file:bg-paper-soft file:font-sans file:text-[11px] file:font-medium file:tracking-[0.20em] file:uppercase file:text-rouge hover:file:bg-paper file:cursor-pointer cursor-pointer"
+          />
+          <span class="meta text-ink/55">
+            Aceita .jpg, .jpeg ou .png · pode anexar várias · até 10 MB cada
+          </span>
+        </label>
+
+        {/* Termo de cessão editorial */}
+        <label
+          class="sm:col-span-2 flex items-start gap-2 cursor-pointer text-[12px] leading-[1.5] text-ink/75 mt-4"
+        >
+          <input
+            type="checkbox"
+            name="consent"
+            required
+            class="mt-0.5 accent-rouge"
+          />
+          <span>
+            Autorizo o uso editorial deste material por (In)finitudes para
+            possível publicação na seção Curadoria, conforme os{" "}
+            <a href="/termos" class="underline">Termos de Uso</a> e a{" "}
+            <a href="/privacidade" class="underline">Política de Privacidade</a>.
+            Mantenho a autoria dos textos.
+          </span>
+        </label>
+
+        <button
+          type="submit"
+          class="sm:col-span-2 mt-2 bg-rouge text-paper px-8 py-3.5 text-[11px] font-medium tracking-[0.22em] uppercase hover:bg-rouge-deep transition-colors"
+        >
+          Enviar minha história
+        </button>
+      </form>
+
+      <p class="meta mt-4 text-center">
+        Atenção · este formulário ainda está em fase de configuração. Para
+        envios urgentes, escreva para{" "}
+        <a href="/contato" class="underline">Contato</a>.
+      </p>
+    </section>
+
+    {/* ============================================================
+        4 · Lista de histórias publicadas
+        ============================================================ */}
+    <section class="max-w-5xl mx-auto px-6 lg:px-12 pb-16 lg:pb-24">
+      <header class="text-center mb-10">
+        <Divider variant="rouge" gap="mb-8 max-w-md mx-auto" />
+        <p
+          class="font-sans text-[11px] font-medium tracking-[0.30em] uppercase text-ink/80"
+        >
+          Histórias publicadas
+        </p>
+      </header>
+      <Divider variant="rouge" />
+      {
+        hasRealPosts ? (
+          posts.map((post) => (
+            <>
+              <PostListItem post={post} />
+              <Divider variant="rouge" />
+            </>
+          ))
+        ) : (
+          FAKE_POSTS.map((item) => (
+            <>
+              <PostListItem post={item.post} author={item.author} />
+              <Divider variant="rouge" />
+            </>
+          ))
+        )
+      }
+    </section>
+
+    <NewsletterSection />
+  </main>
+
+  <Footer />
+
+  {/* ============================================================
+      Validação cliente: pelo menos um dos campos (texto OU arquivo)
+      precisa estar preenchido. Mensagem de erro nativa do navegador.
+      ============================================================ */}
+  <script is:inline>
+    (function () {
+      const form = document.getElementById("curadoria-form");
+      if (!form) return;
+      const story = document.getElementById("curadoria-story");
+      const storyFile = document.getElementById("curadoria-story-file");
+      if (!story || !storyFile) return;
+
+      form.addEventListener("submit", (event) => {
+        const hasText = story.value.trim().length > 0;
+        const hasFile = storyFile.files && storyFile.files.length > 0;
+        if (!hasText && !hasFile) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          story.setCustomValidity(
+            "Escreva sua história OU anexe um arquivo .doc/.docx.",
+          );
+          story.reportValidity();
+          return;
+        }
+        story.setCustomValidity("");
+      });
+
+      story.addEventListener("input", () => story.setCustomValidity(""));
+      storyFile.addEventListener("change", () =>
+        story.setCustomValidity(""),
+      );
+    })();
+  </script>
+</Layout>

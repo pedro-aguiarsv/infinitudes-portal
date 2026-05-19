@@ -4,12 +4,14 @@
 // -------------------------------------------------------------
 // Sobrescreve a rota dinâmica `[category].astro` para `/loja`.
 // Estrutura:
-//   1. Hero: aquarela vermelha grande à direita + "LOJA" à esquerda
+//   1. Hero: aquarela vermelha + label "LOJA"
 //   2. Divider rouge
 //   3. Grid 3 colunas de ProductCard
 //   4. Footer (sem newsletter — diferente das outras páginas)
 //
-// Catálogo vem de `src/lib/products.ts` (mock — integrar Sanity depois).
+// Catálogo vem do Sanity (schema `product`). Se vazio, cai em
+// fallback mínimo (`FALLBACK_PRODUCTS`) para a página continuar
+// funcionando.
 // =============================================================
 import Layout from "../layouts/Layout.astro";
 import Header from "../components/Header.astro";
@@ -17,7 +19,27 @@ import Footer from "../components/Footer.astro";
 import ProductCard from "../components/ProductCard.astro";
 import WatercolorAccent from "../components/WatercolorAccent.astro";
 import Divider from "../components/Divider.astro";
-import { PRODUCTS } from "../lib/products";
+import { getAllProducts, urlFor } from "../lib/sanity";
+import { FALLBACK_PRODUCTS, mapSanityProduct } from "../lib/products";
+
+const sanityProducts = await getAllProducts();
+
+const products =
+  sanityProducts.length > 0
+    ? sanityProducts.map((p) =>
+        mapSanityProduct(
+          p,
+          p.mainImage
+            ? urlFor(p.mainImage)
+                .width(800)
+                .height(800)
+                .fit("crop")
+                .auto("format")
+                .url()
+            : null,
+        ),
+      )
+    : FALLBACK_PRODUCTS;
 ---
 
 <Layout title="Loja — (In)finitudes" description="Livros, cadernos e objetos editoriais.">
@@ -46,11 +68,11 @@ import { PRODUCTS } from "../lib/products";
       <Divider variant="rouge" gap="my-4" />
     </div>
 
-    {/* 3 · GRID 3 colunas */}
+    {/* 3 · GRID */}
     <section class="max-w-6xl mx-auto px-6 lg:px-12 py-12 lg:py-16">
       <div class="grid grid-cols-2 lg:grid-cols-3 gap-x-6 lg:gap-x-12 gap-y-14 lg:gap-y-20">
         {
-          PRODUCTS.map((p) => (
+          products.map((p) => (
             <ProductCard
               title={p.title}
               byline={p.byline}
@@ -63,6 +85,12 @@ import { PRODUCTS } from "../lib/products";
           ))
         }
       </div>
+
+      {sanityProducts.length === 0 && (
+        <p class="meta text-center mt-12 text-muted/80">
+          Catálogo em construção · novos produtos serão publicados em breve.
+        </p>
+      )}
     </section>
   </main>
 

@@ -1,176 +1,185 @@
 ---
 // =============================================================
-// /sobre · Página "Sobre" (page-02)
+// /sobre · Página "Sobre o (In)finitudes"
 // -------------------------------------------------------------
-// Rota estática que sobrescreve a dinâmica `[category].astro`
-// para o slug `sobre`. Apresenta a autora Eleonora C. Santos e
-// o livro (In)finitudes, com seções:
-//   1. Hero · título grande + dek + composição do livro
-//   2. Bio inicial (3 parágrafos)
-//   3. Aquarela preta + foto da autora lado a lado
-//   4. Continuação da bio
-//   5. Teaser "Galeria de fotos · Entrevistados"
-//   6. Newsletter + Footer
+// Rota estática que sobrescreve a dinâmica `[category].astro`.
 //
-// Foto da autora e fotos extras devem ser colocadas em
-// /public/about/ — quando estiverem disponíveis, basta trocar
-// os caminhos hardcoded abaixo.
+// Estrutura editorial:
+//   1. SectionTitle "Sobre o (In)finitudes"
+//   2. Texto explicativo do projeto (Sanity → projectDescription,
+//      com fallback editorial)
+//   3. Seção "Quem faz" — grid de participantes (hardcoded)
+//   4. Newsletter
+//
+// Os participantes ficam HARDCODED no array TEAM abaixo
+// (decisão do cliente, 2026). Para editar: trocar nome/cargo/bio
+// e adicionar a foto em /public/team/{slug}.jpg.
+//
+// QUANDO O CLIENTE QUISER EDITAR PELO STUDIO: criar um schema
+// dedicado `teamMember` no Sanity Studio e trocar o array por
+// `await getTeamMembers()`.
 // =============================================================
 import Layout from "../layouts/Layout.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import SectionTitle from "../components/SectionTitle.astro";
 import NewsletterSection from "../components/NewsletterSection.astro";
-import WatercolorAccent from "../components/WatercolorAccent.astro";
-import BookCover from "../components/BookCover.astro";
-import Divider from "../components/Divider.astro";
-import Logo from "../components/Logo.astro";
+import { PortableText } from "astro-portabletext";
+import PTBlock from "../components/portable-text/PTBlock.astro";
+import { getAboutPage } from "../lib/sanity";
 
-const introParagraphs = [
-  "Eleonora Cruz Santos é jornalista, escritora e curadora de conteúdos sobre humanização na saúde e cuidados paliativos. Fundou o projeto (In)finitudes em 2024 como um espaço de escuta e elaboração coletiva sobre o fim da vida — um tema que, segundo ela, ainda carece de linguagem.",
-  "Formada em Letras pela USP e mestre em Comunicação pela ECA-USP, trabalhou por uma década na cobertura cultural de jornais como Folha de S.Paulo e Piauí, antes de mergulhar na área de cuidados como pesquisadora associada ao Hospital Israelita Albert Einstein.",
-  "Seu primeiro livro, “(In)finitudes: ensaios sobre a dor e a fé”, reúne vinte e quatro textos curtos sobre presença, escuta e a gramática silenciosa dos cuidados paliativos. É também apresentadora do videocast Divã Infinito.",
+const about = await getAboutPage();
+
+// Fallback editorial enquanto o Sanity não tem `projectDescription`
+// preenchido. Foca no PROJETO, não em uma pessoa só.
+const FAKE_PROJECT_DESCRIPTION = [
+  "O (In)finitudes é um projeto cultural idealizado por Eleonora Santos que une jornalismo, literatura e escuta em torno de um tema ainda em silêncio na cultura brasileira: os processos de adoecimento, o fim da vida e a espiritualidade que os atravessa.",
+  "Reúne ensaios, entrevistas, recomendações e um videocast — o Divã Infinito — que conversa com médicos, pacientes, teólogos e cuidadores sobre histórias reais e os efeitos psíquicos, espirituais e relacionais do cuidado.",
+  "Acreditamos que falar sobre finitude não é resignação; é uma forma de honrar a vida com mais presença, mais linguagem e menos solidão. Esta página apresenta as pessoas que tornam o projeto possível.",
 ];
 
-const moreParagraphs = [
-  "Ao longo dos últimos cinco anos, Eleonora coordenou rodas de escuta em hospitais públicos e privados, formou redes de cuidadores e escreveu reportagens premiadas sobre a saúde do morrer no Brasil. Acredita que cada conversa difícil acolhida tira o tabu de cima — e que o jornalismo cultural pode (e deve) ocupar esse lugar.",
-  "Sua coluna semanal “Carta do Editor” é lida por mais de 12 mil assinantes. As entrevistas que conduz se aproximam mais do gênero ensaístico do que da entrevista clássica: ela escuta, espera, deixa as pausas existirem.",
+const hasRealDescription =
+  Array.isArray(about?.projectDescription) &&
+  about!.projectDescription!.length > 0;
+
+const ptComponents = {
+  block: {
+    normal: PTBlock,
+    h2: PTBlock,
+    h3: PTBlock,
+    blockquote: PTBlock,
+  },
+};
+
+// =============================================================
+// TEAM · Participantes do projeto (HARDCODED)
+// -------------------------------------------------------------
+// [PLACEHOLDER] Pedro: confirme nomes, cargos e bios reais com a
+// cliente e me passe as fotos (sugiro 600×800px, .jpg/.webp, em
+// /public/team/{slug}.jpg). Por enquanto: 3 cards de exemplo.
+// =============================================================
+type TeamMember = {
+  name: string;
+  role: string;
+  bio: string;
+  /** Caminho relativo a /public. Ex.: "/team/eleonora.jpg". null → placeholder. */
+  photo: string | null;
+};
+
+const TEAM: TeamMember[] = [
+  {
+    name: "Eleonora C. Santos",
+    role: "Idealizadora · Autora · Apresentadora",
+    bio: "Jornalista, escritora e curadora dos conteúdos do (In)finitudes. Autora do livro homônimo e apresentadora do videocast Divã Infinito. Pesquisa há mais de uma década o encontro entre cuidado, escuta e linguagem.",
+    photo: null,
+  },
+  {
+    name: "[Nome do participante 2]",
+    role: "[Cargo / função no projeto]",
+    bio: "[Mini bio em uma ou duas frases — quem é, o que faz, o que traz ao projeto. Texto editorial, sem CV técnico.]",
+    photo: null,
+  },
+  {
+    name: "[Nome do participante 3]",
+    role: "[Cargo / função no projeto]",
+    bio: "[Mini bio em uma ou duas frases.]",
+    photo: null,
+  },
 ];
 ---
 
 <Layout
-  title="Sobre — (In)finitudes"
-  description="Conheça Eleonora Cruz Santos e o projeto (In)finitudes."
+  title="Sobre o (In)finitudes — (In)finitudes"
+  description="Um projeto cultural sobre cuidado, finitude e espiritualidade. Conheça as pessoas por trás do (In)finitudes."
 >
   <Header />
 
   <main>
-    {/* ============================================================
-        1 · HERO · Título + dek + foto do livro centralizada
-        ============================================================ */}
-    <section class="max-w-5xl mx-auto px-6 lg:px-12 pt-12 lg:pt-16 pb-10">
-      <div class="text-center">
-        <h1
-          class="font-display text-[32px] sm:text-[42px] lg:text-[52px] leading-[1.05] font-normal tracking-[-0.01em] uppercase"
-        >
-          <span class="text-rouge">(</span>IN<span class="text-rouge">)</span>FINITUDES <span class="font-sans normal-case font-light">por</span> Eleonora C. Santos
-        </h1>
-        <p class="font-serif italic text-[18px] lg:text-[20px] text-ink/75 mt-4">
-          Conheça a autora e o projeto.
-        </p>
-        <p class="meta mt-4 text-muted/80">
-          Jornalista · Editora · Curadora — Maio de 2026
-        </p>
-      </div>
-
-      {/* Composição visual do livro (placeholder até receber foto real) */}
-      <figure class="mt-12 lg:mt-16 max-w-3xl mx-auto">
-        <div
-          class="relative bg-[#ece7d4] py-10 lg:py-16 px-6 flex items-center justify-center"
-        >
-          {/* "Pilha" de dois livros estilizada */}
-          <div class="relative w-full max-w-lg">
-            {/* Livro de baixo · spine vertical */}
-            <div
-              class="absolute left-2 top-6 w-[140px] h-[280px] bg-paper border border-rule/60 rotate-[-6deg] origin-bottom-left shadow-lg flex items-end justify-center pb-6"
-            >
-              <p
-                class="font-display text-[14px] tracking-[0.06em] -rotate-90 whitespace-nowrap origin-center uppercase"
-              >
-                <span class="text-rouge">(</span>IN<span class="text-rouge">)</span>FINITUDES
-              </p>
-            </div>
-
-            {/* Livro de cima · capa OFICIAL extraída do design */}
-            <div
-              class="relative ml-32 w-[200px] shadow-2xl rotate-[3deg]"
-            >
-              <BookCover variant="sm" class="w-full" />
-            </div>
-          </div>
-        </div>
-      </figure>
+    {/* 1 · Cabeçalho da página */}
+    <section class="max-w-5xl mx-auto px-6 lg:px-12">
+      <SectionTitle eyebrow="Seção" title="Sobre o (In)finitudes" />
     </section>
 
-    {/* ============================================================
-        2 · BIO INICIAL · coluna única, serif body
-        ============================================================ */}
+    {/* 2 · Texto explicativo do projeto */}
     <section
       class="max-w-2xl mx-auto px-6 py-10 lg:py-14 font-serif text-[17px] lg:text-[18px] leading-[1.7] space-y-5 text-ink-soft"
     >
-      {introParagraphs.map((p) => <p>{p}</p>)}
-    </section>
-
-    {/* ============================================================
-        3 · AQUARELA PRETA + FOTO DA AUTORA
-        ============================================================ */}
-    <section class="max-w-5xl mx-auto px-6 lg:px-12 py-10 lg:py-14">
-      <div
-        class="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-12 items-center"
-      >
-        <div class="flex justify-center md:justify-end">
-          <WatercolorAccent
-            variant="black-blob"
-            class="w-[260px] sm:w-[320px] lg:w-[380px] h-auto"
+      {
+        hasRealDescription ? (
+          <PortableText
+            value={about!.projectDescription as unknown[]}
+            components={ptComponents}
           />
-        </div>
-        <div class="flex justify-center md:justify-start">
-          <div
-            class="w-full max-w-[320px] aspect-[3/4] ph border border-rule/60"
-            data-label="Foto · Eleonora C. Santos"
-          >
-          </div>
-        </div>
+        ) : (
+          FAKE_PROJECT_DESCRIPTION.map((p) => <p>{p}</p>)
+        )
+      }
+    </section>
+
+    {/* 3 · Quem faz o projeto */}
+    <section class="max-w-6xl mx-auto px-6 lg:px-12 py-12 lg:py-20">
+      <div class="text-center mb-12 lg:mb-16">
+        <p class="eyebrow text-rouge">Quem faz</p>
+        <h2
+          class="font-display text-[28px] sm:text-[34px] lg:text-[40px] leading-[1.1] mt-3 font-normal tracking-[-0.005em]"
+        >
+          As pessoas por trás do projeto
+        </h2>
+      </div>
+
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-12"
+      >
+        {
+          TEAM.map((member) => (
+            <article class="text-center">
+              {/* Foto */}
+              <div class="mx-auto w-full max-w-[260px] aspect-[3/4] mb-5">
+                {member.photo ? (
+                  <img
+                    src={member.photo}
+                    alt={`Foto · ${member.name}`}
+                    class="w-full h-full object-cover border border-rule/60"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ) : (
+                  <div
+                    class="w-full h-full bg-paper-soft border border-rule/40 flex items-center justify-center"
+                    aria-hidden="true"
+                  >
+                    <span class="font-sans text-[10px] font-medium tracking-[0.28em] uppercase text-ink/40 text-center px-3">
+                      Foto
+                      <br />
+                      em breve
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Cargo (eyebrow rouge) */}
+              <p class="eyebrow text-rouge">{member.role}</p>
+
+              {/* Nome */}
+              <h3
+                class="font-display text-[20px] lg:text-[24px] leading-[1.15] mt-2 font-normal tracking-[-0.005em]"
+              >
+                {member.name}
+              </h3>
+
+              {/* Mini bio */}
+              <p
+                class="font-serif text-[14px] lg:text-[15px] leading-[1.55] mt-3 text-ink/75 max-w-xs mx-auto"
+              >
+                {member.bio}
+              </p>
+            </article>
+          ))
+        }
       </div>
     </section>
 
-    {/* ============================================================
-        4 · MAIS BIO
-        ============================================================ */}
-    <section
-      class="max-w-2xl mx-auto px-6 py-10 lg:py-14 font-serif text-[17px] lg:text-[18px] leading-[1.7] space-y-5 text-ink-soft"
-    >
-      {moreParagraphs.map((p) => <p>{p}</p>)}
-    </section>
-
-    {/* ============================================================
-        5 · TEASER GALERIA · banner com bloco bordô + foto
-        ============================================================ */}
-    <section class="max-w-5xl mx-auto px-6 lg:px-12 py-12 lg:py-16">
-      <a
-        href="/galeria"
-        class="group block grid grid-cols-1 md:grid-cols-2 overflow-hidden"
-      >
-        {/* Bloco bordô · label */}
-        <div
-          class="bg-rouge text-paper p-10 lg:p-12 flex flex-col justify-center min-h-[280px]"
-        >
-          <p class="eyebrow text-paper/80">Conheça os bastidores</p>
-          <h3
-            class="font-display text-[28px] lg:text-[36px] leading-[1.1] mt-3 text-paper"
-          >
-            Galeria de fotos
-            <br />
-            <span class="italic font-light">Entrevistados</span>
-          </h3>
-          <span
-            class="mt-6 font-sans text-[10px] font-medium tracking-[0.22em] uppercase text-paper/90 link-ed inline-block"
-          >
-            Ver galeria →
-          </span>
-        </div>
-
-        {/* Foto · placeholder */}
-        <div
-          class="ph aspect-[4/3] md:aspect-auto md:min-h-[280px] transition-[filter] duration-300 group-hover:brightness-95"
-          data-label="Foto · Entrevistado em estúdio"
-        >
-        </div>
-      </a>
-    </section>
-
-    {/* ============================================================
-        6 · Newsletter
-        ============================================================ */}
+    {/* 4 · Newsletter */}
     <NewsletterSection />
   </main>
 

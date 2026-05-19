@@ -1,0 +1,133 @@
+---
+// =============================================================
+// RecommendationListItem.astro · Item de listagem do /recomenda
+// -------------------------------------------------------------
+// Inspirado no layout do EpisodeListItem (page-07), mas adaptado
+// para recomendações de terceiros:
+//   ┌──────────────────────────────┬──────────────┐
+//   │ Título da recomendação       │  Imagem      │
+//   │ Resumo (excerpt)             │  da          │
+//   │                              │  recomenda-  │
+//   │ [ Acessar ]                  │  ção         │
+//   └──────────────────────────────┴──────────────┘
+//
+// • Quando `externalUrl` está preenchido → botão "Acessar" abre
+//   em nova aba (Amazon, Spotify, site do evento etc.)
+// • Quando vazio → botão vira "Ler mais" e leva ao post interno
+// • Quando não há imagem → placeholder neutro (bg-paper-soft)
+// =============================================================
+import { urlFor, type SanityImage } from "../lib/sanity";
+
+export interface Props {
+  title: string;
+  excerpt?: string | null;
+  /** URL do post interno (/{categoria}/{slug}) — usado quando não há externalUrl */
+  internalHref: string;
+  /** URL externa opcional (Amazon, Spotify, evento etc.) */
+  externalUrl?: string | null;
+  mainImage?: SanityImage | null;
+  authors?: string | null;
+}
+
+const { title, excerpt, internalHref, externalUrl, mainImage, authors } =
+  Astro.props;
+
+const hasExternal = Boolean(externalUrl);
+const linkHref = hasExternal ? externalUrl! : internalHref;
+const ctaLabel = hasExternal ? "Acessar" : "Ler mais";
+const linkAttrs = hasExternal
+  ? { target: "_blank", rel: "noopener noreferrer" }
+  : {};
+
+const imageUrl = mainImage
+  ? urlFor(mainImage).width(600).height(600).fit("crop").auto("format").url()
+  : null;
+const imageAlt = mainImage?.alt ?? title;
+---
+
+<article
+  class="grid grid-cols-12 gap-6 lg:gap-10 py-8 lg:py-10 items-center"
+>
+  {/* Texto + CTA · 8 colunas */}
+  <div class="col-span-12 sm:col-span-8 order-2 sm:order-1">
+    <h3
+      class="font-display text-[22px] sm:text-[26px] lg:text-[28px] leading-[1.15] font-medium tracking-[-0.005em]"
+    >
+      <a
+        href={linkHref}
+        {...linkAttrs}
+        class="hover:text-rouge transition-colors"
+      >
+        {title}
+      </a>
+    </h3>
+
+    {
+      excerpt && (
+        <p class="font-serif text-[15px] lg:text-[16px] leading-[1.5] mt-2 text-ink/80 max-w-prose">
+          {excerpt}
+        </p>
+      )
+    }
+
+    {
+      authors && (
+        <p class="font-sans text-[10px] font-medium tracking-[0.20em] uppercase text-rouge mt-3">
+          {authors}
+        </p>
+      )
+    }
+
+    <div class="mt-5 max-w-xs">
+      <a
+        href={linkHref}
+        {...linkAttrs}
+        class="inline-flex items-center justify-center bg-rouge text-paper px-6 py-2.5 text-[11px] font-medium tracking-[0.22em] uppercase hover:bg-rouge-deep transition-colors w-full"
+      >
+        {ctaLabel}
+        {
+          hasExternal && (
+            <span class="ml-2" aria-hidden="true">
+              ↗
+            </span>
+          )
+        }
+      </a>
+    </div>
+  </div>
+
+  {/* Imagem · 4 colunas */}
+  <div
+    class="col-span-12 sm:col-span-4 order-1 sm:order-2 flex justify-center sm:justify-end"
+  >
+    <a
+      href={linkHref}
+      {...linkAttrs}
+      class="block w-[200px] h-[200px] sm:w-[180px] sm:h-[180px] lg:w-[220px] lg:h-[220px] group"
+      aria-label={`${ctaLabel}: ${title}`}
+    >
+      {
+        imageUrl ? (
+          <img
+            src={imageUrl}
+            alt={imageAlt}
+            class="w-full h-full object-cover transition-[filter] duration-300 group-hover:brightness-95"
+            loading="lazy"
+            decoding="async"
+          />
+        ) : (
+          <div
+            class="w-full h-full bg-paper-soft border border-rule/40 flex items-center justify-center"
+            aria-hidden="true"
+          >
+            <span class="font-sans text-[9px] font-medium tracking-[0.30em] uppercase text-ink/40 text-center px-3">
+              (In)finitudes
+              <br />
+              recomenda
+            </span>
+          </div>
+        )
+      }
+    </a>
+  </div>
+</article>

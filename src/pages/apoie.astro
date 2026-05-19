@@ -1,0 +1,329 @@
+---
+// =============================================================
+// /apoie · Página "Apoie o (In)finitudes" (page-13)
+// -------------------------------------------------------------
+// Estrutura editorial:
+//   1. SectionTitle "Apoie o (In)finitudes"
+//   2. Bloco "Por que apoiar?" (eyebrow rouge minimalista)
+//   3. "Para onde vai sua contribuição" (lista de iniciativas)
+//   4. "Como apoiar" (PIX único + plataforma recorrente)
+//   5. "Incentivo fiscal" (informações sobre leis, se aplicável)
+//   6. Newsletter (com o próprio CTA da página apoie ao lado)
+//
+// IMPORTANTE: o conteúdo desta página está em PLACEHOLDER por
+// enquanto. Para entrar no ar precisa de:
+//   • Chave PIX real (ou QR code .png em /public/apoie/qrcode-pix.png)
+//   • Link da plataforma recorrente (Apoia.se, Benfeitoria, etc.)
+//   • Texto definitivo da cliente sobre cada iniciativa apoiada
+//   • Definição: o projeto está em alguma Lei de Incentivo? (Rouanet,
+//     ProAC, Lei Aldir Blanc, etc.) Se sim, descrever benefício fiscal.
+// =============================================================
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import SectionTitle from "../components/SectionTitle.astro";
+import NewsletterSection from "../components/NewsletterSection.astro";
+import Divider from "../components/Divider.astro";
+
+// =============================================================
+// CONTEÚDO EDITORIAL (placeholders editáveis no código)
+// -------------------------------------------------------------
+// Quando o conteúdo estabilizar, vale mover para um schema
+// `donatePage` no Sanity (singleton) — mesmo padrão do bookInfo.
+// =============================================================
+
+const SOBRE_O_APOIO =
+  "O (In)finitudes é um projeto cultural independente, sem fins lucrativos, mantido por leitoras, leitores e parceiros que acreditam no jornalismo sobre cuidado, escuta e finitude. Sua contribuição financia desde a produção dos ensaios até as gravações do videocast Divã Infinito, garantindo que o conteúdo continue circulando de forma gratuita e em acesso aberto.";
+
+// Lista do que sua contribuição financia
+type Iniciativa = {
+  title: string;
+  description: string;
+};
+
+const INICIATIVAS: Iniciativa[] = [
+  {
+    title: "Conteúdo editorial",
+    description:
+      "Pagamento de autoras convidadas, revisão, curadoria e publicação dos ensaios do Hub Infinito.",
+  },
+  {
+    title: "Videocast Divã Infinito",
+    description:
+      "Produção, gravação, edição e hospedagem dos episódios em YouTube e Spotify.",
+  },
+  {
+    title: "Plataforma e infraestrutura",
+    description:
+      "Manutenção do site, do CMS, hospedagem, ferramentas de newsletter e atendimento a leitores.",
+  },
+  {
+    title: "Curadoria de histórias",
+    description:
+      "Leitura, seleção e edição das histórias enviadas pelos leitores na seção Curadoria.",
+  },
+];
+
+// =============================================================
+// CONFIGURAÇÃO DE PAGAMENTO · PLACEHOLDER
+// -------------------------------------------------------------
+// Substitua os valores abaixo quando o cliente decidir.
+// =============================================================
+const PIX_CHAVE: string | null = null; // ex.: "doacoes@infinitudes.com.br" ou CNPJ
+const PIX_TIPO = "E-mail"; // "CPF" / "CNPJ" / "E-mail" / "Telefone" / "Aleatória"
+const PIX_TITULAR = "[Titular a definir]"; // nome que aparece pra confirmação
+
+const PLATAFORMA_RECORRENTE: { nome: string; url: string } | null = null;
+// ex.: { nome: "Apoia.se", url: "https://apoia.se/infinitudes" }
+
+const CONTATO_DOACOES = "contato@infinitudes.com.br";
+
+// Incentivo fiscal — placeholder. Se o projeto NÃO estiver em
+// nenhum incentivo fiscal aprovado, esta seção pode ser removida
+// (o JSX abaixo já checa por `INCENTIVO_FISCAL_ATIVO`).
+const INCENTIVO_FISCAL_ATIVO = false;
+const INCENTIVO_FISCAL_TEXTO =
+  "[A definir: o projeto está aprovado em alguma lei de incentivo? Lei Rouanet (federal), ProAC (SP), Lei Aldir Blanc, ou outra? Se sim, descrever aqui o benefício fiscal — quem pode deduzir, até quanto, e qual o passo a passo. Se não, manter esta seção oculta.]";
+---
+
+<Layout
+  title="Apoie o (In)finitudes — Quero ser um doador"
+  description="O (In)finitudes é um projeto cultural independente. Conheça as formas de apoiar e o que sua contribuição financia."
+>
+  <Header />
+
+  <main>
+    {/* 1 · Cabeçalho da página */}
+    <section class="max-w-5xl mx-auto px-6 lg:px-12">
+      <SectionTitle eyebrow="Apoio" title="Apoie o (In)finitudes" />
+    </section>
+
+    {/* 2 · Por que apoiar? — bloco "O que é?" editorial */}
+    <section class="bg-paper-soft border-y border-rule/60">
+      <div class="max-w-3xl mx-auto px-6 py-14 lg:py-20 text-center">
+        <p class="eyebrow text-rouge">Por que apoiar?</p>
+        <p
+          class="font-serif text-[18px] lg:text-[20px] leading-[1.6] mt-5 text-ink-soft"
+        >
+          {SOBRE_O_APOIO}
+        </p>
+      </div>
+    </section>
+
+    {/* 3 · Para onde vai sua contribuição */}
+    <section class="max-w-5xl mx-auto px-6 lg:px-12 py-16 lg:py-20">
+      <div class="text-center mb-10 lg:mb-14">
+        <p class="eyebrow text-rouge">Para onde vai</p>
+        <h2
+          class="font-display text-[28px] sm:text-[34px] lg:text-[40px] leading-[1.1] mt-3 font-normal tracking-[-0.005em]"
+        >
+          O que sua contribuição financia
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-x-12 lg:gap-y-10">
+        {
+          INICIATIVAS.map((item, idx) => (
+            <article class="flex gap-5">
+              <span
+                class="font-display text-[28px] lg:text-[32px] leading-none text-rouge flex-shrink-0 w-10"
+                aria-hidden="true"
+              >
+                {String(idx + 1).padStart(2, "0")}
+              </span>
+              <div>
+                <h3 class="font-display text-[18px] lg:text-[20px] leading-[1.2] font-medium">
+                  {item.title}
+                </h3>
+                <p class="font-serif text-[15px] lg:text-[16px] leading-[1.55] mt-2 text-ink/75">
+                  {item.description}
+                </p>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <Divider variant="rouge" gap="my-0" />
+
+    {/* 4 · Como apoiar */}
+    <section class="max-w-5xl mx-auto px-6 lg:px-12 py-16 lg:py-20">
+      <div class="text-center mb-12 lg:mb-16">
+        <p class="eyebrow text-rouge">Como apoiar</p>
+        <h2
+          class="font-display text-[28px] sm:text-[34px] lg:text-[40px] leading-[1.1] mt-3 font-normal tracking-[-0.005em]"
+        >
+          Escolha a forma que faz sentido pra você
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+        {/* PIX — Doação única */}
+        <article class="border border-rule/60 p-8 lg:p-10 flex flex-col">
+          <p class="eyebrow text-rouge">Doação única</p>
+          <h3
+            class="font-display text-[24px] lg:text-[28px] leading-[1.15] mt-3 font-medium"
+          >
+            PIX
+          </h3>
+          <p
+            class="font-serif text-[15px] lg:text-[16px] leading-[1.55] mt-4 text-ink/75 flex-grow"
+          >
+            Contribuição avulsa, sem cadastro, com confirmação imediata. Você
+            escolhe o valor.
+          </p>
+
+          {
+            PIX_CHAVE ? (
+              <div class="mt-6 bg-paper-soft border border-rule/60 p-5">
+                <p class="meta mb-2">Chave PIX ({PIX_TIPO})</p>
+                <p class="font-mono text-[14px] break-all select-all">
+                  {PIX_CHAVE}
+                </p>
+                <p class="meta mt-3">Titular: {PIX_TITULAR}</p>
+              </div>
+            ) : (
+              <div
+                class="mt-6 bg-paper-soft border border-dashed border-rule p-5 text-left"
+                aria-label="Chave PIX a definir"
+              >
+                <p class="meta mb-2 text-rouge">
+                  ⚠ Chave PIX em configuração
+                </p>
+                <p class="font-serif text-[13px] leading-[1.5] text-ink/65">
+                  Por enquanto, escreva para <strong>{CONTATO_DOACOES}</strong>{" "}
+                  que enviamos os dados de PIX por retorno.
+                </p>
+              </div>
+            )
+          }
+        </article>
+
+        {/* Recorrente — plataforma externa */}
+        <article class="border border-rouge bg-rouge text-paper p-8 lg:p-10 flex flex-col">
+          <p
+            class="font-sans text-[11px] font-medium tracking-[0.22em] uppercase text-paper/80"
+          >
+            Apoio recorrente
+          </p>
+          <h3
+            class="font-display text-[24px] lg:text-[28px] leading-[1.15] mt-3 font-medium"
+          >
+            Apoie todo mês
+          </h3>
+          <p
+            class="font-serif text-[15px] lg:text-[16px] leading-[1.55] mt-4 text-paper/90 flex-grow"
+          >
+            Doação mensal automática no cartão. Cancele quando quiser, sem
+            burocracia. O apoio recorrente é o que dá previsibilidade ao
+            projeto.
+          </p>
+
+          {
+            PLATAFORMA_RECORRENTE ? (
+              <a
+                href={PLATAFORMA_RECORRENTE.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="mt-6 inline-flex items-center justify-center bg-paper text-rouge px-6 py-3.5 text-[11px] font-medium tracking-[0.22em] uppercase hover:bg-paper/90 transition-colors"
+              >
+                Apoiar via {PLATAFORMA_RECORRENTE.nome}
+                <span class="ml-2" aria-hidden="true">
+                  ↗
+                </span>
+              </a>
+            ) : (
+              <div
+                class="mt-6 border border-dashed border-paper/40 p-5"
+                aria-label="Plataforma de recorrência em configuração"
+              >
+                <p
+                  class="font-sans text-[11px] font-medium tracking-[0.22em] uppercase text-paper/80 mb-2"
+                >
+                  ⚠ Em configuração
+                </p>
+                <p class="font-serif text-[13px] leading-[1.5] text-paper/90">
+                  A plataforma de apoio mensal está sendo definida (Apoia.se ou
+                  Benfeitoria). Enquanto isso, use o PIX ao lado ou escreva
+                  para {CONTATO_DOACOES}.
+                </p>
+              </div>
+            )
+          }
+        </article>
+      </div>
+
+      {/* Doação corporativa / patrocínio */}
+      <div class="mt-12 lg:mt-16 max-w-2xl mx-auto text-center">
+        <p class="eyebrow text-rouge">Empresas e parcerias</p>
+        <h3
+          class="font-display text-[22px] lg:text-[26px] leading-[1.15] mt-3 font-medium"
+        >
+          Patrocínio corporativo
+        </h3>
+        <p
+          class="font-serif text-[15px] lg:text-[16px] leading-[1.6] mt-4 text-ink/75"
+        >
+          Empresas, fundações e organizações interessadas em apoiar o (In)finitudes
+          de forma estruturada podem entrar em contato para discutir contrapartidas,
+          formatos de patrocínio e — quando aplicável — incentivo fiscal.
+        </p>
+        <a
+          href={`mailto:${CONTATO_DOACOES}?subject=Patroc%C3%ADnio%20corporativo`}
+          class="inline-block mt-6 border border-rouge text-rouge px-6 py-3 text-[11px] font-medium tracking-[0.22em] uppercase hover:bg-rouge hover:text-paper transition-colors"
+        >
+          Falar com a equipe
+        </a>
+      </div>
+    </section>
+
+    {/* 5 · Incentivo fiscal — só aparece se ativo */}
+    {
+      INCENTIVO_FISCAL_ATIVO && (
+        <>
+          <Divider variant="rouge" gap="my-0" />
+          <section class="max-w-3xl mx-auto px-6 lg:px-12 py-16 lg:py-20">
+            <div class="text-center mb-8">
+              <p class="eyebrow text-rouge">Benefício fiscal</p>
+              <h2 class="font-display text-[24px] lg:text-[30px] leading-[1.15] mt-3 font-medium">
+                Sua doação pode ser deduzida do imposto de renda
+              </h2>
+            </div>
+            <p class="font-serif text-[15px] lg:text-[16px] leading-[1.65] text-ink/80 text-center">
+              {INCENTIVO_FISCAL_TEXTO}
+            </p>
+          </section>
+        </>
+      )
+    }
+
+    {/* 6 · Transparência editorial · disclaimer */}
+    <aside
+      class="max-w-3xl mx-auto px-6 lg:px-12 pb-16 lg:pb-20"
+      aria-label="Aviso editorial"
+    >
+      <div class="border-t border-rule/50 pt-8">
+        <p
+          class="font-sans text-[11px] font-medium tracking-[0.22em] uppercase text-rouge mb-3"
+        >
+          Transparência
+        </p>
+        <p class="font-serif text-[13px] lg:text-[14px] leading-[1.6] text-ink/65">
+          O (In)finitudes não tem fins lucrativos e seus recursos são aplicados
+          integralmente nas iniciativas listadas acima. Periodicamente
+          publicaremos relatórios simples de uso dos recursos. Dúvidas, sugestões
+          ou pedidos de prestação de contas: <a
+            href={`mailto:${CONTATO_DOACOES}`}
+            class="text-rouge underline-offset-4 hover:underline"
+            >{CONTATO_DOACOES}</a
+          >.
+        </p>
+      </div>
+    </aside>
+
+    <NewsletterSection />
+  </main>
+
+  <Footer />
+</Layout>

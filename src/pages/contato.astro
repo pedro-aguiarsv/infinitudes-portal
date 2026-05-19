@@ -1,0 +1,219 @@
+---
+// =============================================================
+// /contato · Página de Contato
+// -------------------------------------------------------------
+// Página estática com:
+//   1. Hero editorial · título + dek
+//   2. Coluna esquerda · canais de contato (e-mail, redes sociais,
+//      imprensa) com aquarela decorativa
+//   3. Coluna direita · formulário de mensagem
+//   4. Newsletter + Footer
+//
+// O e-mail oficial e os links de redes sociais ainda estão como
+// placeholder — serão preenchidos quando a cliente enviar.
+// O formulário é HTML puro (action="" hoje) — quando a cliente
+// definir o destino (Formspree / Netlify Forms / e-mail próprio),
+// basta atualizar a action.
+// =============================================================
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import NewsletterSection from "../components/NewsletterSection.astro";
+import WatercolorAccent from "../components/WatercolorAccent.astro";
+import Divider from "../components/Divider.astro";
+
+// TODO · substituir pelo e-mail oficial quando a cliente enviar.
+const CONTATO_EMAIL = "contato@infinitudes.com.br";
+
+const CANAIS = [
+  {
+    label: "E-mail editorial",
+    value: CONTATO_EMAIL,
+    href: `mailto:${CONTATO_EMAIL}`,
+    eyebrow: "Imprensa, parcerias e curadoria",
+  },
+  {
+    label: "E-mail editorial",
+    value: CONTATO_EMAIL,
+    href: `mailto:${CONTATO_EMAIL}`,
+    eyebrow: "Quer entender melhor nosso projeto?",
+  },
+];
+---
+
+<Layout
+  title="Contato — (In)finitudes"
+  description="Fale com a equipe (In)finitudes. Imprensa, parcerias, curadoria e leitores."
+>
+  <Header />
+
+  <main>
+    {/* ============================================================
+        1 · HERO
+        ============================================================ */}
+    <section class="max-w-5xl mx-auto px-6 lg:px-12 pt-12 lg:pt-16 pb-10 text-center">
+      <p class="eyebrow">Fale com a redação</p>
+      <h1
+        class="font-display text-[40px] sm:text-[56px] lg:text-[72px] leading-[1.02] mt-3 font-normal tracking-[-0.01em] uppercase"
+      >
+        Contato
+      </h1>
+      <p
+        class="font-serif italic text-[18px] lg:text-[20px] leading-[1.5] mt-5 text-ink/80 max-w-2xl mx-auto"
+      >
+        Receberemos com cuidado pautas, propostas, dúvidas e relatos. As respostas
+        não são automáticas — chegam sempre depois de uma leitura inteira.
+      </p>
+    </section>
+
+    <div class="max-w-6xl mx-auto px-6 lg:px-12">
+      <Divider variant="rouge" gap="my-2" />
+    </div>
+
+    {/* ============================================================
+        2 · CANAIS + FORMULÁRIO
+        ============================================================ */}
+    <section class="max-w-6xl mx-auto px-6 lg:px-12 py-16 lg:py-20">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+        {/* Esquerda · canais */}
+        <div class="lg:col-span-5 relative">
+          <WatercolorAccent
+            variant="black-blob"
+            class="absolute -top-10 -left-10 w-[60%] opacity-30 pointer-events-none hidden lg:block"
+          />
+
+          <p class="eyebrow text-rouge">Canais</p>
+          <h2
+            class="font-display text-[28px] lg:text-[36px] leading-[1.1] mt-3 font-normal tracking-[-0.005em]"
+          >
+            Onde nos encontrar.
+          </h2>
+          <p
+            class="font-serif text-[16px] lg:text-[17px] leading-[1.55] mt-5 text-ink/80"
+          >
+            Para envio de releases, propostas comerciais ou histórias para a
+            seção <em class="text-rouge">Curadoria</em>, prefira sempre o e-mail.
+          </p>
+
+          <ul class="mt-10 border-t border-rule/60">
+            {
+              CANAIS.map((c) => (
+                <li class="py-5 border-b border-rule/60">
+                  <span class="meta block">{c.eyebrow}</span>
+                  <a
+                    href={c.href}
+                    class="font-display italic text-[20px] lg:text-[24px] mt-1 block text-ink hover:text-rouge transition-colors"
+                  >
+                    {c.value}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        {/* Direita · formulário */}
+        <div class="lg:col-span-7">
+          <p class="eyebrow text-rouge">Mensagem direta</p>
+          <h2
+            class="font-display text-[28px] lg:text-[36px] leading-[1.1] mt-3 font-normal tracking-[-0.005em]"
+          >
+            Escreva para o (In)finitudes
+          </h2>
+          <p
+            class="font-serif text-[16px] lg:text-[17px] leading-[1.55] mt-5 text-ink/80"
+          >
+            Seu recado chega direto na caixa da redação. Costumamos responder em
+            até 5 dias úteis.
+          </p>
+
+          <form
+            action=""
+            method="POST"
+            class="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-5"
+            onsubmit="event.preventDefault();"
+          >
+            <label class="flex flex-col gap-2 sm:col-span-1">
+              <span class="meta">Nome</span>
+              <input
+                type="text"
+                name="nome"
+                required
+                class="bg-transparent border border-rule px-4 py-3 text-[15px] focus:outline-none focus:border-rouge transition-colors"
+              />
+            </label>
+
+            <label class="flex flex-col gap-2 sm:col-span-1">
+              <span class="meta">E-mail</span>
+              <input
+                type="email"
+                name="email"
+                required
+                class="bg-transparent border border-rule px-4 py-3 text-[15px] focus:outline-none focus:border-rouge transition-colors"
+              />
+            </label>
+
+            <label class="flex flex-col gap-2 sm:col-span-2">
+              <span class="meta">Assunto</span>
+              <select
+                name="assunto"
+                required
+                class="bg-transparent border border-rule px-4 py-3 text-[15px] focus:outline-none focus:border-rouge transition-colors"
+              >
+                <option value="">Selecione um assunto…</option>
+                <option value="imprensa">Imprensa / parcerias</option>
+                <option value="curadoria">Envio de história (Curadoria)</option>
+                <option value="hub-infinito">Participar do Hub Infinito</option>
+                <option value="doacao">Quero ser um doador</option>
+                <option value="livro">Dúvidas sobre o livro</option>
+                <option value="loja">Pedidos da loja</option>
+                <option value="outro">Outro</option>
+              </select>
+            </label>
+
+            <label class="flex flex-col gap-2 sm:col-span-2">
+              <span class="meta">Mensagem</span>
+              <textarea
+                name="mensagem"
+                required
+                rows="6"
+                class="bg-transparent border border-rule px-4 py-3 text-[15px] leading-[1.5] focus:outline-none focus:border-rouge transition-colors resize-y"
+              ></textarea>
+            </label>
+
+            <label
+              class="sm:col-span-2 flex items-start gap-2 cursor-pointer text-[12px] leading-[1.4] text-ink/75"
+            >
+              <input
+                type="checkbox"
+                required
+                class="mt-0.5 accent-rouge"
+              />
+              <span>
+                Concordo com a <a href="/privacidade" class="underline">Política
+                de Privacidade</a> e autorizo o uso dos meus dados apenas para
+                resposta ao contato.
+              </span>
+            </label>
+
+            <button
+              type="submit"
+              class="sm:col-span-2 mt-2 bg-rouge text-paper px-8 py-3.5 text-[11px] font-medium tracking-[0.22em] uppercase hover:bg-rouge-deep transition-colors"
+            >
+              Enviar mensagem
+            </button>
+          </form>
+
+          <p class="meta mt-4">
+            Atenção · este formulário ainda está em fase de configuração. Para
+            envios urgentes, use o e-mail.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <NewsletterSection />
+  </main>
+
+  <Footer />
+</Layout>

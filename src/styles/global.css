@@ -31,10 +31,17 @@
   font-display: swap;
 }
 
+/* Myriad Variable Concept é variable font com dois eixos:
+   · wght (peso):   300 (Light)     → 900 (Black)
+   · wdth (largura): 70 (Condensed) → 110 (Wide)
+   Default da fonte: 300/70 (Light Condensed). Por isso o body
+   abaixo seta explicitamente wght:400, wdth:100 — para que o
+   corpo padrão saia em Regular Normal, e não em Light Condensed. */
 @font-face {
   font-family: "Myriad Variable Concept";
-  src: url("/fonts/myriad-variable-concept.otf") format("opentype");
-  font-weight: 100 900;
+  src: url("/fonts/myriad-variable-concept.otf") format("opentype-variations");
+  font-weight: 300 900;
+  font-stretch: 70% 110%;
   font-style: normal;
   font-display: swap;
 }
@@ -88,6 +95,12 @@
     background-color: var(--color-paper);
     color: var(--color-ink);
     font-family: var(--font-sans);
+    /* Força peso Regular (400) e largura Normal (100) como padrão
+       da variable font Myriad. Sem isso, a fonte cai no default dela
+       (300 Light + 70 Condensed), que fica fino e comprimido. */
+    font-weight: 400;
+    font-stretch: 100%;
+    font-variation-settings: "wght" 400, "wdth" 100;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }

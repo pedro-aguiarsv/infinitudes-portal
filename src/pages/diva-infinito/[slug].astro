@@ -2,18 +2,17 @@
 // =============================================================
 // /diva-infinito/[slug] · Episódio individual (page-08)
 // -------------------------------------------------------------
-// Rota dinâmica que renderiza um episódio. Pega o post pelo slug
-// (posts com category="diva-infinito" são episódios) e mostra:
+// Mostra:
 //   1. SectionTitle "Videocast Divã Infinito"
-//   2. Botão pequeno bordô (ouvir / assinar)
-//   3. "Episódio N" título centralizado
-//   4. Descrição curta centralizada
-//   5. Player de vídeo 16:9 (placeholder ou videoUrl do Sanity)
-//   6. "TODOS OS EPISÓDIOS" header + lista à esquerda +
-//      aquarela decorativa à direita
+//   2. Botão pequeno bordô "Ouvir / Ver"
+//   3. Título do episódio + descrição centralizada
+//   4. Player (YouTube ou Spotify) ou placeholder
+//   5. Show notes (Portable Text) opcional
+//   6. "TODOS OS EPISÓDIOS" lista + aquarela decorativa
 //   7. Newsletter + Footer
 //
-// Quando não houver post real, cai em fake editorial.
+// Lê o schema `episode` do Sanity. Quando não há episódios reais,
+// gera 3 rotas fake para preview de design.
 // =============================================================
 import Layout from "../../layouts/Layout.astro";
 import Header from "../../components/Header.astro";
@@ -22,81 +21,107 @@ import NewsletterSection from "../../components/NewsletterSection.astro";
 import SectionTitle from "../../components/SectionTitle.astro";
 import Divider from "../../components/Divider.astro";
 import WatercolorAccent from "../../components/WatercolorAccent.astro";
-import { getPostsByCategory, urlFor, type PostPreview } from "../../lib/sanity";
+import EpisodePlayer from "../../components/EpisodePlayer.astro";
+import { PortableText } from "astro-portabletext";
+import PTBlock from "../../components/portable-text/PTBlock.astro";
+import {
+  getAllEpisodes,
+  urlFor,
+  type EpisodePreview,
+} from "../../lib/sanity";
 
 export async function getStaticPaths() {
-  const eps = await getPostsByCategory("diva-infinito");
+  const eps = await getAllEpisodes();
   if (eps.length === 0) {
-    // Gera 3 rotas fake só pra dev preview (episodio-1, 2, 3)
+    // Gera 3 rotas fake para preview de design.
     return [1, 2, 3].map((n) => ({
       params: { slug: `episodio-${n}` },
-      props: { episodeNumber: n, post: null },
+      props: { episode: null, episodeNumber: n },
     }));
   }
-  return eps.map((ep, idx) => ({
+  return eps.map((ep) => ({
     params: { slug: ep.slug },
-    props: { episodeNumber: idx + 1, post: ep },
+    props: { episode: ep, episodeNumber: ep.number },
   }));
 }
 
-const { episodeNumber, post } = Astro.props as {
+const { episode, episodeNumber } = Astro.props as {
+  episode: EpisodePreview | null;
   episodeNumber: number;
-  post: PostPreview | null;
 };
 
-const all = await getPostsByCategory("diva-infinito");
+const all = await getAllEpisodes();
 
 // Lista de "outros episódios" — exclui o atual
 const otherEps = all
-  .filter((e) => e._id !== post?._id)
+  .filter((e) => e._id !== episode?._id)
   .slice(0, 4);
 
-// Fallback fake quando não há posts reais
+// Fallback fake quando não há episódios reais
 type FakeEp = {
   title: string;
-  excerpt: string;
+  description: string;
   date: string;
   href: string;
 };
 const FAKE_OTHERS: FakeEp[] = [
   {
-    title: "Shutfalo: Wednesday, May 6, 2026",
-    excerpt: "Can you make a longer word with each new letter?",
-    date: "5 de Maio de 2026",
-    href: "/diva-infinito/episodio-2",
-  },
-  {
-    title: "Muriel Spark, the Double Agent",
-    excerpt:
-      "A new biography claims that novelist fabricated her origin story — but that secret codes lie at the heart of her genius.",
-    date: "5 de Maio de 2026",
-    href: "/diva-infinito/episodio-3",
-  },
-  {
-    title: "How the Iran War Is Shifting Power Toward China",
-    excerpt:
-      "As the U.K.'s credibility and military capacity are tested abroad, China has gained leverage by staying out the fight and learning from it.",
-    date: "5 de Maio de 2026",
+    title: "Divã Infinito · Episódio 1",
+    description: "Conversa de abertura sobre presença e escuta.",
+    date: "Em breve",
     href: "/diva-infinito/episodio-1",
   },
   {
-    title: "The Crossword Wednesday, May 6, 2026",
-    excerpt: "Earth's driest and coldest continent: ten letters.",
-    date: "5 de Maio de 2026",
+    title: "Divã Infinito · Episódio 2",
+    description: "O cuidado como linguagem.",
+    date: "Em breve",
     href: "/diva-infinito/episodio-2",
+  },
+  {
+    title: "Divã Infinito · Episódio 3",
+    description: "Espiritualidade laica e cuidados paliativos.",
+    date: "Em breve",
+    href: "/diva-infinito/episodio-3",
   },
 ];
 
-const showFakeOthers = !post && otherEps.length === 0;
+const showFakeOthers = !episode && otherEps.length === 0;
 
-const heroImage = post?.mainImage
-  ? urlFor(post.mainImage).width(1600).height(900).fit("crop").auto("format").url()
+const epTitle = episode?.title ?? `Episódio ${episodeNumber}`;
+const epDek =
+  episode?.description ??
+  "Em breve · primeiros episódios do videocast Divã Infinito.";
+
+const posterUrl = episode?.thumbnail
+  ? urlFor(episode.thumbnail).width(1600).height(900).fit("crop").auto("format").url()
   : null;
 
-const epTitle = post?.title ?? `Episódio ${episodeNumber}`;
-const epDek =
-  post?.excerpt ??
-  "The New Yorker's editor, David Remnick, presents interviews, profiles, and humor, in a co-production with WNYC Studios.";
+const formattedDate = episode?.publishedAt
+  ? new Intl.DateTimeFormat("pt-BR", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }).format(new Date(episode.publishedAt))
+  : null;
+
+// Show notes só vamos buscar para o episódio atual (precisa do detalhe).
+// Como `getAllEpisodes` não traz showNotes, fazemos lazy fetch via slug
+// quando há episódio real.
+import { getEpisodeBySlug } from "../../lib/sanity";
+const fullEpisode = episode ? await getEpisodeBySlug(episode.slug) : null;
+const hasShowNotes =
+  fullEpisode &&
+  Array.isArray(fullEpisode.showNotes) &&
+  fullEpisode.showNotes.length > 0;
+
+const ptComponents = {
+  block: {
+    normal: PTBlock,
+    h2: PTBlock,
+    h3: PTBlock,
+    blockquote: PTBlock,
+  },
+};
 ---
 
 <Layout title={`${epTitle} — Divã Infinito`}>
@@ -108,14 +133,14 @@ const epDek =
       <SectionTitle
         eyebrow="Seção"
         title="Videocast Divã Infinito"
-        subtitle="Relatos e ensaios autorais."
+        subtitle="Conversas em torno dos episódios."
       />
       <div class="text-center -mt-6 mb-2">
         <a
           href="/diva-infinito"
           class="inline-block bg-rouge text-paper px-4 py-1.5 text-[10px] font-medium tracking-[0.22em] uppercase hover:bg-rouge-deep transition-colors"
         >
-          Ouvir
+          Ver todos
         </a>
       </div>
     </section>
@@ -124,10 +149,11 @@ const epDek =
       <Divider variant="rouge" gap="my-8" />
     </div>
 
-    {/* 2 · Título "Episódio N" + descrição */}
+    {/* 2 · Título + descrição */}
     <section class="max-w-3xl mx-auto px-6 text-center">
+      <p class="eyebrow">Episódio {episodeNumber}</p>
       <h2
-        class="font-display text-[36px] sm:text-[44px] lg:text-[52px] leading-[1.05] font-normal tracking-[-0.01em]"
+        class="font-display text-[36px] sm:text-[44px] lg:text-[52px] leading-[1.05] mt-3 font-normal tracking-[-0.01em]"
       >
         {epTitle}
       </h2>
@@ -136,50 +162,43 @@ const epDek =
       >
         {epDek}
       </p>
+      {
+        episode?.guests && (
+          <p class="meta mt-3 text-rouge">{episode.guests}</p>
+        )
+      }
+      {
+        formattedDate && (
+          <p class="meta mt-2">{formattedDate}{episode?.duration ? ` · ${episode.duration}` : ""}</p>
+        )
+      }
     </section>
 
-    {/* 3 · Video player 16:9 */}
+    {/* 3 · Player */}
     <section class="max-w-4xl mx-auto px-6 lg:px-12 mt-10 lg:mt-12">
-      <figure class="w-full aspect-video bg-ink/85 overflow-hidden relative">
-        {
-          heroImage ? (
-            <img
-              src={heroImage}
-              alt={post?.mainImage?.alt ?? epTitle}
-              class="w-full h-full object-cover"
-              loading="eager"
-            />
-          ) : (
-            <div
-              class="ph w-full h-full"
-              data-label="Player de vídeo · 16:9"
-            />
-          )
-        }
-        {/* Play button overlay */}
-        <button
-          type="button"
-          class="absolute inset-0 flex items-center justify-center group"
-          aria-label="Reproduzir episódio"
-        >
-          <span
-            class="w-20 h-20 rounded-full bg-rouge/90 group-hover:bg-rouge text-paper flex items-center justify-center transition-colors"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              width="32"
-              height="32"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path d="M8 5v14l11-7z" />
-            </svg>
-          </span>
-        </button>
-      </figure>
+      <EpisodePlayer
+        videoUrl={episode?.videoUrl ?? null}
+        title={epTitle}
+        posterUrl={posterUrl}
+        posterAlt={episode?.thumbnail?.alt ?? epTitle}
+      />
     </section>
 
-    {/* 4 · "TODOS OS EPISÓDIOS" + lista + aquarela decorativa */}
+    {/* 4 · Show notes (opcional) */}
+    {
+      hasShowNotes && (
+        <section class="max-w-2xl mx-auto px-6 py-12 lg:py-16">
+          <p class="eyebrow text-center">Show notes</p>
+          <div
+            class="font-serif text-[16px] lg:text-[17px] leading-[1.7] mt-6 space-y-4 text-ink-soft"
+          >
+            <PortableText value={fullEpisode!.showNotes as unknown[]} components={ptComponents} />
+          </div>
+        </section>
+      )
+    }
+
+    {/* 5 · "TODOS OS EPISÓDIOS" + lista + aquarela */}
     <section class="max-w-6xl mx-auto px-6 lg:px-12 py-16 lg:py-20">
       <header class="text-center mb-10">
         <div class="rouge-line max-w-md mx-auto mb-6"></div>
@@ -191,39 +210,58 @@ const epDek =
       </header>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
-        {/* Lista de outros episódios · 7 colunas */}
         <div class="lg:col-span-7">
           {
             (showFakeOthers ? FAKE_OTHERS : otherEps).map((ep, idx) => (
               <>
                 {idx > 0 && <Divider variant="rule" />}
                 <a
-                  href={showFakeOthers ? (ep as FakeEp).href : `/diva-infinito/${(ep as PostPreview).slug}`}
+                  href={
+                    showFakeOthers
+                      ? (ep as FakeEp).href
+                      : `/diva-infinito/${(ep as EpisodePreview).slug}`
+                  }
                   class="group grid grid-cols-12 gap-4 py-5 items-start"
                 >
                   <div class="col-span-12 sm:col-span-8">
                     <h4 class="font-display text-[18px] lg:text-[20px] leading-[1.2] font-medium group-hover:text-rouge transition-colors">
-                      {showFakeOthers ? (ep as FakeEp).title : (ep as PostPreview).title}
+                      {showFakeOthers
+                        ? (ep as FakeEp).title
+                        : (ep as EpisodePreview).title}
                     </h4>
                     <p class="font-serif text-[14px] lg:text-[15px] leading-[1.5] mt-2 text-ink/75">
                       {showFakeOthers
-                        ? (ep as FakeEp).excerpt
-                        : (ep as PostPreview).excerpt}
+                        ? (ep as FakeEp).description
+                        : (ep as EpisodePreview).description}
                     </p>
                     <div class="meta mt-2">
                       {showFakeOthers
                         ? (ep as FakeEp).date
-                        : (ep as PostPreview).publishedAt
+                        : (ep as EpisodePreview).publishedAt
                           ? new Intl.DateTimeFormat("pt-BR", {
                               day: "numeric",
                               month: "long",
                               year: "numeric",
-                            }).format(new Date((ep as PostPreview).publishedAt))
+                            }).format(new Date((ep as EpisodePreview).publishedAt))
                           : ""}
                     </div>
                   </div>
                   <div class="col-span-12 sm:col-span-4">
-                    <div class="ph w-full aspect-square" data-label="Thumb" />
+                    {!showFakeOthers && (ep as EpisodePreview).thumbnail ? (
+                      <img
+                        src={urlFor((ep as EpisodePreview).thumbnail!)
+                          .width(400)
+                          .height(400)
+                          .fit("crop")
+                          .auto("format")
+                          .url()}
+                        alt={(ep as EpisodePreview).thumbnail?.alt ?? (ep as EpisodePreview).title}
+                        class="w-full aspect-square object-cover"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div class="ph w-full aspect-square" data-label="Thumb" />
+                    )}
                   </div>
                 </a>
               </>
@@ -231,7 +269,7 @@ const epDek =
           }
         </div>
 
-        {/* Aquarela decorativa · 5 colunas */}
+        {/* Aquarela decorativa */}
         <div class="hidden lg:flex lg:col-span-5 justify-center items-start">
           <WatercolorAccent
             variant="black-blob"

@@ -4,9 +4,9 @@
 // -------------------------------------------------------------
 // Composição editorial:
 //   1. Header
-//   2. HeroFeatured        ← "capa de revista" com headline + masthead
+//   2. HeroFeatured        ← "capa de revista" com masthead + assinatura
 //   3. FeaturedEssay       ← ensaio de capa com aquarela preta
-//   4. Grid de 3 posts     ← Outras Histórias (faixa sem título)
+//   4. Grid de 3 posts     ← faixa direta sem título de seção
 //   5. BookSection         ← banner bordô do livro
 //   6. LongEssayHighlight  ← ensaio longo com capitular
 //   7. NewsletterSection   ← captura de e-mail
@@ -28,21 +28,14 @@ import { getAllPosts, type PostPreview } from "../lib/sanity";
 import { getCategory } from "../lib/categories";
 
 const posts = await getAllPosts();
-const [featured, ...rest] = posts;
-const gridPosts = rest.slice(0, 3);
+const gridPosts = posts.slice(0, 3);
 
-// Hero · headline aponta para o post mais recente
-const heroContent = featured
-  ? {
-      headline: featured.title,
-      href: featured.category
-        ? `/${featured.category}/${featured.slug}`
-        : `/${featured.slug}`,
-      edition: "Alunos · Santos",
-    }
-  : undefined;
+// Hero · masthead + assinatura institucional fixa
+const heroContent = {
+  edition: "Projeto cultural idealizado por Eleonora Santos",
+};
 
-// Ensaio de capa (segundo post mais recente ou featured se for único)
+// Ensaio de capa (segundo post mais recente ou primeiro se for único)
 const featuredEssay = posts[1] ?? posts[0];
 const essayContent = featuredEssay
   ? {
@@ -116,7 +109,7 @@ const hasRealPosts = gridPosts.length > 0;
   <Header />
 
   <main>
-    {/* 1 · Capa de revista · headline + masthead + aquarela vermelha */}
+    {/* 1 · Capa de revista · masthead + assinatura + aquarela vermelha */}
     <HeroFeatured hero={heroContent} />
 
     {/* 2 · Ensaio de capa · aquarela preta + título + dek */}

@@ -1,0 +1,250 @@
+---
+// =============================================================
+// /privacidade · Política de Privacidade (LGPD)
+// -------------------------------------------------------------
+// Template editorial padrão LGPD (Lei nº 13.709/2018) adaptado
+// ao tipo de operação do portal (In)finitudes:
+//   · Newsletter editorial
+//   · Loja de produtos físicos (e-commerce)
+//   · Formulário de contato
+//
+// O texto é generalista e juridicamente coerente, mas a cliente
+// (e idealmente um(a) advogado(a)) deve revisar antes do go-live.
+// Os campos entre <CONFIRMAR> são placeholders explícitos para
+// dados que precisam ser preenchidos.
+// =============================================================
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import Divider from "../components/Divider.astro";
+
+const updatedAt = new Intl.DateTimeFormat("pt-BR", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+}).format(new Date());
+
+// TODO · trocar pelo e-mail oficial quando a cliente enviar
+const CONTATO_EMAIL = "contato@infinitudes.com.br";
+// TODO · confirmar nome do controlador (PF ou PJ) com a cliente
+const CONTROLADOR = "Eleonora Cruz Santos";
+const CIDADE_FORO = "São Paulo/SP";
+---
+
+<Layout
+  title="Política de Privacidade — (In)finitudes"
+  description="Como tratamos dados pessoais no portal (In)finitudes, conforme a LGPD."
+>
+  <Header />
+
+  <main>
+    <article class="max-w-3xl mx-auto px-6 py-16 lg:py-24">
+      <header class="text-center">
+        <p class="eyebrow">Documento legal</p>
+        <h1
+          class="font-display text-[36px] sm:text-[48px] lg:text-[56px] leading-[1.05] mt-3 font-normal tracking-[-0.01em]"
+        >
+          Política de Privacidade
+        </h1>
+        <p class="meta mt-4">Última atualização · {updatedAt}</p>
+        <Divider variant="rouge" gap="my-10 max-w-md mx-auto" />
+      </header>
+
+      <div
+        class="font-serif text-[16px] lg:text-[17px] leading-[1.7] text-ink-soft space-y-4 [&_h2]:font-display [&_h2]:text-[22px] [&_h2]:lg:text-[26px] [&_h2]:font-normal [&_h2]:text-ink [&_h2]:mt-12 [&_h2]:mb-3 [&_h3]:font-sans [&_h3]:text-[12px] [&_h3]:font-medium [&_h3]:tracking-[0.20em] [&_h3]:uppercase [&_h3]:text-rouge [&_h3]:mt-8 [&_h3]:mb-2 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-2 [&_a]:underline [&_a]:text-rouge [&_strong]:text-ink [&_strong]:font-medium"
+      >
+        <p>
+          O portal <strong>(In)finitudes</strong> respeita a sua privacidade e está
+          comprometido em proteger os dados pessoais de leitores, assinantes e
+          clientes. Esta Política descreve como coletamos, usamos, armazenamos e
+          compartilhamos dados, em conformidade com a <strong>Lei Geral de Proteção
+          de Dados Pessoais — Lei nº 13.709/2018 (LGPD)</strong>.
+        </p>
+
+        <h2>1. Quem é o controlador dos seus dados</h2>
+        <p>
+          O controlador dos dados pessoais coletados neste site é
+          <strong>{CONTROLADOR}</strong>, com contato disponível pelo e-mail
+          <a href={`mailto:${CONTATO_EMAIL}`}>{CONTATO_EMAIL}</a>.
+        </p>
+
+        <h2>2. Quais dados coletamos</h2>
+
+        <h3>2.1 · Newsletter</h3>
+        <p>
+          Quando você assina nossa newsletter, coletamos seu <strong>nome</strong>
+          (opcional) e <strong>endereço de e-mail</strong>.
+        </p>
+
+        <h3>2.2 · Formulário de contato</h3>
+        <p>
+          No formulário em <a href="/contato">/contato</a>, coletamos
+          <strong>nome, e-mail, assunto e o conteúdo da mensagem</strong>. Esses
+          dados são usados exclusivamente para responder ao contato.
+        </p>
+
+        <h3>2.3 · Loja</h3>
+        <p>
+          Para processar pedidos da loja, coletamos:
+        </p>
+        <ul>
+          <li>nome completo, CPF e e-mail;</li>
+          <li>endereço de entrega (CEP, rua, número, complemento, cidade e estado);</li>
+          <li>telefone de contato;</li>
+          <li>dados de pagamento — processados <strong>diretamente pelo gateway de
+          pagamento</strong> (Mercado Pago ou outro, a confirmar). Não
+          armazenamos números de cartão em nossos servidores.</li>
+        </ul>
+
+        <h3>2.4 · Dados de navegação</h3>
+        <p>
+          Coletamos automaticamente alguns dados técnicos de quem visita o site:
+        </p>
+        <ul>
+          <li>endereço IP;</li>
+          <li>tipo de navegador e dispositivo;</li>
+          <li>páginas visitadas e tempo de permanência;</li>
+          <li>cookies (ver seção 7).</li>
+        </ul>
+
+        <h2>3. Para que usamos seus dados</h2>
+        <p>Usamos seus dados pessoais com as seguintes finalidades:</p>
+        <ul>
+          <li><strong>Enviar a newsletter</strong> de ensaios editoriais (com base
+          em consentimento expresso);</li>
+          <li><strong>Responder a contatos</strong> recebidos via formulário ou
+          e-mail;</li>
+          <li><strong>Processar pedidos</strong> da loja, emitir notas fiscais e
+          realizar entregas;</li>
+          <li><strong>Cumprir obrigações legais</strong> (fiscais, tributárias e de
+          retenção de documentos);</li>
+          <li><strong>Melhorar a experiência do site</strong> com base em dados
+          agregados de navegação;</li>
+          <li><strong>Prevenir fraudes</strong> e proteger a segurança do portal.</li>
+        </ul>
+
+        <h2>4. Bases legais para o tratamento</h2>
+        <p>
+          Tratamos dados pessoais com base nas seguintes hipóteses previstas pela
+          LGPD:
+        </p>
+        <ul>
+          <li><strong>Consentimento</strong> (Art. 7º, I) — para newsletter, marketing
+          e comunicações editoriais;</li>
+          <li><strong>Execução de contrato</strong> (Art. 7º, V) — para vendas da
+          loja e entregas;</li>
+          <li><strong>Cumprimento de obrigação legal</strong> (Art. 7º, II) — para
+          retenção fiscal e tributária;</li>
+          <li><strong>Legítimo interesse</strong> (Art. 7º, IX) — para análise
+          agregada de navegação e prevenção de fraudes.</li>
+        </ul>
+
+        <h2>5. Compartilhamento de dados com terceiros</h2>
+        <p>
+          Não vendemos seus dados. Compartilhamos apenas com prestadores de
+          serviço estritamente necessários para a operação do site:
+        </p>
+        <ul>
+          <li><strong>Provedor de e-mail marketing</strong> (Brevo ou outro, a
+          confirmar) — para envio da newsletter;</li>
+          <li><strong>Gateway de pagamento</strong> (Mercado Pago ou outro, a
+          confirmar) — para processamento financeiro de pedidos da loja;</li>
+          <li><strong>Transportadoras</strong> — para entrega dos pedidos (Correios
+          ou similar);</li>
+          <li><strong>Provedor de hospedagem</strong> (Netlify) — para entrega das
+          páginas do site;</li>
+          <li><strong>Sanity CMS</strong> — para armazenamento do conteúdo
+          editorial.</li>
+        </ul>
+        <p>
+          Todos esses fornecedores possuem políticas próprias de privacidade
+          alinhadas à LGPD ou ao GDPR (regulação europeia equivalente).
+        </p>
+
+        <h2>6. Por quanto tempo guardamos seus dados</h2>
+        <ul>
+          <li><strong>Newsletter</strong> · até você solicitar o descadastramento.</li>
+          <li><strong>Mensagens de contato</strong> · até 12 meses após a última
+          interação.</li>
+          <li><strong>Pedidos da loja</strong> · pelo prazo legal exigido pela
+          legislação fiscal brasileira (<strong>5 anos</strong>).</li>
+          <li><strong>Logs técnicos de navegação</strong> · até 6 meses, conforme o
+          Marco Civil da Internet (Lei nº 12.965/2014).</li>
+        </ul>
+
+        <h2>7. Cookies</h2>
+        <p>
+          Utilizamos cookies estritamente necessários ao funcionamento do site e,
+          opcionalmente, cookies de análise (com seu consentimento). Você pode
+          desativar cookies nas configurações do seu navegador, mas algumas
+          funcionalidades podem ser prejudicadas.
+        </p>
+
+        <h2>8. Seus direitos como titular dos dados</h2>
+        <p>
+          A LGPD garante a você (Art. 18) os seguintes direitos, exercíveis a
+          qualquer momento:
+        </p>
+        <ul>
+          <li><strong>Confirmação</strong> da existência de tratamento;</li>
+          <li><strong>Acesso</strong> aos dados;</li>
+          <li><strong>Correção</strong> de dados incompletos, inexatos ou
+          desatualizados;</li>
+          <li><strong>Anonimização, bloqueio ou eliminação</strong> de dados
+          desnecessários ou tratados em desconformidade com a LGPD;</li>
+          <li><strong>Portabilidade</strong> a outro fornecedor;</li>
+          <li><strong>Eliminação</strong> dos dados tratados com base em
+          consentimento;</li>
+          <li><strong>Informação</strong> sobre com quem compartilhamos seus
+          dados;</li>
+          <li><strong>Revogação do consentimento</strong>, a qualquer momento.</li>
+        </ul>
+        <p>
+          Para exercer qualquer um desses direitos, envie um e-mail para
+          <a href={`mailto:${CONTATO_EMAIL}`}>{CONTATO_EMAIL}</a>. Responderemos em
+          até 15 dias.
+        </p>
+
+        <h2>9. Segurança</h2>
+        <p>
+          Adotamos medidas técnicas e administrativas para proteger seus dados
+          contra acessos não autorizados, perda, alteração ou divulgação. Ainda
+          assim, nenhum sistema é 100% seguro — em caso de incidente que possa
+          ocasionar risco aos titulares, comunicaremos a Autoridade Nacional de
+          Proteção de Dados (ANPD) e os afetados, conforme previsto em lei.
+        </p>
+
+        <h2>10. Crianças e adolescentes</h2>
+        <p>
+          O conteúdo do portal é dirigido a maiores de 18 anos. Não coletamos
+          intencionalmente dados de crianças e adolescentes. Caso tomemos
+          conhecimento de coleta indevida, eliminaremos os dados imediatamente.
+        </p>
+
+        <h2>11. Alterações nesta Política</h2>
+        <p>
+          Esta Política poderá ser atualizada periodicamente. A data da última
+          atualização aparece no topo do documento. Mudanças relevantes serão
+          comunicadas pelos canais habituais (newsletter, banners no site).
+        </p>
+
+        <h2>12. Foro</h2>
+        <p>
+          Fica eleito o foro da comarca de <strong>{CIDADE_FORO}</strong> para
+          dirimir quaisquer questões decorrentes desta Política, com renúncia a
+          qualquer outro, por mais privilegiado que seja.
+        </p>
+
+        <Divider variant="rouge" gap="mt-12" />
+
+        <p class="meta mt-8 text-center">
+          Em caso de dúvidas, entre em contato pelo e-mail <a
+            href={`mailto:${CONTATO_EMAIL}`}>{CONTATO_EMAIL}</a> ou pela página de
+          <a href="/contato">contato</a>.
+        </p>
+      </div>
+    </article>
+  </main>
+
+  <Footer />
+</Layout>

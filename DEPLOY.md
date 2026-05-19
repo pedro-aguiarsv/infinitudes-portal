@@ -76,7 +76,7 @@ Agora toda vez que você publicar/alterar/deletar um post no Studio, o Netlify r
 ## Passo 4 · Verificar que está tudo no ar
 
 - Home com hero + grid de 3 colunas (quando houver ao menos 4 posts).
-- Páginas `/outras-historias`, `/hub-infinito`, `/diva-infinito`, `/curadoria`, `/lojinha`, `/sobre`, `/recomenda`.
+- Páginas `/hub-infinito`, `/diva-infinito`, `/curadoria`, `/sobre`, `/recomenda`, `/loja`.
 - Posts em URLs editoriais: `/hub-infinito/titulo-do-post`.
 
 ---

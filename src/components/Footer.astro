@@ -5,31 +5,88 @@
 //   · Bloco preto com logo, patrocínio, realização, redes sociais
 //   · Copyright em sans uppercase
 //
-// Patrocinadores e realizadores ficam em /public/footer/ como
-// imagens monocromáticas (PNG ou SVG). Veja FOOTER_LOGOS abaixo.
+// Patrocinadores e realizadores agora vêm do Sanity (`siteSettings`).
+// Se o documento não existir ainda, usa fallback estático com os
+// PNG/WebP locais em /public/footer/sponsors/.
 // =============================================================
-import { NAV_ITEMS } from "../lib/categories";
+import { getNavItems } from "../lib/categories";
 import Logo from "./Logo.astro";
+import { getSiteSettings, urlFor, type SponsorLogo } from "../lib/sanity";
 
-// Patrocínio + Realização — logos oficiais em /public/footer/sponsors/
-// (PNG + WebP, fundo preto pra combinar com o footer escuro).
-const SPONSORS = [
-  { label: "Lei Rouanet", src: "/footer/sponsors/lei-rouanet", h: "h-10" },
-  { label: "Itaú", src: "/footer/sponsors/itau", h: "h-12" },
+const [settings, navItems] = await Promise.all([
+  getSiteSettings(),
+  getNavItems(),
+]);
+
+// ----- Patrocinadores / Realização -------------------------
+// Se o Sanity tem itens cadastrados, usa eles. Senão, fallback
+// estático com os logos já existentes em /public/footer/sponsors/.
+type FooterLogo = {
+  label: string;
+  src: string;       // URL para <img>
+  srcWebp?: string;  // <source> webp (opcional)
+  h: string;         // classe Tailwind de altura
+};
+
+const FALLBACK_SPONSORS: FooterLogo[] = [
+  { label: "Lei Rouanet", src: "/footer/sponsors/lei-rouanet.png", srcWebp: "/footer/sponsors/lei-rouanet.webp", h: "h-10" },
+  { label: "Itaú", src: "/footer/sponsors/itau.png", srcWebp: "/footer/sponsors/itau.webp", h: "h-12" },
 ];
-const REALIZATION = [
-  { label: "Ministério da Cultura", src: "/footer/sponsors/min-cultura", h: "h-8" },
-  { label: "Governo do Brasil", src: "/footer/sponsors/governo-brasil", h: "h-12" },
+const FALLBACK_REALIZATION: FooterLogo[] = [
+  { label: "Ministério da Cultura", src: "/footer/sponsors/min-cultura.png", srcWebp: "/footer/sponsors/min-cultura.webp", h: "h-8" },
+  { label: "Governo do Brasil", src: "/footer/sponsors/governo-brasil.png", srcWebp: "/footer/sponsors/governo-brasil.webp", h: "h-12" },
 ];
 
-const SOCIAL = [
-  { label: "Instagram", href: "https://instagram.com", icon: "instagram" },
-  { label: "LinkedIn", href: "https://linkedin.com", icon: "linkedin" },
-  { label: "Spotify", href: "https://spotify.com", icon: "spotify" },
-  { label: "Contato", href: "/contato", icon: "mail" },
-];
+function mapSanityLogo(s: SponsorLogo): FooterLogo {
+  return {
+    label: s.label,
+    src: s.logo
+      ? urlFor(s.logo).width(400).auto("format").url()
+      : "",
+    h: "h-10",
+  };
+}
+
+const sponsors: FooterLogo[] =
+  settings?.sponsors && settings.sponsors.length > 0
+    ? settings.sponsors.map(mapSanityLogo)
+    : FALLBACK_SPONSORS;
+
+const realization: FooterLogo[] =
+  settings?.realization && settings.realization.length > 0
+    ? settings.realization.map(mapSanityLogo)
+    : FALLBACK_REALIZATION;
+
+// ----- Redes sociais ---------------------------------------
+type SocialLink = {
+  label: string;
+  href: string;
+  icon: "instagram" | "linkedin" | "spotify" | "youtube" | "mail";
+};
+
+const socialFromCMS: SocialLink[] = [];
+if (settings?.social?.instagram)
+  socialFromCMS.push({ label: "Instagram", href: settings.social.instagram, icon: "instagram" });
+if (settings?.social?.linkedin)
+  socialFromCMS.push({ label: "LinkedIn", href: settings.social.linkedin, icon: "linkedin" });
+if (settings?.social?.spotify)
+  socialFromCMS.push({ label: "Spotify", href: settings.social.spotify, icon: "spotify" });
+if (settings?.social?.youtube)
+  socialFromCMS.push({ label: "YouTube", href: settings.social.youtube, icon: "youtube" });
+
+const SOCIAL: SocialLink[] =
+  socialFromCMS.length > 0
+    ? [...socialFromCMS, { label: "Contato", href: "/contato", icon: "mail" }]
+    : [
+        { label: "Instagram", href: "https://instagram.com", icon: "instagram" },
+        { label: "LinkedIn", href: "https://linkedin.com", icon: "linkedin" },
+        { label: "Spotify", href: "https://spotify.com", icon: "spotify" },
+        { label: "Contato", href: "/contato", icon: "mail" },
+      ];
 
 const year = new Date().getFullYear();
+const copyrightText =
+  settings?.copyright ?? `© ${year} · Todos os direitos reservados`;
 ---
 
 {/* Linha com nav das seções (fundo creme, mesma tipografia da topbar) */}
@@ -39,7 +96,7 @@ const year = new Date().getFullYear();
     class="max-w-7xl mx-auto px-6 lg:px-12 py-6 flex flex-wrap items-center justify-center gap-x-8 md:gap-x-10 lg:gap-x-12 gap-y-3"
   >
     {
-      NAV_ITEMS.map((item) => (
+      navItems.map((item) => (
         <a
           href={item.href}
           class="font-sans text-[10px] font-medium uppercase tracking-[0.22em] text-ink/70 link-ed hover:text-rouge"
@@ -71,7 +128,7 @@ const year = new Date().getFullYear();
       </a>
     </div>
 
-    {/* Patrocínio e Realização · logos em monocromia */}
+    {/* Patrocínio e Realização */}
     <div
       class="md:col-span-6 grid grid-cols-2 gap-8 items-start text-center"
     >
@@ -81,13 +138,13 @@ const year = new Date().getFullYear();
         >
           Patrocínio
         </p>
-        <div class="flex items-center justify-center gap-6">
+        <div class="flex items-center justify-center gap-6 flex-wrap">
           {
-            SPONSORS.map((s) => (
+            sponsors.map((s) => (
               <picture>
-                <source srcset={`${s.src}.webp`} type="image/webp" />
+                {s.srcWebp && <source srcset={s.srcWebp} type="image/webp" />}
                 <img
-                  src={`${s.src}.png`}
+                  src={s.src}
                   alt={s.label}
                   class={`${s.h} w-auto object-contain select-none`}
                   loading="lazy"
@@ -105,13 +162,13 @@ const year = new Date().getFullYear();
         >
           Realização
         </p>
-        <div class="flex items-center justify-center gap-6">
+        <div class="flex items-center justify-center gap-6 flex-wrap">
           {
-            REALIZATION.map((s) => (
+            realization.map((s) => (
               <picture>
-                <source srcset={`${s.src}.webp`} type="image/webp" />
+                {s.srcWebp && <source srcset={s.srcWebp} type="image/webp" />}
                 <img
-                  src={`${s.src}.png`}
+                  src={s.src}
                   alt={s.label}
                   class={`${s.h} w-auto object-contain select-none`}
                   loading="lazy"
@@ -175,6 +232,16 @@ const year = new Date().getFullYear();
                     <path d="M12 0a12 12 0 1 0 0 24A12 12 0 0 0 12 0zm5.52 17.34a.75.75 0 0 1-1.03.25c-2.82-1.72-6.38-2.11-10.56-1.16a.75.75 0 1 1-.33-1.46c4.57-1.04 8.5-.6 11.66 1.34.36.22.47.69.26 1.03zm1.47-3.29a.94.94 0 0 1-1.29.31c-3.23-1.98-8.15-2.56-11.97-1.4a.94.94 0 1 1-.55-1.8c4.37-1.33 9.78-.69 13.5 1.6.45.27.59.86.31 1.29zm.13-3.43c-3.87-2.3-10.27-2.51-13.97-1.39a1.13 1.13 0 1 1-.66-2.16c4.24-1.29 11.3-1.04 15.76 1.6a1.13 1.13 0 1 1-1.13 1.95z" />
                   </svg>
                 )}
+                {s.icon === "youtube" && (
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="14"
+                    height="14"
+                    fill="currentColor"
+                  >
+                    <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z" />
+                  </svg>
+                )}
                 {s.icon === "mail" && (
                   <svg
                     viewBox="0 0 24 24"
@@ -196,15 +263,35 @@ const year = new Date().getFullYear();
     </div>
   </div>
 
-  {/* Linha de copyright */}
+  {/* Linha de copyright + links legais */}
   <div class="border-t border-paper/15">
     <div
-      class="max-w-7xl mx-auto px-6 lg:px-12 py-4 flex justify-end"
+      class="max-w-7xl mx-auto px-6 lg:px-12 py-4 flex flex-col sm:flex-row gap-3 sm:gap-6 justify-between items-center"
     >
+      <div class="flex items-center gap-5">
+        <a
+          href="/privacidade"
+          class="font-sans text-[10px] tracking-[0.22em] uppercase text-paper/55 hover:text-paper link-ed"
+        >
+          Privacidade
+        </a>
+        <a
+          href="/termos"
+          class="font-sans text-[10px] tracking-[0.22em] uppercase text-paper/55 hover:text-paper link-ed"
+        >
+          Termos
+        </a>
+        <a
+          href="/contato"
+          class="font-sans text-[10px] tracking-[0.22em] uppercase text-paper/55 hover:text-paper link-ed"
+        >
+          Contato
+        </a>
+      </div>
       <p
         class="font-sans text-[10px] tracking-[0.22em] uppercase text-paper/55"
       >
-        © {year} · Todos os direitos reservados
+        {copyrightText}
       </p>
     </div>
   </div>

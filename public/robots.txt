@@ -1,0 +1,39 @@
+# =============================================================
+# robots.txt · (In)finitudes
+# -------------------------------------------------------------
+# Permite que buscadores indexem o site, com exceção de páginas
+# de preview/desenvolvimento. O sitemap é gerado automaticamente
+# pelo @astrojs/sitemap durante o build.
+# =============================================================
+
+User-agent: *
+Allow: /
+
+# Páginas de preview (uso interno · não indexar)
+Disallow: /preview/
+
+# 404 (não precisa indexar)
+Disallow: /404
+
+# Bloqueio explícito a bots de scraping de IA generativa
+# (preserva o conteúdo editorial autoral da autora)
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: PerplexityBot
+Disallow: /
+
+# Sitemap principal
+Sitemap: https://infinitudes.com.br/sitemap-index.xml

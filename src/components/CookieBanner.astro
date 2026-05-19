@@ -1,0 +1,138 @@
+---
+// =============================================================
+// CookieBanner.astro · Banner de cookies LGPD
+// -------------------------------------------------------------
+// Aparece UMA VEZ na primeira visita do usuário, no canto inferior
+// da tela, com 3 ações:
+//   · Aceitar todos · gravam-se cookies funcionais + analytics
+//   · Recusar opcionais · só cookies estritamente necessários
+//   · Ler política · link para /privacidade
+//
+// A escolha é gravada em localStorage (`infinitudes-cookie-consent`)
+// com versão · futuras mudanças na política bumpam a versão e o
+// banner reaparece para reconsentimento.
+//
+// Comportamento:
+//   · Se NÃO houver decisão registrada (ou versão diferente) →
+//     banner aparece animado de baixo pra cima.
+//   · Se já decidiu → fica oculto silenciosamente.
+//   · `window.dispatchEvent('cookie-consent-update', { detail })`
+//     é emitido quando o usuário decide — analytics futuros podem
+//     escutar para iniciar/desligar tracking.
+// =============================================================
+const CONSENT_VERSION = "1";
+---
+
+<aside
+  id="cookie-banner"
+  data-version={CONSENT_VERSION}
+  class="fixed inset-x-3 bottom-3 lg:inset-x-auto lg:right-6 lg:bottom-6 lg:max-w-md z-50 hidden translate-y-full transition-transform duration-500 ease-out"
+  role="dialog"
+  aria-live="polite"
+  aria-labelledby="cookie-banner-title"
+>
+  <div
+    class="bg-paper border border-rouge/20 shadow-2xl p-6 lg:p-7"
+  >
+    <p class="eyebrow">Privacidade</p>
+    <h2
+      id="cookie-banner-title"
+      class="font-display text-[20px] lg:text-[22px] leading-[1.2] mt-2 font-normal"
+    >
+      Este site usa cookies.
+    </h2>
+    <p
+      class="font-serif text-[14px] lg:text-[15px] leading-[1.5] mt-3 text-ink/80"
+    >
+      Usamos cookies estritamente necessários para o funcionamento do site
+      e cookies opcionais de análise de navegação. Você pode aceitar todos,
+      manter apenas os essenciais ou ler nossa <a
+        href="/privacidade"
+        class="underline text-rouge hover:text-rouge-deep"
+      >Política de Privacidade</a>.
+    </p>
+
+    <div
+      class="mt-5 flex flex-col sm:flex-row gap-2 sm:gap-3"
+    >
+      <button
+        type="button"
+        data-cookie-action="accept"
+        class="bg-rouge text-paper px-5 py-2.5 text-[10px] font-medium tracking-[0.22em] uppercase hover:bg-rouge-deep transition-colors flex-1"
+      >
+        Aceitar todos
+      </button>
+      <button
+        type="button"
+        data-cookie-action="reject"
+        class="border border-rule px-5 py-2.5 text-[10px] font-medium tracking-[0.22em] uppercase text-ink hover:border-rouge hover:text-rouge transition-colors flex-1"
+      >
+        Apenas essenciais
+      </button>
+    </div>
+  </div>
+</aside>
+
+<script is:inline define:vars={{ CONSENT_VERSION }}>
+  (function () {
+    const STORAGE_KEY = "infinitudes-cookie-consent";
+    const banner = document.getElementById("cookie-banner");
+    if (!banner) return;
+
+    function readConsent() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return null;
+        return JSON.parse(raw);
+      } catch (_) {
+        return null;
+      }
+    }
+
+    function saveConsent(decision) {
+      try {
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify({
+            decision,
+            version: CONSENT_VERSION,
+            ts: new Date().toISOString(),
+          }),
+        );
+      } catch (_) {
+        // localStorage indisponível (modo privado, etc.) · ignora
+      }
+      window.dispatchEvent(
+        new CustomEvent("cookie-consent-update", { detail: { decision } }),
+      );
+    }
+
+    function show() {
+      banner.classList.remove("hidden");
+      // pequeno delay para animar
+      requestAnimationFrame(() => {
+        banner.classList.remove("translate-y-full");
+      });
+    }
+
+    function hide() {
+      banner.classList.add("translate-y-full");
+      setTimeout(() => banner.classList.add("hidden"), 500);
+    }
+
+    const existing = readConsent();
+    if (!existing || existing.version !== CONSENT_VERSION) {
+      // Mostra apenas após a página ter renderizado
+      window.requestAnimationFrame(() => setTimeout(show, 600));
+    }
+
+    banner.addEventListener("click", function (ev) {
+      const target = ev.target;
+      if (!(target instanceof HTMLElement)) return;
+      const action = target.getAttribute("data-cookie-action");
+      if (!action) return;
+      saveConsent(action === "accept" ? "all" : "essential");
+      hide();
+    });
+  })();
+</script>

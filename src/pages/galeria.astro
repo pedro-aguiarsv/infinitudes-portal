@@ -1,0 +1,159 @@
+---
+// =============================================================
+// /galeria · Galeria de fotos · Entrevistados
+// -------------------------------------------------------------
+// Página listagem das fotos dos entrevistados que aparecem no
+// livro / no Divã Infinito. Estrutura:
+//   1. Hero · título + dek + aquarela rouge
+//   2. Grid masonry de fotos (2/3/4 colunas conforme breakpoint)
+//   3. Newsletter + Footer
+//
+// Lê o schema `galleryPhoto` do Sanity. Se vazio, mostra
+// placeholders + aviso de "galeria em construção".
+// =============================================================
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import NewsletterSection from "../components/NewsletterSection.astro";
+import WatercolorAccent from "../components/WatercolorAccent.astro";
+import Divider from "../components/Divider.astro";
+import { getGalleryPhotos, urlFor } from "../lib/sanity";
+
+const photos = await getGalleryPhotos();
+const hasReal = photos.length > 0;
+
+// Placeholders para o "estado vazio apresentável"
+type FakePhoto = {
+  caption: string;
+  role: string;
+  bg: string;
+  aspect: string;
+};
+
+const FAKE_PHOTOS: FakePhoto[] = [
+  { caption: "Entrevistado(a) 1", role: "Cuidador(a)", bg: "bg-paper-soft", aspect: "aspect-[3/4]" },
+  { caption: "Entrevistado(a) 2", role: "Profissional de saúde", bg: "bg-rouge/10", aspect: "aspect-square" },
+  { caption: "Entrevistado(a) 3", role: "Familiar", bg: "bg-paper-soft", aspect: "aspect-[4/5]" },
+  { caption: "Entrevistado(a) 4", role: "Capelania hospitalar", bg: "bg-paper-soft", aspect: "aspect-[3/4]" },
+  { caption: "Entrevistado(a) 5", role: "Paciente em cuidado", bg: "bg-rouge/10", aspect: "aspect-[4/5]" },
+  { caption: "Entrevistado(a) 6", role: "Equipe multiprofissional", bg: "bg-paper-soft", aspect: "aspect-square" },
+];
+---
+
+<Layout
+  title="Galeria — (In)finitudes"
+  description="Retratos dos entrevistados que sustentam os ensaios e episódios de (In)finitudes."
+>
+  <Header />
+
+  <main>
+    {/* ============================================================
+        1 · HERO
+        ============================================================ */}
+    <section
+      class="relative overflow-hidden max-w-6xl mx-auto px-6 lg:px-12 py-12 lg:py-20"
+    >
+      <WatercolorAccent
+        variant="rouge-blob"
+        class="absolute right-0 top-0 w-[55%] max-w-[640px] h-auto opacity-90 pointer-events-none"
+      />
+      <div class="relative z-10 max-w-2xl">
+        <p class="eyebrow">Bastidores</p>
+        <h1
+          class="font-display text-[44px] sm:text-[64px] lg:text-[88px] leading-[1] mt-3 font-normal tracking-[-0.01em] uppercase"
+        >
+          Galeria
+        </h1>
+        <p
+          class="font-serif italic text-[18px] lg:text-[22px] leading-[1.45] mt-5 text-ink/80"
+        >
+          Os rostos por trás das histórias. Cuidadores, profissionais, familiares
+          e pacientes que dividiram silêncios e palavras com a redação.
+        </p>
+      </div>
+    </section>
+
+    <div class="max-w-6xl mx-auto px-6 lg:px-12">
+      <Divider variant="rouge" gap="my-2" />
+    </div>
+
+    {/* ============================================================
+        2 · GRID MASONRY
+        ============================================================ */}
+    <section class="max-w-6xl mx-auto px-6 lg:px-12 py-12 lg:py-16">
+      <div
+        class="columns-2 md:columns-3 lg:columns-4 gap-4 lg:gap-6 [&>*]:mb-4 lg:[&>*]:mb-6"
+      >
+        {
+          hasReal
+            ? photos.map((p) => {
+                const url = urlFor(p.image)
+                  .width(800)
+                  .auto("format")
+                  .url();
+                const linkHref = p.relatedPostSlug
+                  ? `/${p.relatedPostSlug}`
+                  : null;
+                return (
+                  <figure class="break-inside-avoid">
+                    {linkHref ? (
+                      <a href={linkHref} class="block group">
+                        <img
+                          src={url}
+                          alt={p.image.alt ?? p.subjectName}
+                          class="w-full h-auto transition-[filter] duration-300 group-hover:brightness-95"
+                          loading="lazy"
+                        />
+                      </a>
+                    ) : (
+                      <img
+                        src={url}
+                        alt={p.image.alt ?? p.subjectName}
+                        class="w-full h-auto"
+                        loading="lazy"
+                      />
+                    )}
+                    <figcaption class="mt-3">
+                      <span class="block font-sans text-[10px] font-medium tracking-[0.20em] uppercase text-rouge">
+                        {p.subjectName}
+                      </span>
+                      {p.role && <span class="meta block mt-1">{p.role}</span>}
+                      {p.caption && (
+                        <span class="font-serif italic text-[13px] leading-[1.45] mt-2 block text-ink/75">
+                          {p.caption}
+                        </span>
+                      )}
+                    </figcaption>
+                  </figure>
+                );
+              })
+            : FAKE_PHOTOS.map((p) => (
+                <figure class="break-inside-avoid">
+                  <div
+                    class={`w-full ${p.aspect} ${p.bg} ph border border-rule/40`}
+                    data-label={p.caption}
+                  />
+                  <figcaption class="mt-3">
+                    <span class="block font-sans text-[10px] font-medium tracking-[0.20em] uppercase text-rouge">
+                      {p.caption}
+                    </span>
+                    <span class="meta block mt-1">{p.role}</span>
+                  </figcaption>
+                </figure>
+              ))
+        }
+      </div>
+
+      {!hasReal && (
+        <p class="meta text-center mt-12 text-muted/80">
+          Galeria em construção · imagens provisórias até a publicação dos
+          retratos definitivos.
+        </p>
+      )}
+    </section>
+
+    <NewsletterSection />
+  </main>
+
+  <Footer />
+</Layout>

@@ -2,16 +2,16 @@
 // =============================================================
 // HeroFeatured.astro · "Capa de revista" da home (page-01)
 // -------------------------------------------------------------
-// Layout do mock:
+// Layout simplificado (sem headline):
 //   ┌───────────────────────────────────────────────┐
-//   │  Gwendoline Riley's            ╭───────╮     │
-//   │  new novel surveys             │ aqua  │     │
-//   │  the wreckage of               │ rouge │     │
-//   │  middle age                    │       │     │
-//   │                                ╰───────╯     │
-//   │  (IN)FINITUDES ◄─── horizontal, "(IN)" red,  │
-//   │  Alunos · Santos     "FINITUDES" preto.       │
-//   │                      Pode sobrepor a aquarela.│
+//   │                                  ╭───────╮    │
+//   │                                  │ aqua  │    │
+//   │                                  │ rouge │    │
+//   │                                  │       │    │
+//   │                                  ╰───────╯    │
+//   │  (IN)FINITUDES ◄─── horizontal, "(IN)" red,   │
+//   │  Projeto cultural idealizado     "FINITUDES"  │
+//   │  por Eleonora Santos             em preto.    │
 //   └───────────────────────────────────────────────┘
 //
 // A aquarela fica posicionada absolutamente à direita
@@ -21,8 +21,7 @@ import WatercolorAccent from "./WatercolorAccent.astro";
 import Logo from "./Logo.astro";
 
 export interface HeroContent {
-  headline: string;
-  href: string;
+  /** Linha editorial sob o masthead (ex.: assinatura do projeto). */
   edition?: string;
 }
 
@@ -30,36 +29,20 @@ export interface Props {
   hero?: HeroContent;
 }
 
-const FAKE: HeroContent = {
-  headline: "Gwendoline Riley's new novel surveys the wreckage of middle age",
-  href: "/outras-historias/gwendoline-riley",
-  edition: "Alunos · Santos",
-};
+const DEFAULT_EDITION = "Projeto cultural idealizado por Eleonora Santos";
 
-const { hero = FAKE } = Astro.props;
+const { hero = {} } = Astro.props;
+const editionText = hero.edition ?? DEFAULT_EDITION;
 ---
 
 <section class="relative">
   <div
     class="relative max-w-7xl mx-auto px-6 lg:px-12 pt-10 lg:pt-12 pb-16 lg:pb-20"
   >
-    <div class="grid grid-cols-12 gap-6 items-start">
-      {/* Coluna esquerda · headline + masthead horizontal */}
+    <div class="grid grid-cols-12 gap-6 items-center">
+      {/* Coluna esquerda · masthead horizontal */}
       <div class="col-span-12 lg:col-span-7 order-2 lg:order-1 relative z-10">
-        {/* Headline pequena italic bordô — coluna curta */}
-        <a
-          href={hero.href}
-          class="block group max-w-[15rem] lg:max-w-[16rem] lg:pl-12"
-        >
-          <p
-            class="font-display italic text-rouge text-[18px] sm:text-[20px] lg:text-[22px] leading-[1.18] group-hover:text-rouge-deep transition-colors"
-          >
-            {hero.headline}
-          </p>
-        </a>
-
-        {/* Masthead · logo oficial empilhado */}
-        <div class="mt-8 lg:mt-12">
+        <div class="lg:pl-12">
           <Logo
             variant="compact"
             loading="eager"
@@ -67,9 +50,9 @@ const { hero = FAKE } = Astro.props;
             alt="(In)finitudes"
           />
           {
-            hero.edition && (
+            editionText && (
               <p class="mt-3 lg:mt-4 font-sans text-[10px] tracking-[0.34em] uppercase text-ink/70">
-                {hero.edition}
+                {editionText}
               </p>
             )
           }

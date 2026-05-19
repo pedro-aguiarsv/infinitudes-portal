@@ -59,6 +59,24 @@ export const postType = defineType({
       description: 'Subtítulo editorial que aparece abaixo do título (1–2 frases).',
     }),
     // =============================================================
+    // externalUrl · usado principalmente em /recomenda. Quando
+    // preenchido, o botão "Acessar" leva ao link externo (Amazon,
+    // Spotify, site do evento etc.). Se vazio, o site usa o link
+    // interno do post (/{categoria}/{slug}).
+    // =============================================================
+    defineField({
+      name: 'externalUrl',
+      title: 'Link externo (opcional)',
+      type: 'url',
+      description:
+        'Para recomendações de terceiros: link da Amazon, Spotify, site do evento etc. Quando preenchido, o botão "Acessar" abre esse link em nova aba.',
+      validation: (Rule) =>
+        Rule.uri({scheme: ['http', 'https']}).custom((url) => {
+          // Validação opcional, sem mensagem agressiva
+          return true
+        }),
+    }),
+    // =============================================================
     // authors · texto livre da linha de bylines (ex.: "Por Eleonora
     // Cruz Santos" ou "Por A, B e C"). Mais flexível que referência
     // a um schema de autores neste estágio.

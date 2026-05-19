@@ -2,73 +2,101 @@
 // =============================================================
 // /livro · Página de venda do livro "(In)finitudes"
 // -------------------------------------------------------------
-// Página estática que apresenta o livro e leva à compra na loja
-// (/loja/livro-finitudes). Sobrescreve nada (slug "livro" não é
-// uma categoria do Sanity).
-//
-// Estrutura (scroll vertical, sem navegação interna):
-//   1. Hero · capa + título + subtítulo + autor + CTA "Comprar"
-//   2. Sinopse · parágrafo principal
-//   3. O que você vai encontrar · 4 destaques em grid
-//   4. Trecho · passagem do livro com drop cap
-//   5. Sobre a autora · mini bio com aquarela + link
-//   6. Depoimentos · 3 quotes
-//   7. CTA final · banner bordô com "Adicionar ao carrinho"
-//   8. Newsletter + Footer
-//
-// Conteúdo é todo placeholder — pronto pra ser substituído quando
-// o lead/Eleonora passar a sinopse, trechos e depoimentos reais.
+// Conteúdo vem do Sanity (`bookInfo` singleton + `testimonial`).
+// Quando os documentos não existem, cai em conteúdo fake editorial
+// para que a página funcione mesmo durante a fase de povoamento.
 // =============================================================
 import Layout from "../layouts/Layout.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import NewsletterSection from "../components/NewsletterSection.astro";
-import WatercolorAccent from "../components/WatercolorAccent.astro";
 import BookCover from "../components/BookCover.astro";
+import WatercolorAccent from "../components/WatercolorAccent.astro";
 import Divider from "../components/Divider.astro";
-import Logo from "../components/Logo.astro";
-import { getProductBySlug } from "../lib/products";
+import { PortableText } from "astro-portabletext";
+import PTBlock from "../components/portable-text/PTBlock.astro";
+import {
+  getBookInfo,
+  getTestimonialsForBook,
+  urlFor,
+  type Testimonial,
+} from "../lib/sanity";
 
-const livro = getProductBySlug("livro-finitudes");
-const cartHref = `/loja/${livro?.slug ?? "livro-finitudes"}`;
+const [book, testimonials] = await Promise.all([
+  getBookInfo(),
+  getTestimonialsForBook(),
+]);
 
-const destaques = [
-  {
-    label: "Ensaios",
-    value: "24",
-    desc: "Textos curtos sobre presença, escuta e cuidado.",
-  },
-  {
-    label: "Páginas",
-    value: "192",
-    desc: "Papel pólen 80g, capa em hot stamping.",
-  },
-  {
-    label: "Formato",
-    value: "14 × 21 cm",
-    desc: "Físico (com envio nacional) ou e-book.",
-  },
-  {
-    label: "Lançamento",
-    value: "21 / 05",
-    desc: "Pré-venda aberta · primeira tiragem limitada.",
-  },
+// ----- Resolução de campos com fallback ---------------------
+const bookTitle = book?.title ?? "(In)finitudes";
+const bookSubtitle =
+  book?.subtitle ??
+  "Vinte e quatro ensaios sobre presença, escuta e a gramática silenciosa dos cuidados paliativos.";
+const bookAuthor = book?.author ?? "Eleonora C. Santos";
+const bookPrice = book?.price ?? "R$ 65,00";
+const launchEdition = book?.launchEdition ?? "Edição 2026 · Pré-venda";
+const ctaText = book?.ctaText ?? "Comprar agora";
+const productSlug = book?.ctaProductSlug ?? "livro-finitudes";
+const cartHref = `/loja/${productSlug}`;
+
+const coverUrl = book?.cover
+  ? urlFor(book.cover).width(720).height(960).fit("crop").auto("format").url()
+  : null;
+const coverAlt = book?.cover?.alt ?? `Capa do livro ${bookTitle}`;
+
+// Renderização do título: parênteses em bordô SEM espaços extras.
+// Usamos replace + set:html para evitar que o JSX insira whitespace
+// entre os <span>s e o texto adjacente (bug que causava "( In) finitudes").
+const formattedBookTitle = bookTitle.replace(
+  /\(([^)]+)\)/g,
+  '<span class="text-rouge">(</span>$1<span class="text-rouge">)</span>',
+);
+
+// Sinopse · usa Portable Text se existir, senão texto padrão
+const hasSynopsis =
+  Array.isArray(book?.synopsis) && book!.synopsis!.length > 0;
+
+// ----- Detalhes técnicos expandíveis ------------------------
+// Consolida páginas, formato, lançamento, ISBNs, idioma etc.
+// Toda info "fria" do livro mora aqui (atrás do toggle).
+const FAKE_TECH_DETAILS = [
+  { label: "Páginas", value: "192" },
+  { label: "Formato", value: "14 × 21 cm" },
+  { label: "Lançamento", value: "21 de maio de 2026" },
+  { label: "ISBN (físico)", value: "Em definição" },
+  { label: "ISBN (e-book)", value: "Em definição" },
+  { label: "Idioma", value: "Português (Brasil)" },
 ];
 
-const depoimentos = [
+const technicalDetails: Array<{ label: string; value: string }> =
+  Array.isArray(book?.technicalDetails) && book!.technicalDetails!.length > 0
+    ? book!.technicalDetails!
+        .filter((d) => d.label && d.value)
+        .map((d) => ({ label: d.label as string, value: d.value as string }))
+    : FAKE_TECH_DETAILS;
+
+// ----- Amostra do livro (PDF) -------------------------------
+const samplePdfUrl = book?.samplePdfUrl ?? null;
+const hasSample = Boolean(samplePdfUrl);
+
+// Depoimentos
+const FAKE_TESTIMONIALS: Testimonial[] = [
   {
+    _id: "fake-1",
     quote:
       "Eleonora costura entrevista, leitura e memória como quem cuida de uma ferida que ainda precisa ser olhada. Um livro raro.",
     author: "Vanessa Bárbara",
     role: "Crítica · Folha de S.Paulo",
   },
   {
+    _id: "fake-2",
     quote:
       "Cada ensaio é uma pequena janela. Olhei por cada uma sem pressa, e em todas vi alguma coisa que eu já tinha esquecido de sentir.",
     author: "Marina Pires",
     role: "Leitora · Belo Horizonte",
   },
   {
+    _id: "fake-3",
     quote:
       "Não conheço outro título recente em português que enfrente o tabu da finitude com tanta delicadeza e tanto rigor.",
     author: "Dr. Ricardo Caponero",
@@ -76,83 +104,181 @@ const depoimentos = [
   },
 ];
 
-const trecho = `Há um silêncio depois da escuta que não é vazio — é cheio de tudo
-aquilo que a outra pessoa acabou de dizer e que, agora, atravessa o
-meu corpo. É o silêncio do quarto de hospital depois de a porta
-fechar, da cozinha depois do telefonema, da carona depois da
-notícia. É um silêncio que pede atenção, não palavras. Foi para
-nomear esse silêncio que comecei a escrever este livro.`;
+const showTestimonials =
+  testimonials.length > 0 ? testimonials : FAKE_TESTIMONIALS;
+
+const ptComponents = {
+  block: {
+    normal: PTBlock,
+    h2: PTBlock,
+    h3: PTBlock,
+    blockquote: PTBlock,
+  },
+};
 ---
 
 <Layout
-  title="Livro (In)finitudes — Eleonora Cruz Santos"
-  description="(In)finitudes reúne 24 ensaios sobre presença, escuta e a gramática silenciosa dos cuidados paliativos. Garanta seu exemplar."
+  title={`Livro ${bookTitle} — ${bookAuthor}`}
+  description={bookSubtitle}
 >
   <Header />
 
   <main>
     {/* ============================================================
-        1 · HERO · capa + título + CTA
+        1 · HERO · capa + título + CTA + amostra
         ============================================================ */}
     <section class="bg-paper">
       <div class="max-w-6xl mx-auto px-6 lg:px-12 py-14 lg:py-20">
         <div
           class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center"
         >
-          {/* Capa oficial do livro extraída do design */}
-          <div class="lg:col-span-6 flex justify-center order-2 lg:order-1">
+          {/* Capa + botão de amostra */}
+          <div class="lg:col-span-6 flex flex-col items-center order-2 lg:order-1">
             <div class="relative w-[280px] sm:w-[320px] lg:w-[360px]">
-              {/* Sombra projetada */}
               <div
                 class="absolute inset-0 translate-x-3 translate-y-3 bg-ink/10"
                 aria-hidden="true"
-              >
-              </div>
-              <BookCover
-                variant="full"
-                loading="eager"
-                class="relative w-full shadow-2xl"
               />
+              {
+                coverUrl ? (
+                  <img
+                    src={coverUrl}
+                    alt={coverAlt}
+                    class="relative w-full aspect-[3/4] object-cover shadow-2xl"
+                    loading="eager"
+                  />
+                ) : (
+                  <BookCover
+                    variant="full"
+                    loading="eager"
+                    class="relative w-full shadow-2xl"
+                  />
+                )
+              }
             </div>
+
+            {/* Botão de amostra (estilo Amazon "Look inside") */}
+            {
+              hasSample ? (
+                <button
+                  type="button"
+                  data-open-sample
+                  class="mt-6 inline-flex items-center gap-2 border border-rouge text-rouge px-6 py-2.5 text-[11px] font-medium tracking-[0.22em] uppercase hover:bg-rouge hover:text-paper transition-colors"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    class="w-4 h-4"
+                    aria-hidden="true"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"
+                    />
+                  </svg>
+                  Ler uma amostra
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  disabled
+                  aria-disabled="true"
+                  title="A amostra do livro estará disponível em breve."
+                  class="mt-6 inline-flex items-center gap-2 border border-ink/20 text-ink/40 px-6 py-2.5 text-[11px] font-medium tracking-[0.22em] uppercase cursor-not-allowed"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    class="w-4 h-4"
+                    aria-hidden="true"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"
+                    />
+                  </svg>
+                  Amostra em breve
+                </button>
+              )
+            }
           </div>
 
-          {/* Headline + CTA · 6 cols */}
+          {/* Headline + CTA */}
           <div class="lg:col-span-6 order-1 lg:order-2 text-center lg:text-left">
-            <p class="eyebrow">Edição 2026 · Pré-venda</p>
+            <p class="eyebrow">{launchEdition}</p>
             <h1
               class="font-display text-[44px] sm:text-[56px] lg:text-[72px] leading-[1.02] mt-3 font-normal tracking-[-0.01em] uppercase"
-            >
-              <span class="text-rouge">(</span>IN<span class="text-rouge">)</span>FINITUDES
-            </h1>
+              set:html={formattedBookTitle}
+            ></h1>
             <p
               class="font-serif italic text-[19px] lg:text-[22px] leading-[1.45] mt-5 text-ink/80"
             >
-              Vinte e quatro ensaios sobre presença, escuta e a gramática
-              silenciosa dos cuidados paliativos.
+              {bookSubtitle}
             </p>
             <p
               class="mt-4 font-sans text-[11px] font-medium tracking-[0.22em] uppercase text-rouge"
             >
-              por Eleonora Cruz Santos
+              por {bookAuthor}
             </p>
 
-            {/* Bloco preço + CTAs */}
             <div
               class="mt-8 flex flex-col sm:flex-row sm:items-center sm:justify-center lg:justify-start gap-4"
             >
               <span class="font-display italic text-[26px] lg:text-[28px] text-ink">
-                {livro?.price ?? "R$ 65,00"}
+                {bookPrice}
               </span>
               <a
                 href={cartHref}
                 class="inline-block text-center bg-rouge text-paper px-8 py-3.5 text-[11px] font-medium tracking-[0.22em] uppercase hover:bg-rouge-deep transition-colors"
               >
-                Comprar agora
+                {ctaText}
               </a>
             </div>
             <p class="meta mt-4">
               Frete nacional · envio a partir de 21 de maio de 2026
             </p>
+            {
+              technicalDetails.length > 0 && (
+                <details class="book-details mt-3 group">
+                  <summary class="inline-flex items-center gap-1.5 font-sans text-[10px] font-medium tracking-[0.22em] uppercase text-rouge cursor-pointer select-none hover:text-rouge-deep transition-colors list-none">
+                    Detalhes técnicos
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      class="w-3 h-3 transition-transform duration-200 group-open:rotate-180"
+                      aria-hidden="true"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.06l3.71-3.83a.75.75 0 1 1 1.08 1.04l-4.25 4.38a.75.75 0 0 1-1.08 0L5.21 8.27a.75.75 0 0 1 .02-1.06Z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                  </summary>
+                  <div class="mt-4 p-5 bg-paper-soft border border-rule/40 lg:max-w-md">
+                    <dl class="space-y-2">
+                      {technicalDetails.map((d) => (
+                        <div class="flex justify-between gap-4 text-[12px] leading-snug">
+                          <dt class="font-sans font-medium tracking-[0.10em] uppercase text-ink/65 text-[10px] pt-0.5 whitespace-nowrap">
+                            {d.label}
+                          </dt>
+                          <dd class="font-serif text-ink/90 text-right">{d.value}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </div>
+                </details>
+              )
+            }
           </div>
         </div>
       </div>
@@ -164,82 +290,30 @@ nomear esse silêncio que comecei a escrever este livro.`;
     <section class="bg-paper-soft border-y border-rule/60">
       <div class="max-w-3xl mx-auto px-6 py-16 lg:py-20 text-center">
         <p class="eyebrow">Sobre o livro</p>
-        <p
-          class="font-serif text-[19px] lg:text-[21px] leading-[1.55] mt-6 text-ink-soft"
-        >
-          <span class="font-display italic text-rouge">(In)finitudes</span>{" "}
-          reúne textos escritos ao longo de cinco anos de escuta — em
-          enfermarias, salas de espera, rodas de cuidadores e cozinhas onde a
-          notícia ainda não tinha sido dada. Eleonora costura entrevista,
-          leitura e memória para investigar o que se diz (e o que se silencia)
-          ao redor da finitude. Não é um livro sobre a morte: é um livro sobre
-          o tempo que sobra de presença quando a gente decide ficar.
-        </p>
-      </div>
-    </section>
-
-    {/* ============================================================
-        3 · DESTAQUES · 4 colunas
-        ============================================================ */}
-    <section class="max-w-6xl mx-auto px-6 lg:px-12 py-16 lg:py-20">
-      <header class="text-center mb-12">
-        <Divider variant="rouge" gap="mb-8 max-w-md mx-auto" />
-        <p
-          class="font-sans text-[11px] font-medium tracking-[0.30em] uppercase text-ink/80"
-        >
-          O que você vai encontrar
-        </p>
-      </header>
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
         {
-          destaques.map((d) => (
-            <div class="text-center px-2">
-              <p class="font-display text-[44px] lg:text-[52px] leading-[1] font-normal text-rouge">
-                {d.value}
-              </p>
-              <p class="mt-3 font-sans text-[10px] font-medium tracking-[0.22em] uppercase text-ink/80">
-                {d.label}
-              </p>
-              <p class="font-serif text-[14px] lg:text-[15px] leading-[1.5] mt-3 text-ink/75">
-                {d.desc}
-              </p>
+          hasSynopsis ? (
+            <div class="font-serif text-[19px] lg:text-[21px] leading-[1.55] mt-6 text-ink-soft space-y-4">
+              <PortableText value={book!.synopsis as unknown[]} components={ptComponents} />
             </div>
-          ))
+          ) : (
+            <p
+              class="font-serif text-[19px] lg:text-[21px] leading-[1.55] mt-6 text-ink-soft"
+            >
+              <span class="font-display italic text-rouge">(In)finitudes</span>{" "}
+              reúne textos escritos ao longo de cinco anos de escuta — em enfermarias,
+              salas de espera, rodas de cuidadores e cozinhas onde a notícia ainda
+              não tinha sido dada. Eleonora costura entrevista, leitura e memória
+              para investigar o que se diz (e o que se silencia) ao redor da
+              finitude. Não é um livro sobre a morte: é um livro sobre o tempo que
+              sobra de presença quando a gente decide ficar.
+            </p>
+          )
         }
       </div>
     </section>
 
     {/* ============================================================
-        4 · TRECHO · com drop cap e aquarela
-        ============================================================ */}
-    <section class="bg-paper border-y border-rule/60">
-      <div class="max-w-3xl mx-auto px-6 py-20 lg:py-24 relative">
-        <WatercolorAccent
-          variant="rouge-blob"
-          class="absolute right-0 top-0 w-[280px] h-auto opacity-25 pointer-events-none -translate-y-1/4 translate-x-1/4 hidden lg:block"
-        />
-
-        <p class="eyebrow text-center">Um trecho</p>
-        <div class="mt-8 font-serif text-[18px] lg:text-[20px] leading-[1.65] text-ink-soft">
-          <p>
-            <span
-              class="font-display float-left text-[68px] lg:text-[88px] leading-[0.85] mr-3 mt-1 text-rouge"
-            >
-              {trecho.trim().charAt(0)}
-            </span>
-            {trecho.trim().substring(1)}
-          </p>
-        </div>
-        <p
-          class="mt-8 font-sans text-[10px] font-medium tracking-[0.22em] uppercase text-rouge text-center"
-        >
-          — Ensaio 03 · "Silêncios atentos"
-        </p>
-      </div>
-    </section>
-
-    {/* ============================================================
-        5 · SOBRE A AUTORA
+        3 · SOBRE A AUTORA
         ============================================================ */}
     <section class="max-w-5xl mx-auto px-6 lg:px-12 py-16 lg:py-24">
       <div class="grid grid-cols-1 md:grid-cols-12 gap-10 lg:gap-16 items-center">
@@ -261,7 +335,7 @@ nomear esse silêncio que comecei a escrever este livro.`;
           <h2
             class="font-display text-[32px] lg:text-[40px] leading-[1.1] mt-3 font-normal tracking-[-0.005em]"
           >
-            Eleonora Cruz Santos
+            {bookAuthor}
           </h2>
           <p
             class="font-serif text-[16px] lg:text-[17px] leading-[1.6] mt-5 text-ink/85"
@@ -283,7 +357,7 @@ nomear esse silêncio que comecei a escrever este livro.`;
     </section>
 
     {/* ============================================================
-        6 · DEPOIMENTOS · 3 colunas
+        4 · DEPOIMENTOS
         ============================================================ */}
     <section class="bg-paper-soft border-y border-rule/60">
       <div class="max-w-6xl mx-auto px-6 lg:px-12 py-16 lg:py-24">
@@ -298,7 +372,7 @@ nomear esse silêncio que comecei a escrever este livro.`;
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-12">
           {
-            depoimentos.map((d) => (
+            showTestimonials.map((d) => (
               <figure class="text-center">
                 <span class="font-display text-[48px] lg:text-[56px] leading-[1] text-rouge block">
                   “
@@ -310,7 +384,7 @@ nomear esse silêncio que comecei a escrever este livro.`;
                   <span class="block font-sans text-[10px] font-medium tracking-[0.22em] uppercase text-rouge">
                     {d.author}
                   </span>
-                  <span class="meta block mt-1">{d.role}</span>
+                  {d.role && <span class="meta block mt-1">{d.role}</span>}
                 </figcaption>
               </figure>
             ))
@@ -320,14 +394,14 @@ nomear esse silêncio que comecei a escrever este livro.`;
     </section>
 
     {/* ============================================================
-        7 · CTA FINAL · banner bordô
+        5 · CTA FINAL
         ============================================================ */}
     <section class="bg-rouge text-paper">
       <div class="max-w-5xl mx-auto px-6 lg:px-12 py-16 lg:py-24 text-center">
         <p
           class="font-sans text-[11px] font-medium tracking-[0.30em] uppercase text-paper/80"
         >
-          Edição 2026 · Pré-venda aberta
+          {launchEdition}
         </p>
         <h2
           class="font-display text-[36px] sm:text-[44px] lg:text-[56px] leading-[1.05] mt-4 font-normal tracking-[-0.01em] text-paper"
@@ -344,7 +418,7 @@ nomear esse silêncio que comecei a escrever este livro.`;
           class="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center"
         >
           <span class="font-display italic text-[28px] text-paper">
-            {livro?.price ?? "R$ 65,00"}
+            {bookPrice}
           </span>
           <a
             href={cartHref}
@@ -360,4 +434,83 @@ nomear esse silêncio que comecei a escrever este livro.`;
   </main>
 
   <Footer />
+
+  {/* ============================================================
+      Modal de amostra do livro (renderizado apenas se há PDF)
+      ============================================================ */}
+  {
+    hasSample && samplePdfUrl && (
+      <dialog
+        id="sample-modal"
+        aria-labelledby="sample-modal-title"
+        class="m-0 p-0 w-screen h-screen max-w-none max-h-none bg-transparent backdrop:bg-black/70"
+      >
+        <div class="flex flex-col w-full h-full bg-paper">
+          <header class="flex items-center justify-between px-6 py-3 border-b border-rule/60 bg-paper-soft">
+            <p
+              id="sample-modal-title"
+              class="font-sans text-[11px] font-medium tracking-[0.22em] uppercase text-ink/80"
+            >
+              Amostra · {bookTitle}
+            </p>
+            <button
+              type="button"
+              data-close-sample
+              aria-label="Fechar amostra"
+              class="font-sans text-[11px] font-medium tracking-[0.22em] uppercase text-rouge hover:text-rouge-deep transition-colors"
+            >
+              Fechar ✕
+            </button>
+          </header>
+          <iframe
+            src={samplePdfUrl}
+            title={`Amostra do livro ${bookTitle}`}
+            class="flex-1 w-full border-0 bg-ink/5"
+          ></iframe>
+        </div>
+      </dialog>
+
+      <script is:inline>
+        (function () {
+          const dialog = document.getElementById("sample-modal");
+          if (!dialog) return;
+          const trigger = document.querySelector("[data-open-sample]");
+          const closeBtn = document.querySelector("[data-close-sample]");
+
+          trigger?.addEventListener("click", () => {
+            if (typeof dialog.showModal === "function") {
+              dialog.showModal();
+            } else {
+              dialog.setAttribute("open", "");
+            }
+          });
+
+          closeBtn?.addEventListener("click", () => dialog.close());
+
+          // Fechar ao clicar no backdrop (fora do conteúdo interno)
+          dialog.addEventListener("click", (event) => {
+            const rect = dialog.getBoundingClientRect();
+            const inside =
+              event.clientX >= rect.left &&
+              event.clientX <= rect.right &&
+              event.clientY >= rect.top &&
+              event.clientY <= rect.bottom;
+            // Como o <dialog> ocupa 100vw/100vh, clicar fora cai no próprio
+            // dialog (não no .flex interno). Detectamos por event.target:
+            if (event.target === dialog) dialog.close();
+          });
+        })();
+      </script>
+    )
+  }
 </Layout>
+
+<style>
+  /* Esconde a setinha padrão do navegador no <summary>, deixando só o ícone customizado */
+  .book-details summary::-webkit-details-marker {
+    display: none;
+  }
+  .book-details summary::marker {
+    content: "";
+  }
+</style>

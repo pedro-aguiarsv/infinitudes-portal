@@ -1,0 +1,72 @@
+---
+// =============================================================
+// /404 · Página de erro 404 (página não encontrada)
+// -------------------------------------------------------------
+// Mantém o tom editorial do projeto: tipografia display, aquarela
+// rouge ao fundo e CTAs de retorno. Astro detecta este arquivo e
+// usa-o automaticamente para qualquer rota não resolvida.
+// =============================================================
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import WatercolorAccent from "../components/WatercolorAccent.astro";
+import Divider from "../components/Divider.astro";
+---
+
+<Layout
+  title="Página não encontrada — (In)finitudes"
+  description="A página que você procura não existe ou foi movida."
+>
+  <Header />
+
+  <main>
+    <section
+      class="relative overflow-hidden max-w-5xl mx-auto px-6 lg:px-12 py-20 lg:py-28 text-center"
+    >
+      <WatercolorAccent
+        variant="rouge-blob"
+        class="absolute right-0 top-0 w-[420px] h-auto opacity-25 pointer-events-none -translate-y-1/4 translate-x-1/4 hidden lg:block"
+      />
+
+      <p class="eyebrow">Erro 404</p>
+      <h1
+        class="font-display text-[80px] sm:text-[120px] lg:text-[160px] leading-[0.9] mt-3 font-normal tracking-[-0.02em] text-rouge"
+      >
+        404
+      </h1>
+      <p
+        class="font-display italic text-[24px] lg:text-[32px] mt-2 text-ink"
+      >
+        Esta página se perdeu no caminho.
+      </p>
+
+      <Divider variant="rouge" gap="my-10 max-w-md mx-auto" />
+
+      <p
+        class="font-serif text-[17px] lg:text-[18px] leading-[1.6] max-w-xl mx-auto text-ink-soft"
+      >
+        Talvez o endereço tenha mudado, ou o conteúdo ainda esteja por chegar.
+        Nesse meio-tempo, há outros caminhos abertos:
+      </p>
+
+      <div
+        class="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center"
+      >
+        <a
+          href="/"
+          class="inline-block bg-rouge text-paper px-8 py-3.5 text-[11px] font-medium tracking-[0.22em] uppercase hover:bg-rouge-deep transition-colors"
+        >
+          Voltar à home
+        </a>
+        <a
+          href="/livro"
+          class="inline-block font-sans text-[11px] font-medium tracking-[0.22em] uppercase text-rouge link-ed"
+        >
+          Conhecer o livro →
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>

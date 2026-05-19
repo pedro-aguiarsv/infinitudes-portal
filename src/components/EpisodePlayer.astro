@@ -1,0 +1,94 @@
+---
+// =============================================================
+// EpisodePlayer.astro · Player de episódio
+// -------------------------------------------------------------
+// Renderiza:
+//   · iframe do YouTube (16:9)
+//   · iframe do Spotify (compacto, 152px de altura)
+//   · iframe do Vimeo (16:9)
+//   · placeholder com botão "play" quando não há URL
+//
+// Aceita também `posterUrl` (thumbnail), usado como capa visual
+// no estado vazio.
+// =============================================================
+import { getEmbedInfo } from "../lib/embeds";
+
+export interface Props {
+  videoUrl?: string | null;
+  title?: string;
+  posterUrl?: string | null;
+  posterAlt?: string;
+}
+
+const { videoUrl, title = "Episódio", posterUrl, posterAlt } = Astro.props;
+const embed = getEmbedInfo(videoUrl);
+---
+
+{
+  embed.type === "spotify" && embed.embedUrl && (
+    <figure class="w-full">
+      <iframe
+        src={embed.embedUrl}
+        title={`Spotify · ${title}`}
+        width="100%"
+        height="232"
+        frameborder="0"
+        loading="lazy"
+        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+        class="block w-full"
+      />
+    </figure>
+  )
+}
+
+{
+  (embed.type === "youtube" || embed.type === "vimeo") && embed.embedUrl && (
+    <figure class="w-full aspect-video bg-ink/85 overflow-hidden">
+      <iframe
+        src={embed.embedUrl}
+        title={`Vídeo · ${title}`}
+        loading="lazy"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+        allowfullscreen
+        class="w-full h-full"
+      />
+    </figure>
+  )
+}
+
+{
+  embed.type === "unknown" && (
+    <figure class="w-full aspect-video bg-ink/85 overflow-hidden relative">
+      {posterUrl ? (
+        <img
+          src={posterUrl}
+          alt={posterAlt ?? title}
+          class="w-full h-full object-cover"
+          loading="lazy"
+        />
+      ) : (
+        <div class="ph w-full h-full" data-label="Player de vídeo · 16:9" />
+      )}
+      <button
+        type="button"
+        class="absolute inset-0 flex items-center justify-center group"
+        aria-label="Reproduzir episódio"
+        disabled
+      >
+        <span
+          class="w-20 h-20 rounded-full bg-rouge/90 group-hover:bg-rouge text-paper flex items-center justify-center transition-colors"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            width="32"
+            height="32"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path d="M8 5v14l11-7z" />
+          </svg>
+        </span>
+      </button>
+    </figure>
+  )
+}
