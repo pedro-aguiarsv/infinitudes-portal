@@ -109,14 +109,30 @@ const hasRealPosts = gridPosts.length > 0;
   <Header />
 
   <main>
-    {/* 1 · Capa de revista · masthead + assinatura + aquarela vermelha */}
+    {/* 1 · Capa de revista · manifesto editorial + aquarela vermelha */}
     <HeroFeatured hero={heroContent} />
 
-    {/* 2 · Ensaio de capa · aquarela preta + título + dek */}
+    {/* Divisor fino entre o manifesto superior e o ensaio de capa */}
+    <div class="max-w-7xl mx-auto px-6 lg:px-12">
+      <div class="border-t border-rule"></div>
+    </div>
+
+    {/* 2 · Ensaio de capa · texto à esquerda + aquarela preta à direita */}
     <FeaturedEssay essay={essayContent} />
 
-    {/* 3 · Grid de 3 posts · sem título de seção (faixa direta) */}
-    <section class="max-w-6xl mx-auto px-6 lg:px-12 py-16 lg:py-24">
+    {/* Divisor de seção · eyebrow centralizado entre linhas finas */}
+    <div class="max-w-7xl mx-auto px-6 lg:px-12">
+      <div class="flex items-center gap-6 py-10 lg:py-14">
+        <span class="flex-1 h-px bg-rule"></span>
+        <span class="eyebrow whitespace-nowrap">
+          Relatos &amp; Podcasts da semana
+        </span>
+        <span class="flex-1 h-px bg-rule"></span>
+      </div>
+    </div>
+
+    {/* 3 · Grid de 3 posts · alinhado ao container editorial */}
+    <section class="max-w-7xl mx-auto px-6 lg:px-12 pb-16 lg:pb-24">
       <div
         class="grid grid-cols-1 md:grid-cols-3 gap-y-14 md:gap-x-10 lg:gap-x-14"
       >
@@ -134,7 +150,7 @@ const hasRealPosts = gridPosts.length > 0;
       </div>
     </section>
 
-    {/* 4 · Banner bordô · livro */}
+    {/* 4 · Banner bordô · livro (break section full-width intencional) */}
     <BookSection />
 
     {/* 5 · Ensaio longo destacado · capitular */}

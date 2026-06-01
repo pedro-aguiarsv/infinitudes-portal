@@ -2,13 +2,15 @@
 // =============================================================
 // FeaturedEssay.astro · "Ensaio de capa" da home (page-01, bloco 2)
 // -------------------------------------------------------------
-// Layout em duas colunas:
-//   · Esquerda: aquarela preta (silhueta) — peça gráfica
-//   · Direita: eyebrow bordô + título display + dek serif italic
-//             + byline (autor · tempo de leitura) + CTA bordô
+// Padrão zigue-zague editorial (alternância com o Hero):
+//   · Hero        → texto à esquerda · aquarela bordô à direita
+//   · FeaturedEssay (este) → aquarela preta à esquerda · texto à direita
 //
+// Estrutura desta seção:
+//   · Esquerda: aquarela preta (silhueta) — peça gráfica
+//   · Direita: eyebrow bordô + título serif + dek italic
+//             + byline (autor · tempo de leitura) + CTA bordô
 // Pode receber dados do Sanity ou cair em fake editorial.
-// Fundo paper-soft (creme um pouco mais quente) para se destacar.
 // =============================================================
 import WatercolorAccent from "./WatercolorAccent.astro";
 
@@ -37,34 +39,31 @@ const FAKE: FeaturedContent = {
 const { essay = FAKE } = Astro.props;
 ---
 
-<section class="bg-paper-soft border-y border-rule/60">
-  <div class="max-w-6xl mx-auto px-6 lg:px-12 py-20 lg:py-28">
+<section>
+  <div class="max-w-7xl mx-auto px-6 lg:px-12 py-20 lg:py-28">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
-      {/* Coluna esquerda · aquarela preta silhueta */}
-      <div class="lg:col-span-6 flex justify-center">
+      {/* Coluna esquerda · aquarela preta (peça gráfica) */}
+      <div class="lg:col-span-5 flex justify-center lg:justify-start">
         <WatercolorAccent
           variant="black-figure"
-          class="w-[320px] sm:w-[400px] lg:w-[460px] h-auto"
+          class="w-[320px] sm:w-[400px] lg:w-[440px] h-auto"
         />
       </div>
 
-      {/* Coluna direita · texto */}
-      <div class="lg:col-span-6">
+      {/* Coluna direita · texto (eyebrow + título + dek + byline + CTA) */}
+      <div class="lg:col-span-7">
         <p class="eyebrow">{essay.eyebrow}</p>
         <h2
-          class="font-display text-[40px] sm:text-[48px] lg:text-[56px] leading-[1.05] mt-4 font-normal tracking-[-0.01em]"
+          class="font-serif text-[40px] sm:text-[48px] lg:text-[56px] leading-[1.05] mt-4 font-normal tracking-[-0.01em]"
         >
-          <a
-            href={essay.href}
-            class="transition-colors hover:text-rouge"
-          >
+          <a href={essay.href} class="transition-colors hover:text-rouge">
             {essay.title}
           </a>
         </h2>
 
         {
           essay.dek && (
-            <p class="font-serif italic text-[19px] lg:text-[21px] leading-[1.45] mt-6 text-ink/80">
+            <p class="font-serif italic text-[19px] lg:text-[21px] leading-[1.45] mt-6 text-ink/80 max-w-[52ch]">
               {essay.dek}
             </p>
           )

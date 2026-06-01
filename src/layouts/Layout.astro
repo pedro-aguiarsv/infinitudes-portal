@@ -1,9 +1,9 @@
 ---
 // =============================================================
 // Layout.astro · Shell base de todas as páginas
-// As fontes oficiais (DIN Alternate Bold + Myriad Variable Concept)
-// são carregadas via @font-face direto no global.css, a partir de
-// /public/fonts/ — não usamos mais Google Fonts.
+// Fontes locais carregadas via @font-face em global.css (a partir
+// de /public/fonts/): Playfair Display (serif), Inter (sans),
+// DIN Alternate Bold e Myriad Pro (detalhes). Não usamos Google Fonts.
 // =============================================================
 import "../styles/global.css";
 import CookieBanner from "../components/CookieBanner.astro";
@@ -36,19 +36,19 @@ const ogImage = new URL(image, Astro.site ?? Astro.url).toString();
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={canonicalURL.toString()} />
 
-    {/* Preload das fontes locais para evitar FOUT */}
+    {/* Preload das fontes críticas para evitar FOUT (body + títulos) */}
     <link
       rel="preload"
-      href="/fonts/din-alternate-bold.ttf"
+      href="/fonts/inter-variable.ttf"
       as="font"
       type="font/ttf"
       crossorigin
     />
     <link
       rel="preload"
-      href="/fonts/myriad-variable-concept.otf"
+      href="/fonts/playfair-display-regular.ttf"
       as="font"
-      type="font/otf"
+      type="font/ttf"
       crossorigin
     />
 

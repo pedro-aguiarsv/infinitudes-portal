@@ -8,16 +8,7 @@
 //   1. SectionTitle "Sobre o (In)finitudes"
 //   2. Texto explicativo do projeto (Sanity → projectDescription,
 //      com fallback editorial)
-//   3. Seção "Quem faz" — grid de participantes (hardcoded)
-//   4. Newsletter
-//
-// Os participantes ficam HARDCODED no array TEAM abaixo
-// (decisão do cliente, 2026). Para editar: trocar nome/cargo/bio
-// e adicionar a foto em /public/team/{slug}.jpg.
-//
-// QUANDO O CLIENTE QUISER EDITAR PELO STUDIO: criar um schema
-// dedicado `teamMember` no Sanity Studio e trocar o array por
-// `await getTeamMembers()`.
+//   3. Newsletter
 // =============================================================
 import Layout from "../layouts/Layout.astro";
 import Header from "../components/Header.astro";
@@ -35,7 +26,7 @@ const about = await getAboutPage();
 const FAKE_PROJECT_DESCRIPTION = [
   "O (In)finitudes é um projeto cultural idealizado por Eleonora Santos que une jornalismo, literatura e escuta em torno de um tema ainda em silêncio na cultura brasileira: os processos de adoecimento, o fim da vida e a espiritualidade que os atravessa.",
   "Reúne ensaios, entrevistas, recomendações e um videocast — o Divã Infinito — que conversa com médicos, pacientes, teólogos e cuidadores sobre histórias reais e os efeitos psíquicos, espirituais e relacionais do cuidado.",
-  "Acreditamos que falar sobre finitude não é resignação; é uma forma de honrar a vida com mais presença, mais linguagem e menos solidão. Esta página apresenta as pessoas que tornam o projeto possível.",
+  "Acreditamos que falar sobre finitude não é resignação; é uma forma de honrar a vida com mais presença, mais linguagem e menos solidão.",
 ];
 
 const hasRealDescription =
@@ -50,47 +41,11 @@ const ptComponents = {
     blockquote: PTBlock,
   },
 };
-
-// =============================================================
-// TEAM · Participantes do projeto (HARDCODED)
-// -------------------------------------------------------------
-// [PLACEHOLDER] Pedro: confirme nomes, cargos e bios reais com a
-// cliente e me passe as fotos (sugiro 600×800px, .jpg/.webp, em
-// /public/team/{slug}.jpg). Por enquanto: 3 cards de exemplo.
-// =============================================================
-type TeamMember = {
-  name: string;
-  role: string;
-  bio: string;
-  /** Caminho relativo a /public. Ex.: "/team/eleonora.jpg". null → placeholder. */
-  photo: string | null;
-};
-
-const TEAM: TeamMember[] = [
-  {
-    name: "Eleonora C. Santos",
-    role: "Idealizadora · Autora · Apresentadora",
-    bio: "Jornalista, escritora e curadora dos conteúdos do (In)finitudes. Autora do livro homônimo e apresentadora do videocast Divã Infinito. Pesquisa há mais de uma década o encontro entre cuidado, escuta e linguagem.",
-    photo: null,
-  },
-  {
-    name: "[Nome do participante 2]",
-    role: "[Cargo / função no projeto]",
-    bio: "[Mini bio em uma ou duas frases — quem é, o que faz, o que traz ao projeto. Texto editorial, sem CV técnico.]",
-    photo: null,
-  },
-  {
-    name: "[Nome do participante 3]",
-    role: "[Cargo / função no projeto]",
-    bio: "[Mini bio em uma ou duas frases.]",
-    photo: null,
-  },
-];
 ---
 
 <Layout
   title="Sobre o (In)finitudes — (In)finitudes"
-  description="Um projeto cultural sobre cuidado, finitude e espiritualidade. Conheça as pessoas por trás do (In)finitudes."
+  description="Um projeto cultural sobre cuidado, finitude e espiritualidade — ensaios, entrevistas e o videocast Divã Infinito."
 >
   <Header />
 
@@ -116,70 +71,7 @@ const TEAM: TeamMember[] = [
       }
     </section>
 
-    {/* 3 · Quem faz o projeto */}
-    <section class="max-w-6xl mx-auto px-6 lg:px-12 py-12 lg:py-20">
-      <div class="text-center mb-12 lg:mb-16">
-        <p class="eyebrow text-rouge">Quem faz</p>
-        <h2
-          class="font-display text-[28px] sm:text-[34px] lg:text-[40px] leading-[1.1] mt-3 font-normal tracking-[-0.005em]"
-        >
-          As pessoas por trás do projeto
-        </h2>
-      </div>
-
-      <div
-        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-12"
-      >
-        {
-          TEAM.map((member) => (
-            <article class="text-center">
-              {/* Foto */}
-              <div class="mx-auto w-full max-w-[260px] aspect-[3/4] mb-5">
-                {member.photo ? (
-                  <img
-                    src={member.photo}
-                    alt={`Foto · ${member.name}`}
-                    class="w-full h-full object-cover border border-rule/60"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                ) : (
-                  <div
-                    class="w-full h-full bg-paper-soft border border-rule/40 flex items-center justify-center"
-                    aria-hidden="true"
-                  >
-                    <span class="font-sans text-[10px] font-medium tracking-[0.28em] uppercase text-ink/40 text-center px-3">
-                      Foto
-                      <br />
-                      em breve
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              {/* Cargo (eyebrow rouge) */}
-              <p class="eyebrow text-rouge">{member.role}</p>
-
-              {/* Nome */}
-              <h3
-                class="font-display text-[20px] lg:text-[24px] leading-[1.15] mt-2 font-normal tracking-[-0.005em]"
-              >
-                {member.name}
-              </h3>
-
-              {/* Mini bio */}
-              <p
-                class="font-serif text-[14px] lg:text-[15px] leading-[1.55] mt-3 text-ink/75 max-w-xs mx-auto"
-              >
-                {member.bio}
-              </p>
-            </article>
-          ))
-        }
-      </div>
-    </section>
-
-    {/* 4 · Newsletter */}
+    {/* 3 · Newsletter */}
     <NewsletterSection />
   </main>
 

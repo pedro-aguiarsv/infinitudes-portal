@@ -296,17 +296,27 @@ const ptComponents = {
               <PortableText value={book!.synopsis as unknown[]} components={ptComponents} />
             </div>
           ) : (
-            <p
-              class="font-serif text-[19px] lg:text-[21px] leading-[1.55] mt-6 text-ink-soft"
-            >
-              <span class="font-display italic text-rouge">(In)finitudes</span>{" "}
-              reúne textos escritos ao longo de cinco anos de escuta — em enfermarias,
-              salas de espera, rodas de cuidadores e cozinhas onde a notícia ainda
-              não tinha sido dada. Eleonora costura entrevista, leitura e memória
-              para investigar o que se diz (e o que se silencia) ao redor da
-              finitude. Não é um livro sobre a morte: é um livro sobre o tempo que
-              sobra de presença quando a gente decide ficar.
-            </p>
+            <div class="font-serif text-[19px] lg:text-[21px] leading-[1.55] mt-6 text-ink-soft space-y-5 text-left">
+              <p>
+                Sete meses antes do diagnóstico, Eleonora notou que começaram
+                a surgir “caroços” pelo corpo. Angústia e insegurança
+                misturadas ao desejo de encarar a doença e se cuidar foram
+                os sentimentos que a mobilizaram.
+              </p>
+              <p>
+                Em todas as consultas médicas, Eleonora não quis que ninguém
+                a acompanhasse; mantinha ótima relação com seus médicos e
+                caminhava em silêncio espiritual, em diálogos interiores
+                com o transcendente.
+              </p>
+              <p>
+                Foi nessa jornada que se sentiu inspirada a ajudar outras
+                pessoas em processo de tratamento, em busca de cura ou de
+                conforto espiritual — para apoiá-las a seguirem com força e
+                a lidar melhor com a perspectiva da morte: a finitude da
+                vida.
+              </p>
+            </div>
           )
         }
       </div>
@@ -337,15 +347,28 @@ const ptComponents = {
           >
             {bookAuthor}
           </h2>
-          <p
-            class="font-serif text-[16px] lg:text-[17px] leading-[1.6] mt-5 text-ink/85"
+          <div
+            class="font-serif text-[16px] lg:text-[17px] leading-[1.6] mt-5 text-ink/85 space-y-4"
           >
-            Jornalista, escritora e curadora de conteúdos sobre humanização em
-            saúde e cuidados paliativos. Fundou o projeto (In)finitudes em 2024
-            como um espaço de escuta e elaboração coletiva sobre o fim da vida.
-            Trabalhou por uma década na cobertura cultural da Folha de S. Paulo
-            e da Piauí.
-          </p>
+            <p>
+              Eleonora C. Santos é economista, mestre em Demografia, doutora
+              em Administração, pós-doutora em Economia (UFMG) e tem MBA
+              Executivo pela Coppead-UFRJ. Iniciou sua carreira no Ipea-Rio
+              na área de indicadores sociais e sempre teve um olhar voltado
+              para o desenvolvimento humano. Ingressou no meio cultural ao
+              assumir a direção da organização produtora da grade de
+              programação da Rede TV Minas; mais tarde, tornou-se presidente
+              do Conselho de Administração da EMC (Empresa Mineira de
+              Comunicação), além de atuar em outros conselhos.
+            </p>
+            <p>
+              Foi diretora da área de produção de estatísticas
+              socioeconômicas da Fundação João Pinheiro-MG, economista em
+              bancos de investimento e consultora em organismos
+              internacionais. Há cinco anos é colunista do jornal Estado de
+              Minas e recentemente tornou-se produtora de videocasts.
+            </p>
+          </div>
           <a
             href="/sobre"
             class="inline-block mt-6 font-sans text-[11px] font-medium tracking-[0.22em] uppercase text-rouge link-ed"

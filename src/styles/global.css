@@ -1,18 +1,21 @@
 @import "tailwindcss";
 
 /* =================================================================
-   THEME · (In)finitudes — Sistema de design v3 (DIN + Myriad)
+   THEME · (In)finitudes — Sistema de design v4 (New Yorker)
    -----------------------------------------------------------------
-   Identidade visual oficial fornecida pela autora:
-     · Logo em DIN Alternate Bold (condensed, geométrica)
-     · Texto corrido em Myriad Variable Concept (humanista, neutra)
-     · Sem fontes serif — visual editorial moderno
-     · Paleta limitada: creme + bordô + preto + aquarelas
+   Identidade visual editorial inspirada na New Yorker:
+     · Títulos editoriais em Playfair Display (serif de luxo)
+     · Texto corrido em Inter (sans-serif limpa, variable)
+     · DIN Alternate Bold em menus, eyebrows, números
+     · Myriad Pro em metadados pontuais
+     · Paleta: creme #F9F7F2 + bordô + preto
 
    Tokens disponíveis como utilitários Tailwind v4:
-     --font-display  → font-display  (DIN Alternate Bold — títulos / logo)
-     --font-sans     → font-sans     (Myriad Variable Concept — body / UI)
-     --font-serif    → font-serif    (alias de Myriad — compatibilidade)
+     --font-serif    → font-serif    (Playfair Display — títulos)
+     --font-sans     → font-sans     (Inter — body / UI)
+     --font-din      → font-din      (DIN Alternate Bold — menus / detalhes)
+     --font-myriad   → font-myriad   (Myriad Pro — metadados pontuais)
+     --font-display  → font-display  (alias de DIN, compatibilidade legada)
 
      --color-paper   → bg-paper / text-paper       (fundo creme)
      --color-ink     → text-ink / border-ink       (texto principal)
@@ -22,7 +25,34 @@
      --color-rouge-line → border-rouge-line        (linha vermelha fina)
    ================================================================= */
 
-/* --- Carregamento das fontes locais --- */
+/* --- Carregamento das fontes locais (em /public/fonts/) --- */
+
+/* Playfair Display — serif de luxo para títulos editoriais */
+@font-face {
+  font-family: "Playfair Display";
+  src: url("/fonts/playfair-display-regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Playfair Display";
+  src: url("/fonts/playfair-display-italic.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Inter — sans-serif variable (100→900) para body e UI. */
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/inter-variable.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* DIN Alternate Bold — para menus, eyebrows e detalhes geométricos */
 @font-face {
   font-family: "DIN Alternate";
   src: url("/fonts/din-alternate-bold.ttf") format("truetype");
@@ -31,36 +61,34 @@
   font-display: swap;
 }
 
-/* Myriad Variable Concept é variable font com dois eixos:
-   · wght (peso):   300 (Light)     → 900 (Black)
-   · wdth (largura): 70 (Condensed) → 110 (Wide)
-   Default da fonte: 300/70 (Light Condensed). Por isso o body
-   abaixo seta explicitamente wght:400, wdth:100 — para que o
-   corpo padrão saia em Regular Normal, e não em Light Condensed. */
+/* Myriad Pro — para metadados pontuais (autoria, captions) */
 @font-face {
-  font-family: "Myriad Variable Concept";
-  src: url("/fonts/myriad-variable-concept.otf") format("opentype-variations");
-  font-weight: 300 900;
-  font-stretch: 70% 110%;
+  font-family: "Myriad Pro";
+  src: url("/fonts/myriad-pro-regular.otf") format("opentype");
+  font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
 @theme {
   /* --- Famílias tipográficas (oficial) --- */
+  --font-serif:
+    "Playfair Display", Georgia, "Times New Roman", serif;
+  --font-sans:
+    "Inter", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --font-din:
+    "DIN Alternate", "DIN Alternate Bold", "Bebas Neue",
+    "Helvetica Neue Condensed", "Impact", sans-serif;
+  --font-myriad:
+    "Myriad Pro", "Myriad", system-ui, -apple-system, "Helvetica Neue",
+    Arial, sans-serif;
+  /* Alias mantido por compatibilidade com componentes legados que usam font-display */
   --font-display:
     "DIN Alternate", "DIN Alternate Bold", "Bebas Neue",
     "Helvetica Neue Condensed", "Impact", sans-serif;
-  --font-sans:
-    "Myriad Variable Concept", "Myriad Pro", "Myriad", system-ui,
-    -apple-system, "Helvetica Neue", Arial, sans-serif;
-  /* Alias mantido por compatibilidade com componentes que usam font-serif */
-  --font-serif:
-    "Myriad Variable Concept", "Myriad Pro", "Myriad", system-ui,
-    -apple-system, "Helvetica Neue", Arial, sans-serif;
 
   /* --- Cores --- */
-  --color-paper: #faf5e8; /* fundo creme dominante */
+  --color-paper: #faf5e8; /* fundo bege creme original */
   --color-paper-soft: #f5efde; /* fundo banner sutil */
   --color-ink: #1a1a1a; /* texto principal */
   --color-ink-soft: #2b2b2b; /* texto body */
@@ -95,12 +123,7 @@
     background-color: var(--color-paper);
     color: var(--color-ink);
     font-family: var(--font-sans);
-    /* Força peso Regular (400) e largura Normal (100) como padrão
-       da variable font Myriad. Sem isso, a fonte cai no default dela
-       (300 Light + 70 Condensed), que fica fino e comprimido. */
     font-weight: 400;
-    font-stretch: 100%;
-    font-variation-settings: "wght" 400, "wdth" 100;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -116,14 +139,18 @@
    Componentes utilitários reutilizáveis
    ================================================================= */
 @layer components {
-  /* ---- Metadados (categoria, data, autor) — UPPERCASE espaçado ---- */
+  /* ---- Metadados (categoria, data, autor, tempo de leitura) ----
+     Padrão editorial New Yorker:
+       · Inter (sans), uppercase, 12px (text-xs)
+       · Tracking aberto (tracking-widest ≈ 0.1em)
+       · Cor suave stone-500 — destaca sem competir com o título serif. */
   .meta {
     font-family: var(--font-sans);
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 500;
-    letter-spacing: var(--tracking-meta);
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--color-muted);
+    color: #78716c; /* stone-500 */
   }
 
   /* Variação bordô para eyebrows de seção */

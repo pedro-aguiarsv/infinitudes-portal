@@ -86,7 +86,7 @@ const titleSize = {
     }
 
     <h3
-      class={`font-display ${titleSize} leading-[1.18] mt-2 font-medium tracking-[-0.005em] transition-colors group-hover:text-rouge`}
+      class={`font-serif ${titleSize} leading-[1.18] mt-2 font-medium tracking-[-0.005em] transition-colors group-hover:text-rouge`}
     >
       {post.title}
     </h3>
@@ -101,7 +101,7 @@ const titleSize = {
 
     {
       author && (
-        <div class="mt-4 font-sans text-[10px] font-medium tracking-[0.20em] uppercase text-rouge">
+        <div class="mt-4 font-sans text-xs font-medium tracking-widest uppercase text-stone-500">
           {author}
         </div>
       )
