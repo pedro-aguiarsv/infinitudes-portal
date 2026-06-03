@@ -2,60 +2,41 @@
 // =============================================================
 // Footer.astro · Rodapé institucional (In)finitudes
 //   · Linha de links das seções (em creme, antes do rodapé preto)
-//   · Bloco preto com logo, patrocínio, realização, redes sociais
-//   · Copyright em sans uppercase
+//   · Bloco preto com logo + redes sociais + RÉGUA OFICIAL DE FOMENTO
+//     (régua completa adaptada para fundo escuro)
 //
-// Patrocinadores e realizadores agora vêm do Sanity (`siteSettings`).
-// Se o documento não existir ainda, usa fallback estático com os
-// PNG/WebP locais em /public/footer/sponsors/.
+// IMPORTANTE — Régua oficial de fomento (Lei Rouanet)
+// -------------------------------------------------------------
+// A régua entregue pela equipe oficial (Réguas.pdf) tem duas
+// versões: completa horizontal em fundo claro (9 marcas) e
+// reduzida vertical em fundo escuro (4 marcas). Como o footer
+// do site é em fundo preto e queremos preservar TODAS as marcas
+// (incluindo os apoios mineiros), geramos a versão dark a partir
+// da régua clara completa, mantendo cores das logos coloridas
+// (Lei Rouanet, Itaú, "A" do Gov MG, BRASIL) e invertendo apenas
+// fundo↔texto monocromáticos.
+//   · regua-fomento.{png,webp}      → versão clara (peças impressas)
+//   · regua-fomento-dark.{png,webp} → versão escura (este footer)
+// Qualquer alteração estrutural na ORDEM/proporção deve substituir
+// o arquivo, não recompor com markup.
 // =============================================================
 import { getNavItems } from "../lib/categories";
-import Logo from "./Logo.astro";
-import { getSiteSettings, urlFor, type SponsorLogo } from "../lib/sanity";
+import { getSiteSettings } from "../lib/sanity";
 
 const [settings, navItems] = await Promise.all([
   getSiteSettings(),
   getNavItems(),
 ]);
 
-// ----- Patrocinadores / Realização -------------------------
-// Se o Sanity tem itens cadastrados, usa eles. Senão, fallback
-// estático com os logos já existentes em /public/footer/sponsors/.
-type FooterLogo = {
-  label: string;
-  src: string;       // URL para <img>
-  srcWebp?: string;  // <source> webp (opcional)
-  h: string;         // classe Tailwind de altura
-};
-
-const FALLBACK_SPONSORS: FooterLogo[] = [
-  { label: "Lei Rouanet", src: "/footer/sponsors/lei-rouanet.png", srcWebp: "/footer/sponsors/lei-rouanet.webp", h: "h-10" },
-  { label: "Itaú", src: "/footer/sponsors/itau.png", srcWebp: "/footer/sponsors/itau.webp", h: "h-12" },
-];
-const FALLBACK_REALIZATION: FooterLogo[] = [
-  { label: "Ministério da Cultura", src: "/footer/sponsors/min-cultura.png", srcWebp: "/footer/sponsors/min-cultura.webp", h: "h-8" },
-  { label: "Governo do Brasil", src: "/footer/sponsors/governo-brasil.png", srcWebp: "/footer/sponsors/governo-brasil.webp", h: "h-12" },
-];
-
-function mapSanityLogo(s: SponsorLogo): FooterLogo {
-  return {
-    label: s.label,
-    src: s.logo
-      ? urlFor(s.logo).width(400).auto("format").url()
-      : "",
-    h: "h-10",
-  };
-}
-
-const sponsors: FooterLogo[] =
-  settings?.sponsors && settings.sponsors.length > 0
-    ? settings.sponsors.map(mapSanityLogo)
-    : FALLBACK_SPONSORS;
-
-const realization: FooterLogo[] =
-  settings?.realization && settings.realization.length > 0
-    ? settings.realization.map(mapSanityLogo)
-    : FALLBACK_REALIZATION;
+// Régua oficial de fomento — versão completa para fundo escuro,
+// COM o logo (In)finitudes inserido entre Lei Rouanet e Patrocínio
+// (Itaú). Proporção da imagem: ~10:1 (9916 × 988 px). Renderizada com
+// largura 100% do container; em mobile diminui mas mantém legibilidade
+// das marcas principais por design.
+const FOMENTO_PNG = "/footer/regua-fomento-dark.png";
+const FOMENTO_WEBP = "/footer/regua-fomento-dark.webp";
+const FOMENTO_ALT =
+  "Régua oficial de fomento: Lei Rouanet · Patrocínio Itaú · Apoio Palácio das Artes, Circuito Liberdade, Fundação Clóvis Salgado, Cultura e Turismo de Minas, Governo de Minas · Realização Ministério da Cultura, Governo do Brasil";
 
 // ----- Redes sociais ---------------------------------------
 type SocialLink = {
@@ -67,20 +48,20 @@ type SocialLink = {
 const socialFromCMS: SocialLink[] = [];
 if (settings?.social?.instagram)
   socialFromCMS.push({ label: "Instagram", href: settings.social.instagram, icon: "instagram" });
-if (settings?.social?.linkedin)
-  socialFromCMS.push({ label: "LinkedIn", href: settings.social.linkedin, icon: "linkedin" });
-if (settings?.social?.spotify)
-  socialFromCMS.push({ label: "Spotify", href: settings.social.spotify, icon: "spotify" });
 if (settings?.social?.youtube)
   socialFromCMS.push({ label: "YouTube", href: settings.social.youtube, icon: "youtube" });
+if (settings?.social?.spotify)
+  socialFromCMS.push({ label: "Spotify", href: settings.social.spotify, icon: "spotify" });
+if (settings?.social?.linkedin)
+  socialFromCMS.push({ label: "LinkedIn", href: settings.social.linkedin, icon: "linkedin" });
 
 const SOCIAL: SocialLink[] =
   socialFromCMS.length > 0
     ? [...socialFromCMS, { label: "Contato", href: "/contato", icon: "mail" }]
     : [
         { label: "Instagram", href: "https://instagram.com", icon: "instagram" },
-        { label: "LinkedIn", href: "https://linkedin.com", icon: "linkedin" },
-        { label: "Spotify", href: "https://spotify.com", icon: "spotify" },
+        { label: "YouTube", href: "https://youtube.com/@projetoinfinitudes", icon: "youtube" },
+        { label: "Spotify", href: "https://open.spotify.com/user/31uwpv77x55gctgdwpiwmczvgmfi", icon: "spotify" },
         { label: "Contato", href: "/contato", icon: "mail" },
       ];
 
@@ -109,82 +90,17 @@ const copyrightText =
 </div>
 
 {/* Rodapé preto institucional */}
+{/*
+  Bloco preto: redes sociais centralizadas + régua oficial de fomento
+  (que já contém o logo (In)finitudes entre Lei Rouanet e Itaú).
+*/}
 <footer class="bg-black text-paper">
   <div
-    class="max-w-7xl mx-auto px-6 lg:px-12 py-12 grid grid-cols-1 md:grid-cols-12 gap-10 items-center"
+    class="max-w-7xl mx-auto px-6 lg:px-12 py-12 flex justify-center"
   >
-    {/* Logo à esquerda · versão "paper" (creme p/ fundo escuro) */}
-    <div class="md:col-span-3 flex justify-center md:justify-start">
-      <a href="/" class="inline-block" aria-label="(In)finitudes">
-        <Logo
-          variant="paper"
-          class="h-16 w-auto"
-        />
-        <p
-          class="mt-3 font-sans text-[8px] tracking-[0.42em] uppercase text-paper/60 text-center"
-        >
-          Divã Infinito
-        </p>
-      </a>
-    </div>
-
-    {/* Patrocínio e Realização */}
-    <div
-      class="md:col-span-6 grid grid-cols-2 gap-8 items-start text-center"
-    >
-      <div>
-        <p
-          class="font-sans text-[9px] tracking-[0.30em] uppercase text-paper/55 mb-4"
-        >
-          Patrocínio
-        </p>
-        <div class="flex items-center justify-center gap-6 flex-wrap">
-          {
-            sponsors.map((s) => (
-              <picture>
-                {s.srcWebp && <source srcset={s.srcWebp} type="image/webp" />}
-                <img
-                  src={s.src}
-                  alt={s.label}
-                  class={`${s.h} w-auto object-contain select-none`}
-                  loading="lazy"
-                  decoding="async"
-                  draggable="false"
-                />
-              </picture>
-            ))
-          }
-        </div>
-      </div>
-      <div>
-        <p
-          class="font-sans text-[9px] tracking-[0.30em] uppercase text-paper/55 mb-4"
-        >
-          Realização
-        </p>
-        <div class="flex items-center justify-center gap-6 flex-wrap">
-          {
-            realization.map((s) => (
-              <picture>
-                {s.srcWebp && <source srcset={s.srcWebp} type="image/webp" />}
-                <img
-                  src={s.src}
-                  alt={s.label}
-                  class={`${s.h} w-auto object-contain select-none`}
-                  loading="lazy"
-                  decoding="async"
-                  draggable="false"
-                />
-              </picture>
-            ))
-          }
-        </div>
-      </div>
-    </div>
-
-    {/* Redes sociais à direita */}
-    <div class="md:col-span-3 flex justify-center md:justify-end">
-      <div class="flex flex-col items-center md:items-end gap-3">
+    {/* Redes sociais centralizadas */}
+    <div class="flex justify-center">
+      <div class="flex flex-col items-center gap-3">
         <p
           class="font-sans text-[9px] tracking-[0.30em] uppercase text-paper/55"
         >
@@ -263,7 +179,28 @@ const copyrightText =
     </div>
   </div>
 
-  {/* Linha de copyright + links legais */}
+  {/*
+    Régua oficial de fomento — versão completa para fundo escuro
+    com o logo (In)finitudes integrado entre Lei Rouanet e Itaú.
+    Horizontal (proporção ~10:1), ocupa toda a largura do container.
+  */}
+  <div class="border-t border-paper/15">
+    <div class="max-w-6xl mx-auto px-6 lg:px-12 py-7 lg:py-9">
+      <picture class="block">
+        <source srcset={FOMENTO_WEBP} type="image/webp" />
+        <img
+          src={FOMENTO_PNG}
+          alt={FOMENTO_ALT}
+          class="w-full h-auto select-none"
+          loading="lazy"
+          decoding="async"
+          draggable="false"
+        />
+      </picture>
+    </div>
+  </div>
+
+  {/* Linha de copyright + links legais (último item dentro do bloco preto) */}
   <div class="border-t border-paper/15">
     <div
       class="max-w-7xl mx-auto px-6 lg:px-12 py-4 flex flex-col sm:flex-row gap-3 sm:gap-6 justify-between items-center"

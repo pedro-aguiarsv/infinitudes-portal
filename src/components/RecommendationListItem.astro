@@ -26,11 +26,24 @@ export interface Props {
   /** URL externa opcional (Amazon, Spotify, evento etc.) */
   externalUrl?: string | null;
   mainImage?: SanityImage | null;
+  /**
+   * Capa derivada de serviço externo (thumbnail YouTube, oEmbed Spotify
+   * etc.). Usada apenas quando `mainImage` está vazio. Resolvida no
+   * pai (em build time) via `lib/recommend-thumbs`.
+   */
+  externalImageUrl?: string | null;
   authors?: string | null;
 }
 
-const { title, excerpt, internalHref, externalUrl, mainImage, authors } =
-  Astro.props;
+const {
+  title,
+  excerpt,
+  internalHref,
+  externalUrl,
+  mainImage,
+  externalImageUrl,
+  authors,
+} = Astro.props;
 
 const hasExternal = Boolean(externalUrl);
 const linkHref = hasExternal ? externalUrl! : internalHref;
@@ -39,9 +52,12 @@ const linkAttrs = hasExternal
   ? { target: "_blank", rel: "noopener noreferrer" }
   : {};
 
-const imageUrl = mainImage
+// Capa: prioridade para a imagem cadastrada no Sanity. Se não houver,
+// cai para a thumbnail derivada da URL externa (YouTube/Spotify).
+const sanityImageUrl = mainImage
   ? urlFor(mainImage).width(600).height(600).fit("crop").auto("format").url()
   : null;
+const imageUrl = sanityImageUrl ?? externalImageUrl ?? null;
 const imageAlt = mainImage?.alt ?? title;
 ---
 

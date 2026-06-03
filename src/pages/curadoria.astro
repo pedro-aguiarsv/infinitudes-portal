@@ -29,7 +29,7 @@ import PostListItem from "../components/PostListItem.astro";
 import NewsletterSection from "../components/NewsletterSection.astro";
 import Divider from "../components/Divider.astro";
 import { getCategoriesMerged } from "../lib/categories";
-import { getPostsByCategory, type PostPreview } from "../lib/sanity";
+import { getPostsByCategory } from "../lib/sanity";
 
 const [merged, posts] = await Promise.all([
   getCategoriesMerged(),
@@ -44,63 +44,6 @@ const FALLBACK_LONG_DESCRIPTION =
   "A Curadoria é o espaço aberto do (In)finitudes. Recebemos relatos, depoimentos e ensaios escritos por leitores — pessoas que cuidaram, foram cuidadas, ou que acompanham processos de finitude no cotidiano. Os textos selecionados pela redação são editados em diálogo com quem escreveu e publicados nesta seção.";
 
 const longDescription = category.longDescription ?? FALLBACK_LONG_DESCRIPTION;
-
-// Histórias fake (estado "vazio apresentável") · usadas enquanto
-// a Eleonora ainda não cadastrou relatos reais no Sanity.
-const FAKE_POSTS: Array<{ post: PostPreview; author: string }> = [
-  {
-    post: {
-      _id: "fake-curadoria-1",
-      title: "A última conversa com minha avó",
-      slug: "a-ultima-conversa-com-minha-avo",
-      publishedAt: "2026-05-12",
-      mainImage: null,
-      category: "curadoria",
-      excerpt:
-        "Ela já não falava mais. Eu falei pelos dois — e descobri que isso também era escutá-la.",
-    },
-    author: "Por Marina Castro",
-  },
-  {
-    post: {
-      _id: "fake-curadoria-2",
-      title: "Carta a quem ainda virá",
-      slug: "carta-a-quem-ainda-vira",
-      publishedAt: "2026-05-04",
-      mainImage: null,
-      category: "curadoria",
-      excerpt:
-        "Escrevo do quarto onde meu marido passou os últimos quatro meses. Para quem chegar depois, deixo o que aprendi sobre tempo e ausência.",
-    },
-    author: "Por Joana Rebelo",
-  },
-  {
-    post: {
-      _id: "fake-curadoria-3",
-      title: "O caderno que minha mãe deixou",
-      slug: "o-caderno-que-minha-mae-deixou",
-      publishedAt: "2026-04-28",
-      mainImage: null,
-      category: "curadoria",
-      excerpt:
-        "Ela anotava receitas, contas, sonhos. Quando a casa ficou vazia, o caderno me devolveu uma voz que eu pensei ter perdido.",
-    },
-    author: "Por Lucas Andrade",
-  },
-  {
-    post: {
-      _id: "fake-curadoria-4",
-      title: "Quinze minutos",
-      slug: "quinze-minutos",
-      publishedAt: "2026-04-20",
-      mainImage: null,
-      category: "curadoria",
-      excerpt:
-        "É o tempo médio de uma visita médica. Aprendi a usá-lo para escutar antes de prescrever.",
-    },
-    author: "Por Dra. Helena Tavares",
-  },
-];
 
 const hasRealPosts = posts.length > 0;
 ---
@@ -292,12 +235,14 @@ const hasRealPosts = posts.length > 0;
             </>
           ))
         ) : (
-          FAKE_POSTS.map((item) => (
-            <>
-              <PostListItem post={item.post} author={item.author} />
-              <Divider variant="rouge" />
-            </>
-          ))
+          <div class="text-center py-16 lg:py-24">
+            <p class="eyebrow text-rouge">Em breve</p>
+            <p class="font-serif italic text-[18px] lg:text-[20px] leading-[1.55] mt-5 text-ink-soft max-w-xl mx-auto">
+              Estamos abrindo as inscrições para receber as primeiras histórias.
+              Envie a sua pelo formulário acima — leremos com cuidado e
+              publicaremos as selecionadas aqui.
+            </p>
+          </div>
         )
       }
     </section>

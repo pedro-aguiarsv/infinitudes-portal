@@ -26,6 +26,9 @@ export interface Props {
   meta?: string; // Sobrescreve o rodapé (ex.: "Marina Pires · 6 min")
   imageRatio?: string; // Tailwind aspect: "aspect-[4/3]" (default), "aspect-[4/5]"...
   size?: "sm" | "md" | "lg";
+  /** Fallback de thumbnail para posts sem mainImage (ex.: thumb do YouTube/Spotify
+   * resolvida via resolveExternalThumb na página). */
+  externalImageUrl?: string | null;
 }
 
 const {
@@ -35,6 +38,7 @@ const {
   meta,
   imageRatio = "aspect-[4/3]",
   size = "md",
+  externalImageUrl = null,
 } = Astro.props;
 
 const categoryLabel =
@@ -44,9 +48,11 @@ const postHref = post.category
   ? `/${post.category}/${post.slug}`
   : `/${post.slug}`;
 
-const imageUrl = post.mainImage
+const sanityImageUrl = post.mainImage
   ? urlFor(post.mainImage).width(800).height(600).fit("crop").auto("format").url()
   : null;
+// Prioriza imagem do Sanity; senão usa thumb externa resolvida (YouTube/Spotify)
+const imageUrl = sanityImageUrl ?? externalImageUrl ?? null;
 
 const formattedDate = post.publishedAt
   ? new Intl.DateTimeFormat("pt-BR", {

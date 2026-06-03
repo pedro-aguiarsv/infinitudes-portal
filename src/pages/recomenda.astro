@@ -26,11 +26,25 @@ import NewsletterSection from "../components/NewsletterSection.astro";
 import Divider from "../components/Divider.astro";
 import { getCategoriesMerged } from "../lib/categories";
 import { getPostsByCategory } from "../lib/sanity";
+import { resolveExternalThumb } from "../lib/recommend-thumbs";
 
-const [posts, merged] = await Promise.all([
+const [postsRaw, merged] = await Promise.all([
   getPostsByCategory("recomenda"),
   getCategoriesMerged(),
 ]);
+
+// Resolve a thumbnail externa (YouTube/Spotify) em build time para os
+// posts que ainda não têm `mainImage` no Sanity. Posts com mainImage
+// cadastrada continuam tendo prioridade — esse fallback só atua quando
+// a Eleonora ainda não subiu uma capa pelo Studio.
+const posts = await Promise.all(
+  postsRaw.map(async (p) => ({
+    ...p,
+    externalImageUrl: p.mainImage
+      ? null
+      : await resolveExternalThumb(p.externalUrl),
+  })),
+);
 
 const category = merged.find((c) => c.value === "recomenda");
 
@@ -93,7 +107,7 @@ const hasReal = posts.length > 0;
       category?.longDescription && (
         <section class="bg-paper-soft border-y border-rule/60">
           <div class="max-w-3xl mx-auto px-6 py-14 lg:py-20 text-center">
-            <p class="eyebrow text-rouge">O que é Recomenda?</p>
+            <p class="eyebrow text-rouge">O que é Recomendamos?</p>
             <p class="font-serif text-[18px] lg:text-[20px] leading-[1.6] mt-5 text-ink-soft">
               {category.longDescription}
             </p>
@@ -117,6 +131,7 @@ const hasReal = posts.length > 0;
                   internalHref={`/${post.category}/${post.slug}`}
                   externalUrl={post.externalUrl}
                   mainImage={post.mainImage}
+                  externalImageUrl={post.externalImageUrl}
                   authors={post.authors}
                 />
                 <Divider variant="rule" />

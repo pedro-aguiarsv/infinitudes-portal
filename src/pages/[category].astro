@@ -19,7 +19,6 @@ import NewsletterSection from "../components/NewsletterSection.astro";
 import Divider from "../components/Divider.astro";
 import { CATEGORIES, getCategoriesMerged } from "../lib/categories";
 import { getPostsByCategory } from "../lib/sanity";
-import type { PostPreview } from "../lib/sanity";
 
 export async function getStaticPaths() {
   // Categorias que JÁ TÊM página dedicada (sobrescrevem a rota dinâmica).
@@ -47,60 +46,19 @@ const merged = await getCategoriesMerged();
 const category = merged.find((c) => c.value === categoryValue)!;
 const posts = await getPostsByCategory(categoryValue);
 
-// Fake list editorial (estado "vazio apresentável") usado quando ainda
-// não há posts cadastrados na categoria. Reproduz o tom da page-03.
-const FAKE_POSTS: Array<{ post: PostPreview; author: string }> = [
-  {
-    post: {
-      _id: "fake-1",
-      title: "Shutfalo: Wednesday, May 6, 2026",
-      slug: "shutfalo-may-6",
-      publishedAt: "2026-05-06",
-      mainImage: null,
-      category: categoryValue,
-      excerpt: "Can you make a longer word with each new letter?",
-    },
-    author: "",
-  },
-  {
-    post: {
-      _id: "fake-2",
-      title: "Muriel Spark, the Double Agent",
-      slug: "muriel-spark-double-agent",
-      publishedAt: "2026-05-06",
-      mainImage: null,
-      category: categoryValue,
-      excerpt:
-        "A new biography claims that novelist fabricated her origin story — but that secret codes lie at the heart of her genius.",
-    },
-    author: "Por Eleonora Cruz Santos",
-  },
-  {
-    post: {
-      _id: "fake-3",
-      title: "How the Iran War Is Shifting Power Toward China",
-      slug: "iran-war-china",
-      publishedAt: "2026-05-06",
-      mainImage: null,
-      category: categoryValue,
-      excerpt:
-        "As the U.K.'s credibility and military capacity are tested abroad, China has gained leverage by staying out the fight and learning from it.",
-    },
-    author: "Por Eleonora Cruz Santos",
-  },
-  {
-    post: {
-      _id: "fake-4",
-      title: "The Crossword Wednesday, May 6, 2026",
-      slug: "crossword-may-6",
-      publishedAt: "2026-05-06",
-      mainImage: null,
-      category: categoryValue,
-      excerpt: "Earth's driest and coldest continent: ten letters.",
-    },
-    author: "Por Eleonora Cruz Santos",
-  },
-];
+// Parágrafos do bloco "O que é?" — quebra em \n\n permite múltiplos
+// parágrafos sem precisar de portable text para esses textos curtos.
+const longDescriptionParagraphs = (category.longDescription ?? "")
+  .split(/\n\s*\n/)
+  .map((p) => p.trim())
+  .filter(Boolean);
+
+// Algumas categorias pedem o artigo "o" antes do nome no título da
+// pergunta ("O que é o Hub Infinito?"). Mapeamos aqui as exceções.
+const ARTICULATED_CATEGORIES = new Set(["hub-infinito"]);
+const whatIsLabel = ARTICULATED_CATEGORIES.has(category.value)
+  ? `O que é o ${category.title}?`
+  : `O que é ${category.title}?`;
 
 const hasRealPosts = posts.length > 0;
 ---
@@ -125,13 +83,15 @@ const hasRealPosts = posts.length > 0;
 
     {/* 2 · Bloco "O que é?" — só aparece se a categoria tiver longDescription */}
     {
-      category.longDescription && (
+      longDescriptionParagraphs.length > 0 && (
         <section class="bg-paper-soft border-y border-rule/60">
           <div class="max-w-3xl mx-auto px-6 py-14 lg:py-20 text-center">
-            <p class="eyebrow text-rouge">O que é {category.title}?</p>
-            <p class="font-serif text-[18px] lg:text-[20px] leading-[1.6] mt-5 text-ink-soft">
-              {category.longDescription}
-            </p>
+            <p class="eyebrow text-rouge">{whatIsLabel}</p>
+            <div class="font-serif text-[18px] lg:text-[20px] leading-[1.6] mt-5 text-ink-soft space-y-4">
+              {longDescriptionParagraphs.map((paragraph) => (
+                <p>{paragraph}</p>
+              ))}
+            </div>
           </div>
         </section>
       )
@@ -151,12 +111,13 @@ const hasRealPosts = posts.length > 0;
             </>
           ))
         ) : (
-          FAKE_POSTS.map((item) => (
-            <>
-              <PostListItem post={item.post} author={item.author} />
-              <Divider variant="rouge" />
-            </>
-          ))
+          <div class="text-center py-16 lg:py-24">
+            <p class="eyebrow text-rouge">Em breve</p>
+            <p class="font-serif italic text-[18px] lg:text-[20px] leading-[1.55] mt-5 text-ink-soft max-w-xl mx-auto">
+              Primeiros artigos em curadoria — publicações iniciais previstas
+              para os próximos meses.
+            </p>
+          </div>
         )
       }
     </section>

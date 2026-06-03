@@ -31,9 +31,9 @@ const [book, testimonials] = await Promise.all([
 const bookTitle = book?.title ?? "(In)finitudes";
 const bookSubtitle =
   book?.subtitle ??
-  "Vinte e quatro ensaios sobre presença, escuta e a gramática silenciosa dos cuidados paliativos.";
+  "Além da própria autora, o livro traz relatos de outros 19 pacientes diagnosticados com câncer, além de visões de pessoas que estão do outro lado da história — os filhos da autora e uma mãe que perdeu seu jovem filho.";
 const bookAuthor = book?.author ?? "Eleonora C. Santos";
-const bookPrice = book?.price ?? "R$ 65,00";
+const bookPrice = book?.price ?? "R$ 42,00";
 const launchEdition = book?.launchEdition ?? "Edição 2026 · Pré-venda";
 const ctaText = book?.ctaText ?? "Comprar agora";
 const productSlug = book?.ctaProductSlug ?? "livro-finitudes";
@@ -57,15 +57,25 @@ const hasSynopsis =
   Array.isArray(book?.synopsis) && book!.synopsis!.length > 0;
 
 // ----- Detalhes técnicos expandíveis ------------------------
-// Consolida páginas, formato, lançamento, ISBNs, idioma etc.
+// Consolida ficha catalográfica, equipe editorial e fomento.
 // Toda info "fria" do livro mora aqui (atrás do toggle).
 const FAKE_TECH_DETAILS = [
-  { label: "Páginas", value: "192" },
-  { label: "Formato", value: "14 × 21 cm" },
-  { label: "Lançamento", value: "21 de maio de 2026" },
-  { label: "ISBN (físico)", value: "Em definição" },
-  { label: "ISBN (e-book)", value: "Em definição" },
+  { label: "Páginas", value: "180" },
+  { label: "Formato", value: "22 cm" },
   { label: "Idioma", value: "Português (Brasil)" },
+  { label: "Editora", value: "Literíssima · Belo Horizonte" },
+  { label: "Edição", value: "1ª · 2026" },
+  { label: "ISBN", value: "978-65-5079-651-8" },
+  { label: "Lançamento", value: "22 de junho de 2026" },
+  { label: "Editor", value: "Iago Passos" },
+  { label: "Assistência editorial", value: "Alícia Teodoro" },
+  { label: "Projeto gráfico e diagramação", value: "Albino Papa" },
+  { label: "Revisão", value: "Maria do Rosário Alves Pereira" },
+  { label: "Revisão de conteúdo", value: "Nícia Raies Moreira de Souza" },
+  {
+    label: "Fomento",
+    value: "Lei de Incentivo à Cultura (Lei nº 8.313/1991)",
+  },
 ];
 
 const technicalDetails: Array<{ label: string; value: string }> =
@@ -243,7 +253,7 @@ const ptComponents = {
               </a>
             </div>
             <p class="meta mt-4">
-              Frete nacional · envio a partir de 21 de maio de 2026
+              Envio nacional a partir de 22 de junho de 2026
             </p>
             {
               technicalDetails.length > 0 && (
@@ -389,7 +399,7 @@ const ptComponents = {
           <p
             class="font-sans text-[11px] font-medium tracking-[0.30em] uppercase text-ink/80"
           >
-            Sobre o livro, disseram
+            Disseram sobre o livro
           </p>
         </header>
 
@@ -434,8 +444,8 @@ const ptComponents = {
         <p
           class="font-serif italic text-[18px] lg:text-[20px] leading-[1.5] mt-5 text-paper/85 max-w-xl mx-auto"
         >
-          Primeira tiragem limitada a 800 exemplares numerados. Envio nacional a
-          partir de 21 de maio.
+          Primeira tiragem limitada a 500 exemplares. Envio nacional a partir
+          de 22 de junho.
         </p>
         <div
           class="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center"

@@ -28,3 +28,8 @@ screenshots/
 
 # mocks de design (PDF/PNGs de referência visual, não entram no repo)
 design-refs/
+
+# PDFs e arquivos brutos de fomento/identidade visual (a régua já está
+# extraída em /public/footer/regua-fomento*.{png,webp})
+Réguas.pdf
+*.brutos.pdf

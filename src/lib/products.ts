@@ -35,13 +35,13 @@ export const FALLBACK_PRODUCTS: FallbackProduct[] = [
     slug: "livro-finitudes",
     title: "(In)finitudes",
     byline: "por Eleonora Cruz Santos",
-    price: "R$ 65,00",
+    price: "R$ 42,00",
     shortDescription:
       "Vinte e quatro ensaios curtos sobre presença, escuta e a gramática silenciosa dos cuidados paliativos.",
     longDescription:
       "Vinte e quatro ensaios curtos sobre presença, escuta e a gramática silenciosa dos cuidados paliativos. Eleonora Cruz Santos costura entrevistas, leituras e memórias para investigar o que é dito (e o que é calado) ao redor da finitude.",
     dimensions: "14 × 21 cm · 192 páginas",
-    shipsOn: "21 de maio de 2026",
+    shipsOn: "22 de junho de 2026",
     bg: "bg-paper",
     imageUrl: "/book/capa.png",
     imageAlt: "Capa do livro (In)finitudes por Eleonora Cruz Santos",

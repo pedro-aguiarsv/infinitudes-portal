@@ -7,9 +7,12 @@
 //   │ Divã Infinito Episódio N     │  Aquarela    │
 //   │ Descrição do episódio        │  vermelha ou │
 //   │                              │  preta       │
-//   │ [ Começar a escutar  ]       │  "(IN)FINI   │
+//   │ [ Começar a ver       ]      │  "(IN)FINI   │
 //   │ [ Todos os Episódios ]       │   TUDES" 0N  │
 //   └──────────────────────────────┴──────────────┘
+//
+// `showAllLink={false}` esconde o botão "Todos os Episódios"
+// (útil no primeiro item da lista para reduzir redundância).
 // =============================================================
 import WatercolorAccent from "./WatercolorAccent.astro";
 import Logo from "./Logo.astro";
@@ -18,9 +21,10 @@ export interface Props {
   number: number; // ex.: 1, 2, 3 — usado pra exibir "01", "02"
   title?: string;
   description: string;
-  href: string; // link do "Começar a escutar"
+  href: string; // link do "Começar a ver"
   allHref?: string; // link de "Todos os Episódios" (default /diva-infinito)
   variant?: "rouge" | "black"; // aquarela usada (alterna por episódio)
+  showAllLink?: boolean; // mostra botão "Todos os Episódios" (default true)
 }
 
 const {
@@ -30,6 +34,7 @@ const {
   href,
   allHref = "/diva-infinito",
   variant = "rouge",
+  showAllLink = true,
 } = Astro.props;
 
 const watercolor = variant === "rouge" ? "rouge-blob" : "black-blob";
@@ -59,14 +64,18 @@ const displayTitle = title ?? `Divã Infinito Episódio ${number}`;
         href={href}
         class="text-center bg-rouge text-paper px-6 py-2.5 text-[11px] font-medium tracking-[0.22em] uppercase hover:bg-rouge-deep transition-colors"
       >
-        Começar a escutar
+        Começar a ver
       </a>
-      <a
-        href={allHref}
-        class="text-center border border-rouge text-rouge px-6 py-2.5 text-[11px] font-medium tracking-[0.22em] uppercase hover:bg-rouge hover:text-paper transition-colors"
-      >
-        Todos os Episódios
-      </a>
+      {
+        showAllLink && (
+          <a
+            href={allHref}
+            class="text-center border border-rouge text-rouge px-6 py-2.5 text-[11px] font-medium tracking-[0.22em] uppercase hover:bg-rouge hover:text-paper transition-colors"
+          >
+            Todos os Episódios
+          </a>
+        )
+      }
     </div>
   </div>
 

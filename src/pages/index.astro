@@ -26,12 +26,27 @@ import LongEssayHighlight from "../components/LongEssayHighlight.astro";
 import NewsletterSection from "../components/NewsletterSection.astro";
 import { getAllPosts, type PostPreview } from "../lib/sanity";
 import { getCategory } from "../lib/categories";
+import { resolveExternalThumb } from "../lib/recommend-thumbs";
 
 const posts = await getAllPosts();
-const gridPosts = posts.slice(0, 3);
+const gridPostsRaw = posts.slice(0, 3);
+
+// Resolve thumb externa (YouTube/Spotify) para posts do grid sem mainImage —
+// mesmo padrão do /recomenda. Posts com mainImage cadastrada continuam
+// tendo prioridade.
+const gridPosts = await Promise.all(
+  gridPostsRaw.map(async (p) => ({
+    post: p,
+    externalImageUrl: p.mainImage
+      ? null
+      : await resolveExternalThumb(p.externalUrl),
+  })),
+);
 
 // Hero · masthead + assinatura institucional fixa
 const heroContent = {
+  manifesto:
+    "O infinito faz parte da discussão do projeto, que vai da finitude da vida à infinitude das relações, dos laços e das formas de se ver e de se colocar na vida.",
   edition: "Projeto cultural idealizado por Eleonora Santos",
 };
 
@@ -138,7 +153,12 @@ const hasRealPosts = gridPosts.length > 0;
       >
         {
           hasRealPosts
-            ? gridPosts.map((post) => <PostCard post={post} />)
+            ? gridPosts.map(({ post, externalImageUrl }) => (
+                <PostCard
+                  post={post}
+                  externalImageUrl={externalImageUrl}
+                />
+              ))
             : FAKE_GRID.map((item) => (
                 <PostCard
                   post={item.post}
