@@ -167,9 +167,11 @@ const ptComponents = {
               }
             </div>
 
-            {/* Botão de amostra (estilo Amazon "Look inside") */}
+            {/* Botão de amostra (estilo Amazon "Look inside") — só aparece
+                quando há PDF cadastrado no Sanity. Sem PDF, nenhum botão
+                de amostra é exibido. */}
             {
-              hasSample ? (
+              hasSample && (
                 <button
                   type="button"
                   data-open-sample
@@ -191,31 +193,6 @@ const ptComponents = {
                     />
                   </svg>
                   Ler uma amostra
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  disabled
-                  aria-disabled="true"
-                  title="A amostra do livro estará disponível em breve."
-                  class="mt-6 inline-flex items-center gap-2 border border-ink/20 text-ink/40 px-6 py-2.5 text-[11px] font-medium tracking-[0.22em] uppercase cursor-not-allowed"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    class="w-4 h-4"
-                    aria-hidden="true"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"
-                    />
-                  </svg>
-                  Amostra em breve
                 </button>
               )
             }
@@ -343,11 +320,17 @@ const ptComponents = {
               variant="black-blob"
               class="absolute -top-6 -left-6 w-[60%] h-[60%] opacity-80"
             />
-            <div
-              class="relative w-full h-full ph border border-rule/60"
-              data-label="Foto · Eleonora C. Santos"
-            >
-            </div>
+            <picture class="relative block w-full h-full border border-rule/60 overflow-hidden">
+              <source srcset="/authors/eleonora.webp" type="image/webp" />
+              <img
+                src="/authors/eleonora.jpg"
+                alt="Retrato em preto e branco de Eleonora C. Santos, autora do livro (In)finitudes"
+                class="w-full h-full object-cover select-none"
+                loading="lazy"
+                decoding="async"
+                draggable="false"
+              />
+            </picture>
           </div>
         </div>
         <div class="md:col-span-7">
