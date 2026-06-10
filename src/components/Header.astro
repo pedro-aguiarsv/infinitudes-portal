@@ -27,12 +27,16 @@ const contactLabel = settings?.contactEmail
   ? "Escreva para a redação"
   : "Contato";
 
-const today = new Intl.DateTimeFormat("pt-BR", {
+// Data em pt-BR com APENAS a primeira letra do dia da semana em maiúscula:
+// "Terça-feira, 9 de junho de 2026" (ao invés de "Terça-Feira, 9 De Junho De 2026"
+// que era o resultado quando aplicávamos `text-transform: capitalize` via CSS).
+const todayRaw = new Intl.DateTimeFormat("pt-BR", {
   weekday: "long",
   day: "numeric",
   month: "long",
   year: "numeric",
 }).format(new Date());
+const today = todayRaw.charAt(0).toUpperCase() + todayRaw.slice(1);
 ---
 
 <header class="bg-paper">
@@ -41,7 +45,7 @@ const today = new Intl.DateTimeFormat("pt-BR", {
     <div
       class="max-w-7xl mx-auto px-6 lg:px-12 py-2.5 flex items-center justify-between gap-4"
     >
-      <span class="meta capitalize">{today}</span>
+      <span class="meta">{today}</span>
       <div class="flex items-center gap-8">
         <a href={contactHref} class="meta link-ed hover:text-ink">{contactLabel}</a>
         <a href="#newsletter" class="meta link-ed hover:text-ink">

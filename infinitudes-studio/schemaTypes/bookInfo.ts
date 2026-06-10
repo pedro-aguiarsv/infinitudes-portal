@@ -47,9 +47,19 @@ export const bookInfoType = defineType({
     }),
     defineField({
       name: 'price',
-      title: 'Preço',
+      title: 'Preço promocional',
+      description:
+        'Valor exibido em destaque (ex.: "R$ 42,00"). Será mostrado como "Por R$ 42,00 + frete".',
       type: 'string',
-      initialValue: 'R$ 65,00',
+      initialValue: 'R$ 42,00',
+    }),
+    defineField({
+      name: 'originalPrice',
+      title: 'Preço original (riscado)',
+      description:
+        'Preço de tabela exibido ANTES do promocional, com risco horizontal. Ex.: "R$ 69,00". Aparece como "De R$ 69,00".',
+      type: 'string',
+      initialValue: 'R$ 69,00',
     }),
     defineField({
       name: 'launchEdition',

@@ -33,6 +33,10 @@ const bookSubtitle =
   "Além da própria autora, o livro traz relatos de outros 19 pacientes diagnosticados com câncer, além de visões de pessoas que estão do outro lado da história — os filhos da autora e uma mãe que perdeu seu jovem filho.";
 const bookAuthor = book?.author ?? "Eleonora C. Santos";
 const bookPrice = book?.price ?? "R$ 42,00";
+// Preço original (de tabela), exibido com strikethrough antes do bookPrice
+// promocional. Configurável via Sanity (`bookInfo.originalPrice`); cai no
+// fallback editorial enquanto não é preenchido no Studio.
+const bookOriginalPrice = book?.originalPrice ?? "R$ 69,00";
 const launchEdition = book?.launchEdition ?? "Edição 2026 · Pré-venda";
 const ctaText = book?.ctaText ?? "Comprar agora";
 const productSlug = book?.ctaProductSlug ?? "livro-finitudes";
@@ -88,33 +92,21 @@ const technicalDetails: Array<{ label: string; value: string }> =
 const samplePdfUrl = book?.samplePdfUrl ?? null;
 const hasSample = Boolean(samplePdfUrl);
 
-// Depoimentos
-const FAKE_TESTIMONIALS: Testimonial[] = [
-  {
-    _id: "fake-1",
-    quote:
-      "Eleonora costura entrevista, leitura e memória como quem cuida de uma ferida que ainda precisa ser olhada. Um livro raro.",
-    author: "Vanessa Bárbara",
-    role: "Crítica · Folha de S.Paulo",
-  },
-  {
-    _id: "fake-2",
-    quote:
-      "Cada texto é uma pequena janela. Olhei por cada uma sem pressa, e em todas vi alguma coisa que eu já tinha esquecido de sentir.",
-    author: "Marina Pires",
-    role: "Leitora · Belo Horizonte",
-  },
-  {
-    _id: "fake-3",
-    quote:
-      "Não conheço outro título recente em português que enfrente o tabu da finitude com tanta delicadeza e tanto rigor.",
-    author: "Dr. Ricardo Caponero",
-    role: "Médico paliativista · HCFMUSP",
-  },
-];
+// Depoimentos · seção "Disseram sobre o livro"
+// Quando NÃO há `testimonials` cadastrados no Sanity, exibimos um único
+// destaque editorial (trecho da coluna "As muitas vozes de Eleonora Santos",
+// da jornalista Nalu Saad) — dialoga diretamente com a tese do livro de
+// rejeitar a "lógica da superação obrigatória".
+const FAKE_TESTIMONIAL_HIGHLIGHT: Testimonial = {
+  _id: "fake-nalu-saad",
+  quote:
+    "Nem todas as histórias terminaram bem. Algumas pessoas entrevistadas morreram antes do lançamento do livro. E essa talvez seja uma das decisões mais honestas de Infinitudes: não transformar o adoecimento em uma narrativa simplificada de vitória. A autora conta que queria rejeitar a lógica da “superação obrigatória”. Nem todos conseguem ser fortes o tempo inteiro. Nem todos saem curados. Nem todos encontram sentido rapidamente. Porque todos são humanos.",
+  author: "Nalu Saad",
+  role: "Coluna · “As muitas vozes de Eleonora Santos”",
+};
 
 const showTestimonials =
-  testimonials.length > 0 ? testimonials : FAKE_TESTIMONIALS;
+  testimonials.length > 0 ? testimonials : [FAKE_TESTIMONIAL_HIGHLIGHT];
 
 const ptComponents = {
   block: {
@@ -218,9 +210,18 @@ const ptComponents = {
             <div
               class="mt-8 flex flex-col sm:flex-row sm:items-center sm:justify-center lg:justify-start gap-4"
             >
-              <span class="font-display italic text-[26px] lg:text-[28px] text-ink">
-                {bookPrice}
-              </span>
+              {/* Preço · original riscado + promocional + frete (alinhado verticalmente) */}
+              <div class="flex flex-col items-center sm:items-start gap-1">
+                <span class="font-sans text-[12px] tracking-[0.06em] text-ink/55 line-through decoration-rouge/70 decoration-[1.5px]">
+                  De {bookOriginalPrice}
+                </span>
+                <span class="font-display italic text-[26px] lg:text-[28px] text-ink leading-none">
+                  Por {bookPrice}
+                  <span class="font-sans not-italic text-[12px] tracking-[0.04em] text-ink/55 ml-1.5">
+                    + frete
+                  </span>
+                </span>
+              </div>
               <a
                 href={cartHref}
                 class="inline-block text-center bg-rouge text-paper px-8 py-3.5 text-[11px] font-medium tracking-[0.22em] uppercase hover:bg-rouge-deep transition-colors"
@@ -371,8 +372,8 @@ const ptComponents = {
         4 · DEPOIMENTOS
         ============================================================ */}
     <section class="bg-paper-soft border-y border-rule/60">
-      <div class="max-w-6xl mx-auto px-6 lg:px-12 py-16 lg:py-24">
-        <header class="text-center mb-12">
+      <div class="max-w-3xl mx-auto px-6 lg:px-12 py-16 lg:py-24">
+        <header class="text-center mb-10">
           <Divider variant="rouge" gap="mb-8 max-w-md mx-auto" />
           <p
             class="font-sans text-[11px] font-medium tracking-[0.30em] uppercase text-ink/80"
@@ -381,9 +382,27 @@ const ptComponents = {
           </p>
         </header>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-12">
-          {
-            showTestimonials.map((d) => (
+        {/* Layout adaptativo: 1 destaque centralizado · 2+ em grid */}
+        {showTestimonials.length === 1 ? (
+          <figure class="text-center">
+            <span class="font-display text-[64px] lg:text-[80px] leading-[1] text-rouge block">
+              “
+            </span>
+            <blockquote class="font-serif italic text-[18px] lg:text-[21px] leading-[1.55] mt-2 text-ink-soft max-w-[58ch] mx-auto">
+              {showTestimonials[0].quote}
+            </blockquote>
+            <figcaption class="mt-8">
+              <span class="block font-sans text-[10px] font-medium tracking-[0.22em] uppercase text-rouge">
+                {showTestimonials[0].author}
+              </span>
+              {showTestimonials[0].role && (
+                <span class="meta block mt-1">{showTestimonials[0].role}</span>
+              )}
+            </figcaption>
+          </figure>
+        ) : (
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-12">
+            {showTestimonials.map((d) => (
               <figure class="text-center">
                 <span class="font-display text-[48px] lg:text-[56px] leading-[1] text-rouge block">
                   “
@@ -398,14 +417,79 @@ const ptComponents = {
                   {d.role && <span class="meta block mt-1">{d.role}</span>}
                 </figcaption>
               </figure>
-            ))
-          }
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+
+    {/* ============================================================
+        5 · CONVERSA EM VÍDEO · Bucket List PodCast (Grupo Zelo)
+        Eleonora entrevistada por Gustavo Ziller — fala sobre o "vai
+        dar tudo certo", finitude, espiritualidade e o projeto.
+        ============================================================ */}
+    <section class="bg-paper">
+      <div class="max-w-4xl mx-auto px-6 lg:px-12 py-16 lg:py-24">
+        <header class="text-center mb-10">
+          <Divider variant="rouge" gap="mb-8 max-w-md mx-auto" />
+          <p
+            class="font-sans text-[11px] font-medium tracking-[0.30em] uppercase text-ink/80"
+          >
+            Conversa em vídeo · Bucket List
+          </p>
+        </header>
+
+        <figure class="text-center">
+          <span
+            class="font-display text-[64px] lg:text-[80px] leading-[1] text-rouge block"
+          >
+            “
+          </span>
+          <blockquote
+            class="font-serif italic text-[18px] lg:text-[21px] leading-[1.55] mt-2 text-ink-soft max-w-[58ch] mx-auto"
+          >
+            Toda vez que falavam comigo “vai dar tudo certo”, eu não tinha
+            reação. Ficava calada olhando para a pessoa e, dentro de mim,
+            pensava: o que você quer dizer com “vai dar tudo certo”? É a
+            dificuldade que o outro tem de lidar com a finitude que está
+            revelada no outro — e que é dele também.
+          </blockquote>
+          <figcaption class="mt-8">
+            <span
+              class="block font-sans text-[10px] font-medium tracking-[0.22em] uppercase text-rouge"
+            >
+              Eleonora Santos
+            </span>
+            <span class="meta block mt-1">
+              Bucket List PodCast · Grupo Zelo &amp; Gustavo Ziller · 1h07min
+            </span>
+          </figcaption>
+        </figure>
+
+        <div class="text-center mt-10">
+          <a
+            href="https://www.youtube.com/watch?v=cy-jyQ3kpDw"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 bg-rouge text-paper px-7 py-3.5 text-[11px] font-medium tracking-[0.22em] uppercase hover:bg-rouge-deep transition-colors"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              class="w-3.5 h-3.5"
+              aria-hidden="true"
+            >
+              <path d="M8 5v14l11-7z" />
+            </svg>
+            Assistir no YouTube
+          </a>
         </div>
       </div>
     </section>
 
     {/* ============================================================
-        5 · CTA FINAL
+        6 · CTA FINAL
         ============================================================ */}
     <section class="bg-rouge text-paper">
       <div class="max-w-5xl mx-auto px-6 lg:px-12 py-16 lg:py-24 text-center">
@@ -428,9 +512,18 @@ const ptComponents = {
         <div
           class="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center"
         >
-          <span class="font-display italic text-[28px] text-paper">
-            {bookPrice}
-          </span>
+          {/* Preço · original riscado + promocional + frete (versão clara sobre bordô) */}
+          <div class="flex flex-col items-center gap-1">
+            <span class="font-sans text-[12px] tracking-[0.06em] text-paper/60 line-through decoration-paper/80 decoration-[1.5px]">
+              De {bookOriginalPrice}
+            </span>
+            <span class="font-display italic text-[28px] text-paper leading-none">
+              Por {bookPrice}
+              <span class="font-sans not-italic text-[12px] tracking-[0.04em] text-paper/70 ml-1.5">
+                + frete
+              </span>
+            </span>
+          </div>
           <a
             href={cartHref}
             class="inline-block bg-paper text-rouge px-10 py-4 text-[11px] font-medium tracking-[0.22em] uppercase hover:bg-paper-soft transition-colors"

@@ -147,7 +147,10 @@ export type BookInfo = {
   cover: SanityImage | null;
   /** URL pública do PDF da amostra, resolvido pela GROQ (`samplePdf.asset->url`). */
   samplePdfUrl?: string | null;
+  /** Preço promocional em destaque (ex.: "R$ 42,00"). */
   price: string;
+  /** Preço original (de tabela) exibido riscado antes do promocional (ex.: "R$ 69,00"). */
+  originalPrice?: string | null;
   launchEdition?: string | null;
   synopsis?: unknown[] | null;
   /** Pares label/value mostrados ao expandir "Detalhes técnicos" (páginas, formato, ISBN, etc.). */
@@ -367,6 +370,7 @@ export const bookInfoQuery = groq`
     cover,
     "samplePdfUrl": samplePdf.asset->url,
     price,
+    originalPrice,
     launchEdition,
     synopsis,
     technicalDetails,
