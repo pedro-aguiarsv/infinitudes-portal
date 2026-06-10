@@ -192,7 +192,7 @@
     transform: scaleX(1);
   }
 
-  /* ---- Capitular (drop cap) para abertura de ensaios ---- */
+  /* ---- Capitular (drop cap) para abertura de textos longos ---- */
   .dropcap::first-letter {
     font-family: var(--font-display);
     font-size: 4.75rem;

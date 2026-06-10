@@ -11,7 +11,6 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import NewsletterSection from "../components/NewsletterSection.astro";
 import BookCover from "../components/BookCover.astro";
-import WatercolorAccent from "../components/WatercolorAccent.astro";
 import Divider from "../components/Divider.astro";
 import { PortableText } from "astro-portabletext";
 import PTBlock from "../components/portable-text/PTBlock.astro";
@@ -101,7 +100,7 @@ const FAKE_TESTIMONIALS: Testimonial[] = [
   {
     _id: "fake-2",
     quote:
-      "Cada ensaio é uma pequena janela. Olhei por cada uma sem pressa, e em todas vi alguma coisa que eu já tinha esquecido de sentir.",
+      "Cada texto é uma pequena janela. Olhei por cada uma sem pressa, e em todas vi alguma coisa que eu já tinha esquecido de sentir.",
     author: "Marina Pires",
     role: "Leitora · Belo Horizonte",
   },
@@ -316,16 +315,12 @@ const ptComponents = {
       <div class="grid grid-cols-1 md:grid-cols-12 gap-10 lg:gap-16 items-center">
         <div class="md:col-span-5 flex justify-center md:justify-end">
           <div class="relative w-[240px] sm:w-[280px] aspect-[3/4]">
-            <WatercolorAccent
-              variant="black-blob"
-              class="absolute -top-6 -left-6 w-[60%] h-[60%] opacity-80"
-            />
-            <picture class="relative block w-full h-full border border-rule/60 overflow-hidden">
+            <picture class="relative block w-full h-full overflow-hidden">
               <source srcset="/authors/eleonora.webp" type="image/webp" />
               <img
                 src="/authors/eleonora.jpg"
                 alt="Retrato em preto e branco de Eleonora C. Santos, autora do livro (In)finitudes"
-                class="w-full h-full object-cover select-none"
+                class="w-full h-full object-cover object-[center_22%] select-none"
                 loading="lazy"
                 decoding="async"
                 draggable="false"

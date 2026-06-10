@@ -5,15 +5,16 @@
 // Composição editorial:
 //   1. Header
 //   2. HeroFeatured        ← "capa de revista" com masthead + assinatura
-//   3. FeaturedEssay       ← ensaio de capa com aquarela preta
+//   3. FeaturedEssay       ← vitrine de HUB INFINITO (com aquarela preta)
 //   4. Grid de 3 posts     ← faixa direta sem título de seção
 //   5. BookSection         ← banner bordô do livro
-//   6. LongEssayHighlight  ← ensaio longo com capitular
+//   6. LongEssayHighlight  ← vitrine de RECOMENDAMOS (capitular + CTA)
 //   7. NewsletterSection   ← captura de e-mail
 //   8. Footer
 //
-// Dados vêm do Sanity quando disponível; senão, cada componente
-// usa fake data editorial coerente (estado "vazio apresentável").
+// Cada bloco tenta primeiro um post real da sua categoria-alvo no
+// Sanity; se não houver, cai em fake data editorial coerente
+// (estado "vazio apresentável").
 // =============================================================
 import Layout from "../layouts/Layout.astro";
 import Header from "../components/Header.astro";
@@ -50,18 +51,32 @@ const heroContent = {
   edition: "Projeto cultural idealizado por Eleonora Santos",
 };
 
-// Ensaio de capa (segundo post mais recente ou primeiro se for único)
-const featuredEssay = posts[1] ?? posts[0];
-const essayContent = featuredEssay
+// FeaturedEssay (bloco "artigo de capa") · vitrine de HUB INFINITO
+// Procura o post mais recente da categoria hub-infinito; se não houver,
+// cai no FAKE do próprio componente (que já é Hub Infinito coerente).
+const hubFeatured = posts.find((p) => p.category === "hub-infinito");
+const essayContent = hubFeatured
   ? {
-      eyebrow: `${getCategory(featuredEssay.category ?? "")?.title ?? "Ensaio"} · Cuidados Paliativos`,
-      title: featuredEssay.title,
-      dek: featuredEssay.excerpt,
+      eyebrow: getCategory(hubFeatured.category ?? "")?.title ?? "Hub Infinito",
+      title: hubFeatured.title,
+      dek: hubFeatured.excerpt,
       byline: null,
       readingTime: null,
-      href: featuredEssay.category
-        ? `/${featuredEssay.category}/${featuredEssay.slug}`
-        : `/${featuredEssay.slug}`,
+      href: `/hub-infinito/${hubFeatured.slug}`,
+    }
+  : undefined;
+
+// LongEssayHighlight (bloco de destaque editorial) · vitrine de
+// RECOMENDAMOS. Procura o post mais recente da categoria recomenda;
+// se não houver, cai no FAKE default do componente.
+const reccFeatured = posts.find((p) => p.category === "recomenda");
+const longEssayContent = reccFeatured
+  ? {
+      eyebrow:
+        getCategory(reccFeatured.category ?? "")?.title ?? "Recomendamos",
+      title: reccFeatured.title,
+      paragraphs: reccFeatured.excerpt ? [reccFeatured.excerpt] : undefined,
+      href: `/recomenda/${reccFeatured.slug}`,
     }
   : undefined;
 
@@ -127,12 +142,12 @@ const hasRealPosts = gridPosts.length > 0;
     {/* 1 · Capa de revista · manifesto editorial + aquarela vermelha */}
     <HeroFeatured hero={heroContent} />
 
-    {/* Divisor fino entre o manifesto superior e o ensaio de capa */}
+    {/* Divisor fino entre o manifesto superior e o artigo de capa */}
     <div class="max-w-7xl mx-auto px-6 lg:px-12">
       <div class="border-t border-rule"></div>
     </div>
 
-    {/* 2 · Ensaio de capa · texto à esquerda + aquarela preta à direita */}
+    {/* 2 · Artigo de capa · texto à esquerda + aquarela preta à direita */}
     <FeaturedEssay essay={essayContent} />
 
     {/* Divisor de seção · eyebrow centralizado entre linhas finas */}
@@ -173,8 +188,8 @@ const hasRealPosts = gridPosts.length > 0;
     {/* 4 · Banner bordô · livro (break section full-width intencional) */}
     <BookSection />
 
-    {/* 5 · Ensaio longo destacado · capitular */}
-    <LongEssayHighlight />
+    {/* 5 · Vitrine de Recomendamos · destaque editorial com capitular */}
+    <LongEssayHighlight {...(longEssayContent ?? {})} />
 
     {/* 6 · Newsletter */}
     <NewsletterSection />

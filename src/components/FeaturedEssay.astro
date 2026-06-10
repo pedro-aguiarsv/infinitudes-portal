@@ -1,6 +1,6 @@
 ---
 // =============================================================
-// FeaturedEssay.astro · "Ensaio de capa" da home (page-01, bloco 2)
+// FeaturedEssay.astro · Artigo de capa da home (page-01, bloco 2)
 // -------------------------------------------------------------
 // Padrão zigue-zague editorial (alternância com o Hero):
 //   · Hero        → texto à esquerda · aquarela bordô à direita
@@ -15,7 +15,7 @@
 import WatercolorAccent from "./WatercolorAccent.astro";
 
 export interface FeaturedContent {
-  eyebrow: string; // Ex.: "Ensaio de capa · Cuidados paliativos"
+  eyebrow: string; // Ex.: "Hub Infinito"
   title: string;
   dek?: string | null;
   byline?: string | null;
@@ -28,7 +28,7 @@ export interface Props {
 }
 
 const FAKE: FeaturedContent = {
-  eyebrow: "Ensaio de capa · Cuidados paliativos",
+  eyebrow: "Hub Infinito",
   title: "Quando o cuidado se torna a última linguagem do amor",
   dek: "Uma reflexão sobre presença, escuta e os silêncios que sustentam a dignidade no fim da vida — e o que a medicina aprende com eles.",
   byline: "Por Dra. Helena Brandão",
@@ -87,7 +87,7 @@ const { essay = FAKE } = Astro.props;
           href={essay.href}
           class="inline-block mt-8 font-sans text-[11px] font-medium tracking-[0.20em] uppercase text-rouge link-ed"
         >
-          Ler o ensaio completo →
+          Continuar lendo →
         </a>
       </div>
     </div>

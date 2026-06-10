@@ -29,6 +29,10 @@ screenshots/
 # mocks de design (PDF/PNGs de referência visual, não entram no repo)
 design-refs/
 
+# arquivos-fonte de design (capas YouTube, etc.) — material bruto não
+# consumido pelo build, mantido localmente apenas para edição futura
+assets/
+
 # PDFs e arquivos brutos de fomento/identidade visual (a régua já está
 # extraída em /public/footer/regua-fomento*.{png,webp})
 Réguas.pdf

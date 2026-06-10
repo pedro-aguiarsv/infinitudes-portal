@@ -54,7 +54,8 @@ const today = new Intl.DateTimeFormat("pt-BR", {
     </div>
   </div>
 
-  {/* Logo central (imagem oficial) · tagline "DIVÃ INFINITO" */}
+  {/* Logo central (imagem oficial) — a tagline "DIVÃ INFINITO"
+      já vem embutida na variante "header", não precisa de <p> extra. */}
   <div class="max-w-7xl mx-auto px-6 lg:px-12 py-8 lg:py-10 text-center">
     <a
       href="/"
@@ -62,15 +63,10 @@ const today = new Intl.DateTimeFormat("pt-BR", {
       aria-label="(In)finitudes — página inicial"
     >
       <Logo
-        variant="mini"
+        variant="header"
         loading="eager"
-        class="h-24 sm:h-28 lg:h-32 w-auto mx-auto"
+        class="h-28 sm:h-32 lg:h-40 w-auto mx-auto"
       />
-      <p
-        class="mt-4 font-sans text-[10px] tracking-[0.42em] uppercase text-ink/70"
-      >
-        Divã Infinito
-      </p>
     </a>
   </div>
 

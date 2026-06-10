@@ -57,9 +57,9 @@ type FakeRec = {
   externalUrl: string;
 };
 
-const FAKE_RECS: FakeRec[] = [
+const FAKE_RECS_RAW: FakeRec[] = [
   {
-    title: "Cuidados paliativos: livro essencial sobre escuta no fim da vida",
+    title: "Escuta no fim da vida: livro essencial para quem cuida",
     excerpt:
       "Leitura indicada para profissionais e familiares que acompanham processos de adoecimento — uma reflexão sobre presença, dor e linguagem.",
     authors: "Sugestão da redação",
@@ -68,18 +68,28 @@ const FAKE_RECS: FakeRec[] = [
   {
     title: "Podcast: Vida & Morte, conversas que precisamos ter",
     excerpt:
-      "Série de episódios reúne médicos, teólogos e cuidadores para discutir cuidado paliativo, luto antecipado e espiritualidade.",
+      "Série de episódios reúne médicos, teólogos e cuidadores para discutir cuidado, luto antecipado e espiritualidade.",
     authors: "Sugestão da redação",
     externalUrl: "https://open.spotify.com",
   },
   {
-    title: "Evento: Simpósio Internacional de Cuidados Paliativos 2026",
+    title: "Evento: Simpósio Internacional de Humanização da Saúde 2026",
     excerpt:
       "Encontro presencial e online com palestras de especialistas brasileiros e internacionais. Inscrições abertas.",
     authors: "Sugestão da redação",
     externalUrl: "https://www.example.com",
   },
 ];
+
+// Resolve thumbnails externas (YouTube/Spotify) também para os fakes,
+// mesmo padrão dos posts reais — garante que a recomendação do
+// Roda Viva apareça com a thumb oficial do vídeo já no fallback.
+const FAKE_RECS = await Promise.all(
+  FAKE_RECS_RAW.map(async (rec) => ({
+    ...rec,
+    externalImageUrl: await resolveExternalThumb(rec.externalUrl),
+  })),
+);
 
 const hasReal = posts.length > 0;
 ---
@@ -145,6 +155,7 @@ const hasReal = posts.length > 0;
                   internalHref="#"
                   externalUrl={rec.externalUrl}
                   mainImage={null}
+                  externalImageUrl={rec.externalImageUrl}
                   authors={rec.authors}
                 />
                 <Divider variant="rule" />

@@ -1,13 +1,16 @@
 ---
 // =============================================================
-// LongEssayHighlight.astro · Ensaio longo destacado na home
+// LongEssayHighlight.astro · Destaque editorial da home
 // -------------------------------------------------------------
 // Reproduz o tratamento editorial das páginas internas já na home:
-//   · Eyebrow bordô com categorias separadas por "·"
+//   · Eyebrow bordô com categoria
 //   · Título display centralizado (até 2 linhas)
 //   · Byline em meta uppercase
 //   · Dropcap no primeiro parágrafo (Cormorant)
-//   · CTA "Continuar lendo →" em bordô uppercase
+//   · CTA configurável em bordô uppercase
+//
+// Atualmente alimenta a vitrine de RECOMENDAÇÕES (/recomenda) — pode
+// ser parametrizado para qualquer outra categoria via props.
 // =============================================================
 
 export interface Props {
@@ -16,17 +19,19 @@ export interface Props {
   byline?: string;
   paragraphs?: string[];
   href?: string;
+  cta?: string;
 }
 
 const {
-  eyebrow = "Ensaio Longo · Hub Infinito",
-  title = "O tempo que resta: notas sobre esperança e espiritualidade",
-  byline = "Padre João Ribeiro · 18 min",
+  eyebrow = "Recomendamos",
+  title = "Olhando para as estrelas",
+  byline = "Rádio Novelo Apresenta · Episódio em áudio",
   paragraphs = [
-    "Quando fui chamado pela primeira vez a acompanhar uma família em cuidados paliativos, pensei que meu papel seria consolar. Levei alguns anos para entender que o verdadeiro trabalho era outro, e muito mais silencioso: o de acompanhar sem pressa, sem respostas prontas, sem a urgência de preencher cada pausa com palavras bem intencionadas.",
-    "A esperança realista não nega a finitude — ela habita o tempo que ainda resta com dignidade, atenção e presença. Essa foi a primeira lição que aprendi com pacientes, cuidadores e, sobretudo, com o silêncio dos quartos de hospital ao amanhecer…",
+    "Dois episódios em áudio sobre olhar o céu: diálogos cósmicos de Rita Lee e trocas extraterrestres no Acre. Episódio do \u201CRádio Novelo Apresenta\u201D — contém descrições de luto familiar.",
+    "Uma curadoria de leituras, escutas e olhares selecionados pelo time editorial do (In)finitudes — recomendações que ampliam, com delicadeza, as conversas sobre presença, cuidado e finitude.",
   ],
-  href = "/hub-infinito/tempo-que-resta",
+  href = "/recomenda/olhando-para-as-estrelas",
+  cta = "Acessar recomendação →",
 } = Astro.props;
 ---
 
@@ -62,7 +67,7 @@ const {
         href={href}
         class="font-sans text-[11px] font-medium tracking-[0.22em] uppercase text-rouge link-ed"
       >
-        Continuar lendo →
+        {cta}
       </a>
     </div>
   </div>

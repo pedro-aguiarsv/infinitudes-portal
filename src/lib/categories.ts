@@ -41,12 +41,12 @@ export const CATEGORIES: Category[] = [
     title: "Hub Infinito",
     value: "hub-infinito",
     href: "/hub-infinito",
-    description: "Conteúdos mais técnicos sobre cuidados paliativos.",
+    description: "Conteúdos mais técnicos sobre cuidado, presença e finitude.",
     // Texto editorial enviado pela Eleonora (jun/2026). Os parágrafos
     // são separados por uma linha em branco (\n\n) e o template da
     // página de categoria renderiza cada um em um <p>.
     longDescription:
-      "O Hub Infinito é a extensão das infinitas possibilidades de escuta e de fala, promovidas para além do objetivo inicial do projeto, e que busca trazer outras vozes para debater assuntos diversos — do mais técnico ao mais poético.\n\nO Hub Infinito é um espaço de escrita exclusivo de mulheres, abertas ao diálogo e à escuta com toda a sociedade.",
+      "O Hub Infinito é a extensão das infinitas possibilidades de escuta e de fala, promovidas para além do objetivo inicial do projeto, e que busca trazer outras vozes para debater assuntos diversos — do mais técnico ao mais poético.\n\nO Hub Infinito é um espaço de escrita exclusivo de mulheres, aberto para a discussão, a reflexão e a escuta de toda sociedade.",
     disclaimer:
       "Os artigos e opiniões publicados nesta página são de responsabilidade exclusiva de suas respectivas autoras e não representam, necessariamente, a visão, os valores ou o posicionamento oficial deste site. A publicação de conteúdos de terceiros visa estimular o debate plural e o livre acesso a diferentes perspectivas, não implicando endosso ou concordância por parte da equipe editorial.",
     order: 20,
