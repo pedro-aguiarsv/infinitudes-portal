@@ -4,12 +4,12 @@
 // -------------------------------------------------------------
 // Composição editorial:
 //   1. Header
-//   2. HeroFeatured        ← "capa de revista" com masthead + assinatura
-//   3. FeaturedEssay       ← vitrine de HUB INFINITO (com aquarela preta)
-//   4. Grid de 3 posts     ← faixa direta sem título de seção
-//   5. BookSection         ← banner bordô do livro
-//   6. LongEssayHighlight  ← vitrine de RECOMENDAMOS (capitular + CTA)
-//   7. NewsletterSection   ← captura de e-mail
+//   2. HeroFeatured            ← "capa de revista" com masthead + assinatura
+//   3. FeaturedEssay           ← vitrine de HUB INFINITO (com aquarela preta)
+//   4. Grid de 3 posts         ← faixa direta sem título de seção
+//   5. BookSection             ← banner bordô do livro
+//   6. Grid "Recomendamos"     ← 3 últimas publicações da categoria
+//   7. NewsletterSection       ← captura de e-mail
 //   8. Footer
 //
 // Cada bloco tenta primeiro um post real da sua categoria-alvo no
@@ -23,26 +23,73 @@ import HeroFeatured from "../components/HeroFeatured.astro";
 import FeaturedEssay from "../components/FeaturedEssay.astro";
 import PostCard from "../components/PostCard.astro";
 import BookSection from "../components/BookSection.astro";
-import LongEssayHighlight from "../components/LongEssayHighlight.astro";
 import NewsletterSection from "../components/NewsletterSection.astro";
-import { getAllPosts, type PostPreview } from "../lib/sanity";
+import { getAllPosts } from "../lib/sanity";
 import { getCategory } from "../lib/categories";
 import { resolveExternalThumb } from "../lib/recommend-thumbs";
 
 const posts = await getAllPosts();
-const gridPostsRaw = posts.slice(0, 3);
 
-// Resolve thumb externa (YouTube/Spotify) para posts do grid sem mainImage —
-// mesmo padrão do /recomenda. Posts com mainImage cadastrada continuam
-// tendo prioridade.
-const gridPosts = await Promise.all(
-  gridPostsRaw.map(async (p) => ({
-    post: p,
-    externalImageUrl: p.mainImage
-      ? null
-      : await resolveExternalThumb(p.externalUrl),
-  })),
-);
+// Grid superior · "Em Alta & Podcasts da semana"
+// Vitrine editorial fixa (curadoria manual) com três destaques:
+//   1. Estreia do podcast Divã Infinito (interno, /diva-infinito).
+//   2. Conversa em vídeo no Bucket List PodCast (externo, YouTube).
+//   3. Coluna "As infinitas vozes de Eleonora Santos" (externo, BHAZ).
+// Os cards são renderizados inline (não vêm do Sanity) — quando esses
+// destaques mudarem, ajustar o markup no bloco "3 · Grid editorial".
+type FeaturedCard = {
+  href: string;
+  external: boolean;
+  eyebrow: string;
+  title: string;
+  excerpt: string;
+  meta: string;
+  /** Quando `image` é uma URL, usa-se como `<img>`. Quando é `null`, o card
+   *  cai no placeholder visual (aquarela + logo) controlado pela `variant`. */
+  image: string | null;
+  imageAlt: string;
+  /** Variante do placeholder (rouge/black) — só usada quando `image === null`. */
+  variant: "rouge" | "black";
+};
+
+const featuredCards: FeaturedCard[] = [
+  {
+    href: "/diva-infinito",
+    external: false,
+    eyebrow: "Divã Infinito",
+    title: "Episódio 1 — estreia em junho",
+    excerpt:
+      "Estreia do podcast Divã Infinito. Disponível no YouTube e Spotify a partir de 23 de junho.",
+    meta: "23 de jun. de 2026",
+    image: null,
+    imageAlt: "(In)finitudes — Divã Infinito",
+    variant: "rouge",
+  },
+  {
+    href: "https://www.youtube.com/watch?v=cy-jyQ3kpDw",
+    external: true,
+    eyebrow: "Em alta",
+    title: "Eleonora Santos no Bucket List PodCast",
+    excerpt:
+      "Conversa de pouco mais de uma hora com Gustavo Ziller (Grupo Zelo) sobre o “vai dar tudo certo”, finitude, espiritualidade e o projeto.",
+    meta: "Bucket List PodCast · 1h07min",
+    image: "https://i.ytimg.com/vi/cy-jyQ3kpDw/hqdefault.jpg",
+    imageAlt: "Eleonora Santos no Bucket List PodCast",
+    variant: "rouge",
+  },
+  {
+    href: "https://bhaz.com.br/colunas/siga-essa-mulher/as-infinitas-vozes-de-eleonora-santos/",
+    external: true,
+    eyebrow: "Em alta",
+    title: "As infinitas vozes de Eleonora Santos",
+    excerpt:
+      "Coluna sobre as decisões editoriais mais honestas do livro (In)finitudes — a recusa da “superação obrigatória” e as 20 vozes que atravessam a obra.",
+    meta: "BHAZ · Coluna “Siga essa mulher” · Nalu Saad",
+    image: null,
+    imageAlt: "As infinitas vozes de Eleonora Santos — coluna na BHAZ",
+    variant: "black",
+  },
+];
 
 // Hero · masthead + assinatura institucional fixa
 const heroContent = {
@@ -66,73 +113,23 @@ const essayContent = hubFeatured
     }
   : undefined;
 
-// LongEssayHighlight (bloco de destaque editorial) · vitrine de
-// RECOMENDAMOS. Procura o post mais recente da categoria recomenda;
-// se não houver, cai no FAKE default do componente.
-const reccFeatured = posts.find((p) => p.category === "recomenda");
-const longEssayContent = reccFeatured
-  ? {
-      eyebrow:
-        getCategory(reccFeatured.category ?? "")?.title ?? "Recomendamos",
-      title: reccFeatured.title,
-      paragraphs: reccFeatured.excerpt ? [reccFeatured.excerpt] : undefined,
-      href: `/recomenda/${reccFeatured.slug}`,
-    }
-  : undefined;
+// Vitrine "Recomendamos" · grid das 3 últimas publicações da
+// categoria recomenda (mesmo layout do grid de 3 posts acima).
+// Se a categoria estiver vazia no Sanity, o bloco simplesmente
+// não é renderizado (sem fake) — o grid superior já cobre a vitrine.
+const recommendationsRaw = posts
+  .filter((p) => p.category === "recomenda")
+  .slice(0, 3);
 
-// Fake data para o grid de 3 posts (estado "vazio apresentável")
-type FakeCard = {
-  post: PostPreview;
-  categoryLabel: string;
-  author: string;
-};
+const recommendationCards = await Promise.all(
+  recommendationsRaw.map(async (p) => ({
+    post: p,
+    externalImageUrl: p.mainImage
+      ? null
+      : await resolveExternalThumb(p.externalUrl),
+  })),
+);
 
-const FAKE_GRID: FakeCard[] = [
-  {
-    post: {
-      _id: "fake-1",
-      title: "O que aprendi ao cuidar da minha mãe nos últimos meses",
-      slug: "cuidar-da-minha-mae",
-      publishedAt: new Date().toISOString(),
-      mainImage: null,
-      category: "diva-infinito",
-      excerpt:
-        "Quando a cura deixa de ser o objetivo, descobrimos que presença é a forma mais honesta de amor.",
-    },
-    categoryLabel: "Divã Infinito",
-    author: "Por Marina Pires",
-  },
-  {
-    post: {
-      _id: "fake-2",
-      title: "Dor total: o que Cicely Saunders ainda tem a nos ensinar",
-      slug: "dor-total-cicely-saunders",
-      publishedAt: new Date().toISOString(),
-      mainImage: null,
-      category: "hub-infinito",
-      excerpt:
-        "Conversa com a enfermeira e pesquisadora Ana Lúcia Freire sobre o conceito que fundou o movimento hospice moderno.",
-    },
-    categoryLabel: "Hub Infinito",
-    author: "Por Eleonora Cruz Santos",
-  },
-  {
-    post: {
-      _id: "fake-3",
-      title: "Cartas de uma enfermeira de cuidado intensivo",
-      slug: "cartas-de-hospice",
-      publishedAt: new Date().toISOString(),
-      mainImage: null,
-      category: "curadoria",
-      excerpt:
-        "Cinco documentos resgatados que revelam como o cuidado ao fim da vida mudou — e o que permanece intacto.",
-    },
-    categoryLabel: "Curadoria",
-    author: "Por Eleonora Cruz Santos",
-  },
-];
-
-const hasRealPosts = gridPosts.length > 0;
 ---
 
 <Layout title="(In)finitudes — Divã Infinito">
@@ -155,32 +152,91 @@ const hasRealPosts = gridPosts.length > 0;
       <div class="flex items-center gap-6 py-10 lg:py-14">
         <span class="flex-1 h-px bg-rule"></span>
         <span class="eyebrow whitespace-nowrap">
-          Relatos &amp; Podcasts da semana
+          Em Alta & Podcasts da semana
         </span>
         <span class="flex-1 h-px bg-rule"></span>
       </div>
     </div>
 
-    {/* 3 · Grid de 3 posts · alinhado ao container editorial */}
+    {/* 3 · Grid editorial · três destaques fixos com mesma estrutura visual
+         do PostCard (imagem 4:3 → eyebrow → título → excerpt → meta). Cards
+         externos abrem em nova aba; cards sem imagem caem no placeholder
+         de aquarela + logo. */}
     <section class="max-w-7xl mx-auto px-6 lg:px-12 pb-16 lg:pb-24">
       <div
         class="grid grid-cols-1 md:grid-cols-3 gap-y-14 md:gap-x-10 lg:gap-x-14"
       >
         {
-          hasRealPosts
-            ? gridPosts.map(({ post, externalImageUrl }) => (
-                <PostCard
-                  post={post}
-                  externalImageUrl={externalImageUrl}
-                />
-              ))
-            : FAKE_GRID.map((item) => (
-                <PostCard
-                  post={item.post}
-                  category={item.categoryLabel}
-                  author={item.author}
-                />
-              ))
+          featuredCards.map((card) => (
+            <article class="group">
+              <a
+                href={card.href}
+                {...(card.external
+                  ? { target: "_blank", rel: "noopener noreferrer" }
+                  : {})}
+                class="block"
+              >
+                {card.image ? (
+                  <img
+                    src={card.image}
+                    alt={card.imageAlt}
+                    class="w-full aspect-[4/3] object-cover transition-[filter] duration-300 group-hover:brightness-95"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ) : (
+                  <div class="relative w-full aspect-[4/3] overflow-hidden bg-paper-soft">
+                    <img
+                      src={
+                        card.variant === "rouge"
+                          ? "/watercolors/rouge-blob.webp"
+                          : "/watercolors/black-blob.webp"
+                      }
+                      alt=""
+                      role="presentation"
+                      aria-hidden="true"
+                      loading="lazy"
+                      decoding="async"
+                      class="pointer-events-none select-none absolute inset-0 w-full h-full object-cover transition-[filter] duration-300 group-hover:brightness-95"
+                    />
+                    <div class="absolute inset-0 flex items-center justify-center p-8">
+                      <picture>
+                        <source
+                          srcset="/logo/logo-mini.webp"
+                          type="image/webp"
+                        />
+                        <img
+                          src="/logo/logo-mini.png"
+                          alt={card.imageAlt}
+                          loading="lazy"
+                          decoding="async"
+                          class="select-none w-[42%] h-auto"
+                          draggable="false"
+                        />
+                      </picture>
+                    </div>
+                  </div>
+                )}
+
+                <span class="eyebrow mt-5 block">{card.eyebrow}</span>
+
+                <h3 class="font-serif text-[20px] lg:text-[22px] leading-[1.18] mt-2 font-medium tracking-[-0.005em] transition-colors group-hover:text-rouge">
+                  {card.title}
+                  {card.external && (
+                    <span class="ml-1 align-middle" aria-hidden="true">
+                      ↗
+                    </span>
+                  )}
+                </h3>
+
+                <p class="font-serif text-[15px] lg:text-[16px] leading-[1.45] mt-3 text-ink/80">
+                  {card.excerpt}
+                </p>
+
+                <div class="meta mt-2">{card.meta}</div>
+              </a>
+            </article>
+          ))
         }
       </div>
     </section>
@@ -188,8 +244,30 @@ const hasRealPosts = gridPosts.length > 0;
     {/* 4 · Banner bordô · livro (break section full-width intencional) */}
     <BookSection />
 
-    {/* 5 · Vitrine de Recomendamos · destaque editorial com capitular */}
-    <LongEssayHighlight {...(longEssayContent ?? {})} />
+    {/* 5 · Vitrine de Recomendamos · grid das 3 últimas publicações */}
+    {
+      recommendationCards.length > 0 && (
+        <>
+          <div class="max-w-7xl mx-auto px-6 lg:px-12">
+            <div class="flex items-center gap-6 py-10 lg:py-14">
+              <span class="flex-1 h-px bg-rule" />
+              <span class="eyebrow whitespace-nowrap">Recomendamos</span>
+              <span class="flex-1 h-px bg-rule" />
+            </div>
+          </div>
+          <section class="max-w-7xl mx-auto px-6 lg:px-12 pb-16 lg:pb-24">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-y-14 md:gap-x-10 lg:gap-x-14">
+              {recommendationCards.map(({ post, externalImageUrl }) => (
+                <PostCard
+                  post={post}
+                  externalImageUrl={externalImageUrl}
+                />
+              ))}
+            </div>
+          </section>
+        </>
+      )
+    }
 
     {/* 6 · Newsletter */}
     <NewsletterSection />

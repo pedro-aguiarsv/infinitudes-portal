@@ -16,7 +16,7 @@
 export interface Props {
   eyebrow?: string;
   title?: string;
-  byline?: string;
+  byline?: string | null;
   paragraphs?: string[];
   href?: string;
   cta?: string;
@@ -24,14 +24,13 @@ export interface Props {
 
 const {
   eyebrow = "Recomendamos",
-  title = "Olhando para as estrelas",
-  byline = "Rádio Novelo Apresenta · Episódio em áudio",
+  title = "Curadoria editorial em construção",
+  byline = null,
   paragraphs = [
-    "Dois episódios em áudio sobre olhar o céu: diálogos cósmicos de Rita Lee e trocas extraterrestres no Acre. Episódio do \u201CRádio Novelo Apresenta\u201D — contém descrições de luto familiar.",
     "Uma curadoria de leituras, escutas e olhares selecionados pelo time editorial do (In)finitudes — recomendações que ampliam, com delicadeza, as conversas sobre presença, cuidado e finitude.",
   ],
-  href = "/recomenda/olhando-para-as-estrelas",
-  cta = "Acessar recomendação →",
+  href = "/recomenda",
+  cta = "Conhecer Recomendamos →",
 } = Astro.props;
 ---
 
@@ -46,7 +45,7 @@ const {
           {title}
         </a>
       </h2>
-      <div class="meta mt-6">{byline}</div>
+      {byline && <div class="meta mt-6">{byline}</div>}
     </header>
 
     {

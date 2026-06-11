@@ -39,8 +39,10 @@ const bookPrice = book?.price ?? "R$ 42,00";
 const bookOriginalPrice = book?.originalPrice ?? "R$ 69,00";
 const launchEdition = book?.launchEdition ?? "Edição 2026 · Pré-venda";
 const ctaText = book?.ctaText ?? "Comprar agora";
-const productSlug = book?.ctaProductSlug ?? "livro-finitudes";
-const cartHref = `/loja/${productSlug}`;
+// Loja oficial hospedada na Nuvem Shop. Link aponta direto pro produto;
+// abre em nova aba via target="_blank" nos dois <a> que usam `cartHref`.
+const cartHref =
+  "https://projetoinfinitudes.lojavirtualnuvem.com.br/produtos/livro-infinitudes/";
 
 const coverUrl = book?.cover
   ? urlFor(book.cover).width(720).height(960).fit("crop").auto("format").url()
@@ -107,6 +109,13 @@ const FAKE_TESTIMONIAL_HIGHLIGHT: Testimonial = {
 
 const showTestimonials =
   testimonials.length > 0 ? testimonials : [FAKE_TESTIMONIAL_HIGHLIGHT];
+
+// URL da matéria/coluna referente ao testimonial em destaque (lado esquerdo
+// da seção "Em outra voz" + "Conversa em vídeo"). Se preenchida, exibe o
+// botão "Ler matéria"; se `null`, o botão é omitido. Hardcoded pq é um
+// destaque editorial fixo — quando trocar o testimonial em destaque,
+// atualizar (ou zerar) este valor.
+const featuredTestimonialUrl: string | null = null;
 
 const ptComponents = {
   block: {
@@ -207,27 +216,39 @@ const ptComponents = {
               por {bookAuthor}
             </p>
 
-            <div
-              class="mt-8 flex flex-col sm:flex-row sm:items-center sm:justify-center lg:justify-start gap-4"
-            >
-              {/* Preço · original riscado + promocional + frete (alinhado verticalmente) */}
-              <div class="flex flex-col items-center sm:items-start gap-1">
-                <span class="font-sans text-[12px] tracking-[0.06em] text-ink/55 line-through decoration-rouge/70 decoration-[1.5px]">
-                  De {bookOriginalPrice}
-                </span>
-                <span class="font-display italic text-[26px] lg:text-[28px] text-ink leading-none">
+            {/*
+              Preço + CTA · "De" em linha solo no topo, "Por R$ 42,00 * + frete"
+              alinhado verticalmente ao botão "Comprar agora" (mesma baseline).
+            */}
+            <div class="mt-8">
+              <p
+                class="text-center sm:text-left font-sans text-[12px] tracking-[0.06em] text-ink/55 line-through decoration-rouge/70 decoration-[1.5px]"
+              >
+                De {bookOriginalPrice}
+              </p>
+              <div
+                class="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-center lg:justify-start gap-4"
+              >
+                <span
+                  class="font-display italic text-[26px] lg:text-[28px] text-ink leading-none text-center sm:text-left"
+                >
                   Por {bookPrice}
-                  <span class="font-sans not-italic text-[12px] tracking-[0.04em] text-ink/55 ml-1.5">
+                  <span class="font-sans not-italic text-rouge ml-0.5 align-middle">
+                    *
+                  </span>
+                  <span class="font-sans not-italic text-[10px] font-medium tracking-[0.22em] uppercase text-ink/55 ml-1.5 align-middle relative -top-1">
                     + frete
                   </span>
                 </span>
+                <a
+                  href={cartHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-block text-center bg-rouge text-paper px-8 py-3.5 text-[11px] font-medium tracking-[0.22em] uppercase hover:bg-rouge-deep transition-colors"
+                >
+                  {ctaText}
+                </a>
               </div>
-              <a
-                href={cartHref}
-                class="inline-block text-center bg-rouge text-paper px-8 py-3.5 text-[11px] font-medium tracking-[0.22em] uppercase hover:bg-rouge-deep transition-colors"
-              >
-                {ctaText}
-              </a>
             </div>
             <p class="meta mt-4">
               Envio nacional a partir de 22 de junho de 2026
@@ -266,6 +287,12 @@ const ptComponents = {
                 </details>
               )
             }
+
+            <p
+              class="mt-4 font-sans text-[10px] leading-[1.5] tracking-[0.04em] text-ink/55"
+            >
+              * Desconto válido para os 100 primeiros exemplares.
+            </p>
           </div>
         </div>
       </div>
@@ -354,8 +381,9 @@ const ptComponents = {
               Foi diretora da área de produção de estatísticas
               socioeconômicas da Fundação João Pinheiro-MG, economista em
               bancos de investimento e consultora em organismos
-              internacionais. Há cinco anos é colunista do jornal Estado de
-              Minas e recentemente tornou-se produtora de videocasts.
+              internacionais. É colunista do jornal Estado de Minas,
+              professora convidada da Educação Executiva da FGV e
+              recentemente tornou-se produtora de podcasts.
             </p>
           </div>
           <a
@@ -369,127 +397,162 @@ const ptComponents = {
     </section>
 
     {/* ============================================================
-        4 · DEPOIMENTOS
+        4 · O LIVRO EM OUTRAS VOZES
+        Mescla, em duas colunas equivalentes:
+          A) Depoimento em destaque sobre o livro (Sanity ou fallback
+             editorial — coluna da Nalu Saad).
+          B) Conversa em vídeo · Bucket List PodCast (Grupo Zelo /
+             Gustavo Ziller) com link p/ YouTube.
+        Cada coluna tem seu próprio eyebrow e CTA opcional para o
+        material oficial. Se houver mais de 1 testimonial cadastrado
+        no Sanity, os adicionais aparecem em grid abaixo.
         ============================================================ */}
     <section class="bg-paper-soft border-y border-rule/60">
-      <div class="max-w-3xl mx-auto px-6 lg:px-12 py-16 lg:py-24">
-        <header class="text-center mb-10">
-          <Divider variant="rouge" gap="mb-8 max-w-md mx-auto" />
-          <p
-            class="font-sans text-[11px] font-medium tracking-[0.30em] uppercase text-ink/80"
-          >
-            Disseram sobre o livro
-          </p>
-        </header>
+      <div class="max-w-7xl mx-auto px-6 lg:px-12 py-16 lg:py-24">
+        <div
+          class="grid grid-cols-1 lg:grid-cols-2 gap-x-12 lg:gap-x-20 gap-y-16"
+        >
+          {/* Lado A · Depoimento em destaque (Em outra voz) */}
+          <article class="flex flex-col">
+            <header class="text-center mb-8">
+              <Divider variant="rouge" gap="mb-8 max-w-md mx-auto" />
+              <p
+                class="font-sans text-[11px] font-medium tracking-[0.30em] uppercase text-ink/80"
+              >
+                Em outra voz
+              </p>
+            </header>
 
-        {/* Layout adaptativo: 1 destaque centralizado · 2+ em grid */}
-        {showTestimonials.length === 1 ? (
-          <figure class="text-center">
-            <span class="font-display text-[64px] lg:text-[80px] leading-[1] text-rouge block">
-              “
-            </span>
-            <blockquote class="font-serif italic text-[18px] lg:text-[21px] leading-[1.55] mt-2 text-ink-soft max-w-[58ch] mx-auto">
-              {showTestimonials[0].quote}
-            </blockquote>
-            <figcaption class="mt-8">
-              <span class="block font-sans text-[10px] font-medium tracking-[0.22em] uppercase text-rouge">
-                {showTestimonials[0].author}
+            <figure class="text-center flex-1 flex flex-col">
+              <span
+                class="font-display text-[64px] lg:text-[80px] leading-[1] text-rouge block"
+              >
+                “
               </span>
-              {showTestimonials[0].role && (
-                <span class="meta block mt-1">{showTestimonials[0].role}</span>
-              )}
-            </figcaption>
-          </figure>
-        ) : (
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-12">
-            {showTestimonials.map((d) => (
-              <figure class="text-center">
-                <span class="font-display text-[48px] lg:text-[56px] leading-[1] text-rouge block">
-                  “
+              <blockquote
+                class="font-serif italic text-[17px] lg:text-[19px] leading-[1.55] mt-2 text-ink-soft max-w-[52ch] mx-auto"
+              >
+                {showTestimonials[0].quote}
+              </blockquote>
+              <figcaption class="mt-8">
+                <span
+                  class="block font-sans text-[10px] font-medium tracking-[0.22em] uppercase text-rouge"
+                >
+                  {showTestimonials[0].author}
                 </span>
-                <blockquote class="font-serif italic text-[16px] lg:text-[17px] leading-[1.55] mt-2 text-ink-soft">
-                  {d.quote}
-                </blockquote>
-                <figcaption class="mt-5">
-                  <span class="block font-sans text-[10px] font-medium tracking-[0.22em] uppercase text-rouge">
-                    {d.author}
+                {showTestimonials[0].role && (
+                  <span class="meta block mt-1">
+                    {showTestimonials[0].role}
                   </span>
-                  {d.role && <span class="meta block mt-1">{d.role}</span>}
-                </figcaption>
-              </figure>
-            ))}
+                )}
+              </figcaption>
+            </figure>
+
+            {featuredTestimonialUrl && (
+              <div class="text-center mt-10">
+                <a
+                  href={featuredTestimonialUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-2 bg-rouge text-paper px-7 py-3.5 text-[11px] font-medium tracking-[0.22em] uppercase hover:bg-rouge-deep transition-colors"
+                >
+                  Ler matéria
+                  <span aria-hidden="true">↗</span>
+                </a>
+              </div>
+            )}
+          </article>
+
+          {/* Lado B · Conversa em vídeo · Bucket List */}
+          <article class="flex flex-col">
+            <header class="text-center mb-8">
+              <Divider variant="rouge" gap="mb-8 max-w-md mx-auto" />
+              <p
+                class="font-sans text-[11px] font-medium tracking-[0.30em] uppercase text-ink/80"
+              >
+                Conversa em vídeo · Bucket List
+              </p>
+            </header>
+
+            <figure class="text-center flex-1 flex flex-col">
+              <span
+                class="font-display text-[64px] lg:text-[80px] leading-[1] text-rouge block"
+              >
+                “
+              </span>
+              <blockquote
+                class="font-serif italic text-[17px] lg:text-[19px] leading-[1.55] mt-2 text-ink-soft max-w-[52ch] mx-auto"
+              >
+                Toda vez que falavam comigo “vai dar tudo certo”, eu não tinha
+                reação. Ficava calada olhando para a pessoa e, dentro de mim,
+                pensava: o que você quer dizer com “vai dar tudo certo”? É a
+                dificuldade que o outro tem de lidar com a finitude que está
+                revelada no outro — e que é dele também.
+              </blockquote>
+              <figcaption class="mt-8">
+                <span
+                  class="block font-sans text-[10px] font-medium tracking-[0.22em] uppercase text-rouge"
+                >
+                  Eleonora Santos
+                </span>
+                <span class="meta block mt-1">
+                  Bucket List PodCast · Grupo Zelo &amp; Gustavo Ziller ·
+                  1h07min
+                </span>
+              </figcaption>
+            </figure>
+
+            <div class="text-center mt-10">
+              <a
+                href="https://www.youtube.com/watch?v=cy-jyQ3kpDw"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 bg-rouge text-paper px-7 py-3.5 text-[11px] font-medium tracking-[0.22em] uppercase hover:bg-rouge-deep transition-colors"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  class="w-3.5 h-3.5"
+                  aria-hidden="true"
+                >
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+                Assistir no YouTube
+              </a>
+            </div>
+          </article>
+        </div>
+
+        {/* Testimoniais adicionais (a partir do 2º) — mantém compatibilidade
+            quando há vários cadastrados no Sanity */}
+        {showTestimonials.length > 1 && (
+          <div class="mt-20 pt-16 border-t border-rule/40">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-12">
+              {showTestimonials.slice(1).map((d) => (
+                <figure class="text-center">
+                  <span class="font-display text-[48px] lg:text-[56px] leading-[1] text-rouge block">
+                    “
+                  </span>
+                  <blockquote class="font-serif italic text-[16px] lg:text-[17px] leading-[1.55] mt-2 text-ink-soft">
+                    {d.quote}
+                  </blockquote>
+                  <figcaption class="mt-5">
+                    <span class="block font-sans text-[10px] font-medium tracking-[0.22em] uppercase text-rouge">
+                      {d.author}
+                    </span>
+                    {d.role && <span class="meta block mt-1">{d.role}</span>}
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
           </div>
         )}
       </div>
     </section>
 
     {/* ============================================================
-        5 · CONVERSA EM VÍDEO · Bucket List PodCast (Grupo Zelo)
-        Eleonora entrevistada por Gustavo Ziller — fala sobre o "vai
-        dar tudo certo", finitude, espiritualidade e o projeto.
-        ============================================================ */}
-    <section class="bg-paper">
-      <div class="max-w-4xl mx-auto px-6 lg:px-12 py-16 lg:py-24">
-        <header class="text-center mb-10">
-          <Divider variant="rouge" gap="mb-8 max-w-md mx-auto" />
-          <p
-            class="font-sans text-[11px] font-medium tracking-[0.30em] uppercase text-ink/80"
-          >
-            Conversa em vídeo · Bucket List
-          </p>
-        </header>
-
-        <figure class="text-center">
-          <span
-            class="font-display text-[64px] lg:text-[80px] leading-[1] text-rouge block"
-          >
-            “
-          </span>
-          <blockquote
-            class="font-serif italic text-[18px] lg:text-[21px] leading-[1.55] mt-2 text-ink-soft max-w-[58ch] mx-auto"
-          >
-            Toda vez que falavam comigo “vai dar tudo certo”, eu não tinha
-            reação. Ficava calada olhando para a pessoa e, dentro de mim,
-            pensava: o que você quer dizer com “vai dar tudo certo”? É a
-            dificuldade que o outro tem de lidar com a finitude que está
-            revelada no outro — e que é dele também.
-          </blockquote>
-          <figcaption class="mt-8">
-            <span
-              class="block font-sans text-[10px] font-medium tracking-[0.22em] uppercase text-rouge"
-            >
-              Eleonora Santos
-            </span>
-            <span class="meta block mt-1">
-              Bucket List PodCast · Grupo Zelo &amp; Gustavo Ziller · 1h07min
-            </span>
-          </figcaption>
-        </figure>
-
-        <div class="text-center mt-10">
-          <a
-            href="https://www.youtube.com/watch?v=cy-jyQ3kpDw"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 bg-rouge text-paper px-7 py-3.5 text-[11px] font-medium tracking-[0.22em] uppercase hover:bg-rouge-deep transition-colors"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              class="w-3.5 h-3.5"
-              aria-hidden="true"
-            >
-              <path d="M8 5v14l11-7z" />
-            </svg>
-            Assistir no YouTube
-          </a>
-        </div>
-      </div>
-    </section>
-
-    {/* ============================================================
-        6 · CTA FINAL
+        5 · CTA FINAL
         ============================================================ */}
     <section class="bg-rouge text-paper">
       <div class="max-w-5xl mx-auto px-6 lg:px-12 py-16 lg:py-24 text-center">
@@ -519,13 +582,23 @@ const ptComponents = {
             </span>
             <span class="font-display italic text-[28px] text-paper leading-none">
               Por {bookPrice}
-              <span class="font-sans not-italic text-[12px] tracking-[0.04em] text-paper/70 ml-1.5">
+              <span class="font-sans not-italic text-paper ml-0.5 align-middle">
+                *
+              </span>
+              <span class="font-sans not-italic text-[10px] font-medium tracking-[0.22em] uppercase text-paper/70 ml-1.5 align-middle relative -top-1">
                 + frete
               </span>
+            </span>
+            <span
+              class="font-sans text-[11px] leading-[1.5] text-paper/70 mt-1 max-w-[32ch]"
+            >
+              * Desconto válido para os 100 primeiros exemplares.
             </span>
           </div>
           <a
             href={cartHref}
+            target="_blank"
+            rel="noopener noreferrer"
             class="inline-block bg-paper text-rouge px-10 py-4 text-[11px] font-medium tracking-[0.22em] uppercase hover:bg-paper-soft transition-colors"
           >
             Adicionar ao carrinho

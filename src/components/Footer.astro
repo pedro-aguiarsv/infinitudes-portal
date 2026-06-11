@@ -2,48 +2,81 @@
 // =============================================================
 // Footer.astro · Rodapé institucional (In)finitudes
 //   · Linha de links das seções (em creme)
-//   · Bloco PRETO com redes sociais
-//   · Bloco CREME com a régua oficial de fomento
+//   · Bloco PRETO com redes sociais + Patrocínio + Realização
 //   · Bloco CREME com copyright + links legais
 //
-// IMPORTANTE — Régua oficial de fomento (Lei Rouanet)
-// -------------------------------------------------------------
-// O kit oficial (Réguas.pdf) traz 5 variações. Usamos duas versões
-// CLARAS (logos pretos + coloridos sobre fundo transparente),
-// alternadas por viewport, sempre exibidas sobre faixa creme
-// (bg-paper) — mesmo fundo da seção de Newsletter, garantindo
-// legibilidade total das marcas conforme manual gráfico:
-//   · DESKTOP (≥ 640px) → regua-fomento.{png,webp}
-//       Régua HORIZONTAL CLARA, 9 marcas (Lei Rouanet · Itaú ·
-//       Palácio das Artes · Circuito da Liberdade · Fundação Clóvis
-//       Salgado · Cultura e Turismo · Gov MG · Min Cultura · Gov BR).
-//   · MOBILE  (< 640px) → regua-fomento-mobile.{png,webp}
-//       Régua VERTICAL CLARA, 9 marcas (página 3 do Réguas.pdf).
-//       Mesma composição do desktop, empilhada para telas estreitas.
-// Qualquer alteração estrutural na ORDEM/proporção deve substituir
-// os arquivos, não recompor com markup.
+// Bloco de fomento (modelo enxuto):
+//   · Patrocínio   → Lei Rouanet · Itaú
+//   · Realização   → Ministério da Cultura · Governo do Brasil
+// Os PNGs/WebPs em /public/footer/sponsors/ são versões claras
+// (texto branco + cores oficiais) preparadas pra fundo escuro.
 // =============================================================
 import { getNavItems } from "../lib/categories";
-import { getSiteSettings } from "../lib/sanity";
+import { getSiteSettings, urlFor, type SponsorLogo } from "../lib/sanity";
 
 const [settings, navItems] = await Promise.all([
   getSiteSettings(),
   getNavItems(),
 ]);
 
-// Régua DESKTOP — versão clara horizontal (9 marcas, logos pretos +
-// coloridos sobre fundo transparente). Proporção ~9.4:1.
-const FOMENTO_PNG = "/footer/regua-fomento.png";
-const FOMENTO_WEBP = "/footer/regua-fomento.webp";
-const FOMENTO_ALT =
-  "Régua oficial de fomento: Lei Rouanet · Patrocínio Itaú · Apoio Palácio das Artes, Circuito Liberdade, Fundação Clóvis Salgado, Cultura e Turismo de Minas, Governo de Minas · Realização Ministério da Cultura, Governo do Brasil";
+// ----- Patrocinadores / Realização -------------------------
+// Se o Sanity tem itens cadastrados, usa eles. Senão, fallback
+// estático com os logos já existentes em /public/footer/sponsors/.
+type FooterLogo = {
+  label: string;
+  src: string;
+  srcWebp?: string;
+  /** classe Tailwind de altura. */
+  h: string;
+};
 
-// Régua MOBILE — versão clara vertical (oficial Réguas.pdf página 3),
-// MESMAS 9 marcas do desktop empilhadas para telas estreitas.
-// Proporção ~0.41:1.
-const FOMENTO_MOBILE_PNG = "/footer/regua-fomento-mobile.png";
-const FOMENTO_MOBILE_WEBP = "/footer/regua-fomento-mobile.webp";
-const FOMENTO_MOBILE_ALT = FOMENTO_ALT;
+const FALLBACK_SPONSORS: FooterLogo[] = [
+  {
+    label: "Lei Rouanet",
+    src: "/footer/sponsors/lei-rouanet.png",
+    srcWebp: "/footer/sponsors/lei-rouanet.webp",
+    h: "h-10",
+  },
+  {
+    label: "Itaú",
+    src: "/footer/sponsors/itau.png",
+    srcWebp: "/footer/sponsors/itau.webp",
+    h: "h-12",
+  },
+];
+
+const FALLBACK_REALIZATION: FooterLogo[] = [
+  {
+    label: "Ministério da Cultura",
+    src: "/footer/sponsors/min-cultura.png",
+    srcWebp: "/footer/sponsors/min-cultura.webp",
+    h: "h-8",
+  },
+  {
+    label: "Governo do Brasil",
+    src: "/footer/sponsors/governo-brasil.png",
+    srcWebp: "/footer/sponsors/governo-brasil.webp",
+    h: "h-12",
+  },
+];
+
+function mapSanityLogo(s: SponsorLogo): FooterLogo {
+  return {
+    label: s.label,
+    src: s.logo ? urlFor(s.logo).width(400).auto("format").url() : "",
+    h: "h-10",
+  };
+}
+
+const sponsors: FooterLogo[] =
+  settings?.sponsors && settings.sponsors.length > 0
+    ? settings.sponsors.map(mapSanityLogo)
+    : FALLBACK_SPONSORS;
+
+const realization: FooterLogo[] =
+  settings?.realization && settings.realization.length > 0
+    ? settings.realization.map(mapSanityLogo)
+    : FALLBACK_REALIZATION;
 
 // ----- Redes sociais ---------------------------------------
 type SocialLink = {
@@ -96,11 +129,9 @@ const copyrightText =
   </nav>
 </div>
 
-{/* Rodapé preto institucional — APENAS redes sociais */}
+{/* Rodapé preto institucional · redes sociais + fomento */}
 <footer class="bg-black text-paper">
-  <div
-    class="max-w-7xl mx-auto px-6 lg:px-12 py-12 flex justify-center"
-  >
+  <div class="max-w-7xl mx-auto px-6 lg:px-12 py-12">
     {/* Redes sociais centralizadas */}
     <div class="flex justify-center">
       <div class="flex flex-col items-center gap-3">
@@ -180,74 +211,102 @@ const copyrightText =
         </div>
       </div>
     </div>
+
+    {/* Linha divisória sutil entre redes sociais e fomento */}
+    <div class="mt-12 border-t border-paper/15"></div>
+
+    {/* Patrocínio + Realização · 2 colunas equilibradas */}
+    <div
+      class="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-12 sm:gap-16 items-start text-center"
+    >
+      {/* Patrocínio */}
+      <div>
+        <p
+          class="font-sans text-[9px] tracking-[0.30em] uppercase text-paper/55 mb-5"
+        >
+          Patrocínio
+        </p>
+        <div class="flex items-center justify-center gap-8 flex-wrap">
+          {
+            sponsors.map((s) => (
+              <picture>
+                {s.srcWebp && (
+                  <source srcset={s.srcWebp} type="image/webp" />
+                )}
+                <img
+                  src={s.src}
+                  alt={s.label}
+                  class={`${s.h} w-auto object-contain select-none`}
+                  loading="lazy"
+                  decoding="async"
+                  draggable="false"
+                />
+              </picture>
+            ))
+          }
+        </div>
+      </div>
+
+      {/* Realização */}
+      <div>
+        <p
+          class="font-sans text-[9px] tracking-[0.30em] uppercase text-paper/55 mb-5"
+        >
+          Realização
+        </p>
+        <div class="flex items-center justify-center gap-8 flex-wrap">
+          {
+            realization.map((s) => (
+              <picture>
+                {s.srcWebp && (
+                  <source srcset={s.srcWebp} type="image/webp" />
+                )}
+                <img
+                  src={s.src}
+                  alt={s.label}
+                  class={`${s.h} w-auto object-contain select-none`}
+                  loading="lazy"
+                  decoding="async"
+                  draggable="false"
+                />
+              </picture>
+            ))
+          }
+        </div>
+      </div>
+    </div>
   </div>
 </footer>
 
-{/*
-  Régua oficial de fomento + copyright — em fundo creme (bg-paper),
-  mesmo fundo da seção de Newsletter, garantindo legibilidade total
-  das marcas conforme manual gráfico oficial.
-    · ≥ 640px (sm) → régua horizontal clara, 9 marcas
-    · < 640px      → régua vertical clara, 9 marcas (página 3 do PDF)
-*/}
-<section class="bg-paper text-ink">
-  <div class="px-6 lg:px-12 py-8 lg:py-9">
-    {/* Mobile: régua vertical clara (9 marcas empilhadas) */}
-    <picture class="block sm:hidden mx-auto max-w-[260px]">
-      <source srcset={FOMENTO_MOBILE_WEBP} type="image/webp" />
-      <img
-        src={FOMENTO_MOBILE_PNG}
-        alt={FOMENTO_MOBILE_ALT}
-        class="w-full h-auto select-none"
-        loading="lazy"
-        decoding="async"
-        draggable="false"
-      />
-    </picture>
-    {/* Desktop: régua horizontal completa (9 marcas) */}
-    <picture class="hidden sm:block max-w-6xl mx-auto">
-      <source srcset={FOMENTO_WEBP} type="image/webp" />
-      <img
-        src={FOMENTO_PNG}
-        alt={FOMENTO_ALT}
-        class="w-full h-auto select-none"
-        loading="lazy"
-        decoding="async"
-        draggable="false"
-      />
-    </picture>
-  </div>
-
-  {/* Linha de copyright + links legais — também em creme */}
-  <div class="border-t border-rule/60">
-    <div
-      class="max-w-7xl mx-auto px-6 lg:px-12 py-4 flex flex-col sm:flex-row gap-3 sm:gap-6 justify-between items-center"
-    >
-      <div class="flex items-center gap-5">
-        <a
-          href="/privacidade"
-          class="font-sans text-[10px] tracking-[0.22em] uppercase text-ink/55 hover:text-ink link-ed"
-        >
-          Privacidade
-        </a>
-        <a
-          href="/termos"
-          class="font-sans text-[10px] tracking-[0.22em] uppercase text-ink/55 hover:text-ink link-ed"
-        >
-          Termos
-        </a>
-        <a
-          href="/contato"
-          class="font-sans text-[10px] tracking-[0.22em] uppercase text-ink/55 hover:text-ink link-ed"
-        >
-          Contato
-        </a>
-      </div>
-      <p
-        class="font-sans text-[10px] tracking-[0.22em] uppercase text-ink/55"
+{/* Linha de copyright + links legais · faixa creme */}
+<section class="bg-paper text-ink border-t border-rule/60">
+  <div
+    class="max-w-7xl mx-auto px-6 lg:px-12 py-4 flex flex-col sm:flex-row gap-3 sm:gap-6 justify-between items-center"
+  >
+    <div class="flex items-center gap-5">
+      <a
+        href="/privacidade"
+        class="font-sans text-[10px] tracking-[0.22em] uppercase text-ink/55 hover:text-ink link-ed"
       >
-        {copyrightText}
-      </p>
+        Privacidade
+      </a>
+      <a
+        href="/termos"
+        class="font-sans text-[10px] tracking-[0.22em] uppercase text-ink/55 hover:text-ink link-ed"
+      >
+        Termos
+      </a>
+      <a
+        href="/contato"
+        class="font-sans text-[10px] tracking-[0.22em] uppercase text-ink/55 hover:text-ink link-ed"
+      >
+        Contato
+      </a>
     </div>
+    <p
+      class="font-sans text-[10px] tracking-[0.22em] uppercase text-ink/55"
+    >
+      {copyrightText}
+    </p>
   </div>
 </section>

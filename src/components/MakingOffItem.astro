@@ -1,0 +1,185 @@
+---
+// =============================================================
+// MakingOffItem.astro · Item de listagem da aba "Making-off"
+// -------------------------------------------------------------
+// Layout (variante side-by-side, distinto das Temporadas):
+//   ┌──────────────────────┬──────────────────────┐
+//   │  Player de vídeo     │  Eyebrow + número    │
+//   │  (mp4 / YouTube /    │  Título display      │
+//   │   Vimeo / placeholder│  Descrição serif     │
+//   │   neutro)            │  CTA (opcional)      │
+//   └──────────────────────┴──────────────────────┘
+//
+// `variant="reverse"` inverte os lados (vídeo à direita) — usado
+// pra criar ritmo visual quando há múltiplos itens na lista.
+//
+// O player escolhe automaticamente entre:
+//   1. mp4 direto (`<video controls>`)
+//   2. embed do YouTube (extrai o ID da URL)
+//   3. embed do Vimeo
+//   4. placeholder editorial (quando `videoUrl` é null)
+// =============================================================
+export interface Props {
+  number: number;
+  title: string;
+  description: string;
+  /** URL do vídeo. Pode ser mp4 direto, YouTube ou Vimeo. */
+  videoUrl?: string | null;
+  /** Imagem de capa exibida antes do play (apenas para mp4). */
+  poster?: string | null;
+  /** Link opcional pro post detalhe do episódio. */
+  href?: string | null;
+  /** Inverte a ordem (vídeo à direita) pra criar ritmo visual. */
+  variant?: "default" | "reverse";
+  /** Proporção do vídeo. "portrait" = 9:16 (Reels/Story), "landscape" = 16:9. */
+  orientation?: "portrait" | "landscape";
+}
+
+const {
+  number,
+  title,
+  description,
+  videoUrl = null,
+  poster = null,
+  href = null,
+  variant = "default",
+  orientation = "landscape",
+} = Astro.props;
+
+const isPortrait = orientation === "portrait";
+
+const numStr = number.toString().padStart(2, "0");
+const isReverse = variant === "reverse";
+
+// Detecta o tipo de vídeo a partir da URL.
+function getYouTubeId(url: string): string | null {
+  const m = url.match(
+    /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{6,})/,
+  );
+  return m ? m[1] : null;
+}
+function getVimeoId(url: string): string | null {
+  const m = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  return m ? m[1] : null;
+}
+
+const youTubeId = videoUrl ? getYouTubeId(videoUrl) : null;
+const vimeoId = videoUrl && !youTubeId ? getVimeoId(videoUrl) : null;
+const isMp4 =
+  !!videoUrl && !youTubeId && !vimeoId && /\.(mp4|webm|mov)(\?|$)/i.test(videoUrl);
+
+const youTubeEmbed = youTubeId
+  ? `https://www.youtube.com/embed/${youTubeId}?rel=0&modestbranding=1`
+  : null;
+const vimeoEmbed = vimeoId
+  ? `https://player.vimeo.com/video/${vimeoId}?title=0&byline=0&portrait=0`
+  : null;
+---
+
+<article
+  class:list={[
+    "flex flex-col sm:flex-row gap-6 sm:gap-8 lg:gap-12 py-10 lg:py-14 items-center",
+    isReverse ? "sm:flex-row-reverse" : "",
+  ]}
+>
+  {/* Player · largura intrínseca conforme orientação (sem espaço sobrando) */}
+  <div
+    class:list={[
+      "w-full sm:flex-shrink-0",
+      isPortrait
+        ? "sm:w-[240px] lg:w-[280px]"
+        : "sm:w-[60%] lg:w-[58%]",
+    ]}
+  >
+    <div
+      class:list={[
+        "relative bg-paper-soft border border-rule/40 overflow-hidden mx-auto",
+        isPortrait
+          ? "aspect-[9/16] w-full max-w-[260px] sm:max-w-none"
+          : "aspect-video w-full",
+      ]}
+    >
+      {
+        isMp4 && videoUrl ? (
+          <video
+            controls
+            preload="metadata"
+            playsinline
+            class="absolute inset-0 w-full h-full object-cover"
+            poster={poster ?? undefined}
+          >
+            <source src={videoUrl} />
+            Seu navegador não suporta vídeo HTML5.
+          </video>
+        ) : youTubeEmbed ? (
+          <iframe
+            src={youTubeEmbed}
+            title={title}
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+            class="absolute inset-0 w-full h-full"
+          />
+        ) : vimeoEmbed ? (
+          <iframe
+            src={vimeoEmbed}
+            title={title}
+            loading="lazy"
+            allow="autoplay; fullscreen; picture-in-picture"
+            allowfullscreen
+            class="absolute inset-0 w-full h-full"
+          />
+        ) : (
+          <div
+            class="absolute inset-0 flex flex-col items-center justify-center gap-3 text-ink/40"
+            aria-hidden="true"
+          >
+            <svg
+              viewBox="0 0 64 64"
+              width="56"
+              height="56"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+            >
+              <circle cx="32" cy="32" r="26" />
+              <path d="M27 22 L43 32 L27 42 Z" fill="currentColor" stroke="none" />
+            </svg>
+            <span class="font-sans text-[10px] font-medium tracking-[0.30em] uppercase">
+              Vídeo em breve
+            </span>
+          </div>
+        )
+      }
+    </div>
+  </div>
+
+  {/* Texto · preenche o espaço restante naturalmente */}
+  <div class="w-full sm:flex-1">
+    <p class="eyebrow text-rouge">
+      Making-off · {numStr}
+    </p>
+    <h3
+      class="font-display text-[24px] sm:text-[28px] lg:text-[30px] leading-[1.15] font-medium tracking-[-0.005em] mt-3"
+    >
+      {title}
+    </h3>
+    <p
+      class="font-serif text-[16px] lg:text-[17px] leading-[1.6] mt-4 text-ink/80"
+    >
+      {description}
+    </p>
+    {
+      href && (
+        <div class="mt-6">
+          <a
+            href={href}
+            class="font-sans text-[11px] font-medium tracking-[0.22em] uppercase text-rouge link-ed"
+          >
+            Ler mais →
+          </a>
+        </div>
+      )
+    }
+  </div>
+</article>

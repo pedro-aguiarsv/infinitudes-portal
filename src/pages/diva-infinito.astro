@@ -11,6 +11,7 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import SectionTitle from "../components/SectionTitle.astro";
 import EpisodeListItem from "../components/EpisodeListItem.astro";
+import MakingOffItem from "../components/MakingOffItem.astro";
 import NewsletterSection from "../components/NewsletterSection.astro";
 import Divider from "../components/Divider.astro";
 import { getCategoriesMerged } from "../lib/categories";
@@ -31,41 +32,10 @@ const FALLBACK_LONG_DESCRIPTION =
 
 const longDescription = category?.longDescription ?? FALLBACK_LONG_DESCRIPTION;
 
-// Fake editorial enquanto o Sanity não tem episódios cadastrados.
-type FakeEp = {
-  number: number;
-  title: string;
-  description: string;
-  slug: string;
-};
-
-const FAKE_TEMPORADAS: FakeEp[] = [
-  {
-    number: 1,
-    title: "Divã Infinito Episódio 1",
-    description:
-      "Conversa de abertura sobre o que significa estar presente — em casa, no hospital e no silêncio.",
-    slug: "episodio-1",
-  },
-  {
-    number: 2,
-    title: "Divã Infinito Episódio 2",
-    description:
-      "O cuidado como linguagem: entrevistas com profissionais e familiares que acompanharam fins de vida.",
-    slug: "episodio-2",
-  },
-  {
-    number: 3,
-    title: "Divã Infinito Episódio 3",
-    description:
-      "Espiritualidade laica e o lugar do sagrado nas equipes de cuidado.",
-    slug: "episodio-3",
-  },
-];
-
-const hasReal = episodes.length > 0;
-
-// Separa por tipo. Episódios sem `type` cadastrado caem em "temporada".
+// Lista de "Temporadas" vem 100% do Sanity. Enquanto não há episódios
+// reais cadastrados, a aba aparece vazia (sem placeholders): o banner
+// de lançamento acima já comunica que o podcast estreia em 23/06/2026.
+// Isso evita expor episódios fictícios ao público antes do go-live.
 const realTemporadas = episodes.filter(
   (ep) => (ep.type ?? "temporada") === "temporada",
 );
@@ -79,25 +49,65 @@ function withVariants<T>(items: T[]): (T & { variant: "rouge" | "black" })[] {
   }));
 }
 
-const temporadasList = hasReal
-  ? withVariants(
-      realTemporadas.map((ep) => ({
-        number: ep.number,
-        title: ep.title,
-        description: ep.description,
-        slug: ep.slug,
-      })),
-    )
-  : withVariants(FAKE_TEMPORADAS);
-
-const makingOffList = withVariants(
-  realMakingOff.map((ep) => ({
+const temporadasList = withVariants(
+  realTemporadas.map((ep) => ({
     number: ep.number,
     title: ep.title,
     description: ep.description,
     slug: ep.slug,
   })),
 );
+
+// Making-off · layout side-by-side (vídeo + texto). Quando ainda
+// não há making-offs cadastrados no Sanity, renderiza dois cards
+// placeholder com a estrutura final pra que a Eleonora visualize
+// o layout antes de subir os vídeos. Substituir os textos abaixo
+// pelos definitivos quando os arquivos forem enviados.
+type MakingOffEntry = {
+  number: number;
+  title: string;
+  description: string;
+  videoUrl: string | null;
+  poster: string | null;
+  slug: string | null;
+  orientation: "portrait" | "landscape";
+};
+
+const FAKE_MAKING_OFF: MakingOffEntry[] = [
+  {
+    number: 1,
+    title: "Trailler · Divã Infinito",
+    description:
+      "Pequenos trechos dos 6 primeiros episódios do Divã Infinito.",
+    videoUrl: "/videos/making-off-geral.mp4",
+    poster: null,
+    slug: null,
+    orientation: "portrait",
+  },
+  {
+    number: 2,
+    title: "Trilha sonora · Divã Infinito",
+    description:
+      "Trilha sonora composta pelo Padre Luiz Eustáquio Nogueira para o podcast Divã Infinito.",
+    videoUrl: "/videos/making-off-trilha.mp4",
+    poster: null,
+    slug: null,
+    orientation: "portrait",
+  },
+];
+
+const makingOffList: MakingOffEntry[] =
+  realMakingOff.length > 0
+    ? realMakingOff.map((ep) => ({
+        number: ep.number,
+        title: ep.title,
+        description: ep.description,
+        videoUrl: ep.videoUrl ?? null,
+        poster: null,
+        slug: ep.slug,
+        orientation: "landscape" as const,
+      }))
+    : FAKE_MAKING_OFF;
 ---
 
 <Layout
@@ -140,9 +150,9 @@ const makingOffList = withVariants(
           class="diva-tab is-active"
         >
           Temporadas
-          <span class="diva-tab-count">
-            ({temporadasList.length})
-          </span>
+          {temporadasList.length > 0 && (
+            <span class="diva-tab-count">({temporadasList.length})</span>
+          )}
         </button>
         <button
           type="button"
@@ -154,9 +164,9 @@ const makingOffList = withVariants(
           class="diva-tab"
         >
           Making-off
-          <span class="diva-tab-count">
-            ({makingOffList.length})
-          </span>
+          {makingOffList.length > 0 && (
+            <span class="diva-tab-count">({makingOffList.length})</span>
+          )}
         </button>
       </div>
 
@@ -228,25 +238,29 @@ const makingOffList = withVariants(
           </div>
         </aside>
 
-        <Divider variant="rouge" />
         {
-          temporadasList.map((ep, idx) => (
+          temporadasList.length > 0 && (
             <>
-              <EpisodeListItem
-                number={ep.number}
-                title={ep.title}
-                description={ep.description}
-                href={`/diva-infinito/${ep.slug}`}
-                variant={ep.variant}
-                showAllLink={idx > 0}
-              />
-              <Divider variant="rule" />
+              <Divider variant="rouge" />
+              {temporadasList.map((ep, idx) => (
+                <>
+                  <EpisodeListItem
+                    number={ep.number}
+                    title={ep.title}
+                    description={ep.description}
+                    href={`/diva-infinito/${ep.slug}`}
+                    variant={ep.variant}
+                    showAllLink={idx > 0}
+                  />
+                  <Divider variant="rule" />
+                </>
+              ))}
             </>
-          ))
+          )
         }
       </div>
 
-      {/* Painel: Making-off */}
+      {/* Painel: Making-off · layout side-by-side (vídeo + texto) */}
       <div
         id="panel-making-off"
         role="tabpanel"
@@ -256,28 +270,21 @@ const makingOffList = withVariants(
       >
         <Divider variant="rouge" />
         {
-          makingOffList.length > 0 ? (
-            makingOffList.map((ep) => (
-              <>
-                <EpisodeListItem
-                  number={ep.number}
-                  title={ep.title}
-                  description={ep.description}
-                  href={`/diva-infinito/${ep.slug}`}
-                  variant={ep.variant}
-                />
-                <Divider variant="rule" />
-              </>
-            ))
-          ) : (
-            <div class="text-center py-16 lg:py-20">
-              <p class="eyebrow text-rouge">Em breve</p>
-              <p class="font-serif text-[17px] lg:text-[19px] leading-[1.55] mt-4 text-ink-soft max-w-xl mx-auto">
-                Bastidores das gravações chegam em breve — recortes, conversas
-                off-record e o processo por trás dos episódios.
-              </p>
-            </div>
-          )
+          makingOffList.map((ep, idx) => (
+            <>
+              <MakingOffItem
+                number={ep.number}
+                title={ep.title}
+                description={ep.description}
+                videoUrl={ep.videoUrl}
+                poster={ep.poster}
+                href={ep.slug ? `/diva-infinito/${ep.slug}` : null}
+                variant={idx % 2 === 0 ? "default" : "reverse"}
+                orientation={ep.orientation}
+              />
+              <Divider variant="rule" />
+            </>
+          ))
         }
       </div>
     </section>

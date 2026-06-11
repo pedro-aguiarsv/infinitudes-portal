@@ -63,7 +63,7 @@ export const CATEGORIES: Category[] = [
     value: "curadoria",
     href: "/curadoria",
     description:
-      "Histórias reais por leitores, selecionadas por nossa curadoria",
+      "Histórias reais trazidas por leitores, selecionadas por nossa curadoria",
     order: 40,
   },
   {
