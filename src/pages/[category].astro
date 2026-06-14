@@ -62,6 +62,15 @@ const whatIsLabel = ARTICULATED_CATEGORIES.has(category.value)
 
 const hasRealPosts = posts.length > 0;
 
+// Assinatura abreviada APENAS no Hub Infinito: nesta seção a autora assina
+// como "Eleonora C. Santos" (no restante do site mantemos "Eleonora Cruz
+// Santos" como está no Sanity). Override local, escopado à categoria.
+const isHubInfinito = categoryValue === "hub-infinito";
+const bylineOverride = (authors?: string | null) =>
+  isHubInfinito && authors
+    ? authors.replace("Eleonora Cruz Santos", "Eleonora C. Santos")
+    : undefined;
+
 // Aquarelas de fallback para posts sem `mainImage` — cada item da lista
 // recebe uma diferente (ciclando) para dar variedade visual às capas.
 const FALLBACK_WATERCOLORS = [
@@ -118,6 +127,7 @@ const FALLBACK_WATERCOLORS = [
             <>
               <PostListItem
                 post={post}
+                author={bylineOverride(post.authors)}
                 fallbackWatercolor={
                   FALLBACK_WATERCOLORS[idx % FALLBACK_WATERCOLORS.length]
                 }
