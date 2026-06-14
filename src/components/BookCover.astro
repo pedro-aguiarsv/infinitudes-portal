@@ -3,7 +3,7 @@
 // BookCover.astro · Capa oficial do livro (In)finitudes
 // -------------------------------------------------------------
 // Renderiza a capa REAL do livro (extraída do PDF de design):
-//   "(IN)FINITUDES — Eleonora C. Santos" + aquarela vermelha
+//   "(IN)FINITUDES — Eleonora Santos" + aquarela vermelha
 //   + selo "Literíssima Editora".
 //
 // Variantes de tamanho:
@@ -27,7 +27,7 @@ const {
   variant = "sm",
   class: className = "",
   loading = "lazy",
-  alt = "(In)finitudes — capa do livro por Eleonora C. Santos",
+  alt = "(In)finitudes — capa do livro por Eleonora Santos",
 } = Astro.props;
 
 const base = variant === "full" ? "/book/capa" : "/book/capa-sm";

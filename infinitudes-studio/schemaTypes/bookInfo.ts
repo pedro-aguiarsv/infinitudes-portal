@@ -28,7 +28,7 @@ export const bookInfoType = defineType({
       name: 'author',
       title: 'Autor(a)',
       type: 'string',
-      initialValue: 'Eleonora C. Santos',
+      initialValue: 'Eleonora Santos',
     }),
     defineField({
       name: 'cover',
