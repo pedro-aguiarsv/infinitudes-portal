@@ -20,7 +20,6 @@ import Layout from "../layouts/Layout.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import HeroFeatured from "../components/HeroFeatured.astro";
-import FeaturedEssay from "../components/FeaturedEssay.astro";
 import PostCard from "../components/PostCard.astro";
 import BookSection from "../components/BookSection.astro";
 import NewsletterSection from "../components/NewsletterSection.astro";
@@ -50,6 +49,10 @@ type FeaturedCard = {
   /** Classe Tailwind opcional de object-position (ex.: "object-[center_20%]")
    *  para ajustar o enquadramento da imagem no recorte 4:3. */
   imagePosition?: string;
+  /** Quando true, a imagem é exibida inteira (object-contain) sobre um fundo
+   *  creme, em vez de preencher o card cortando (object-cover). Útil para
+   *  artes verticais que perderiam o título/marca no recorte. */
+  imageContain?: boolean;
   /** Variante do placeholder (rouge/black) — só usada quando `image === null`. */
   variant: "rouge" | "black";
 };
@@ -89,6 +92,7 @@ const featuredCards: FeaturedCard[] = [
     meta: "BHAZ · Coluna “Siga essa mulher” · Nalu Saad",
     image: "/authors/eleonora-bhaz.webp",
     imageAlt: "As infinitas vozes de Eleonora Santos — coluna na BHAZ",
+    imageContain: true,
     variant: "black",
   },
 ];
@@ -100,16 +104,18 @@ const heroContent = {
   edition: "Projeto cultural idealizado por Eleonora Santos",
 };
 
-// FeaturedEssay (bloco "artigo de capa") · destaque do fragmento avulso
-// "Deus, a morte e a infinitude" (sem categoria, acessível só por aqui).
-const essayContent = {
-  eyebrow: "Fragmentos",
-  title: "Deus, a morte e a infinitude",
-  dek: "Quantos de nós somos realmente capazes de nos sentir acolhidos por Deus quando vivemos a morte de uma pessoa muito amada?",
-  byline: null,
-  readingTime: null,
-  href: "/fragmentos/deus-a-morte-e-a-infinitude",
-};
+// Fragmento de capa · "Deus, a morte e a infinitude" — texto integral
+// exibido no bloco de capa da home (sem link para página dedicada).
+const fragmentoParagraphs = [
+  "Quantos de nós somos realmente capazes de nos sentir acolhidos por Deus quando vivemos a morte de uma pessoa muito amada?",
+  "Quantos de nós vivemos muito mais o clamor da piedade para estancar a dor do que a confiança de que Deus está realmente acolhendo?",
+  "Nos sentimos realmente amados em meio a profundas dores e sentimentos de desamparo? Dores viscerais de desamparo e abandono, dores cobertas de medo e desproteção, dores da alma, dores…",
+  "Nem sempre a dor vem como resultado de um ato concreto; ela pode ser fruto do intangível, da história não contada de um ambiente silenciado. Sua origem, talvez pouco importe, mas sua permanência, importa muito.",
+  "A escuta é o passo para o acolhimento. A escuta interior é o maior passo para a superação. É o olhar para dentro, o escutar das batidas do coração embaladas por notas de presença divina — o refúgio mais certo.",
+  "Na dicotomia da escuta, a dor ocupa os espaços do vazio interior, mas o esvaziamento interior preenche e aquece, constrói a ponte do amor acalentador.",
+  "A dor da morte questiona a presença de Deus, ocupa o corpo e a mente, traz novo sentido ao existir, em especial ao existir que não mais existe.",
+  "E onde está Deus? Está ali onde aparenta nada mais existir. Ocupa todo o vazio infinito, reconstitue o propósito e produz mudança pelo sentido. Onde está o inalcançável, o infinito, Deus lá está a nos esperar.",
+];
 
 // Vitrine "Recomendamos" · grid das 3 últimas publicações da
 // categoria recomenda (mesmo layout do grid de 3 posts acima).
@@ -145,8 +151,47 @@ const recommendationCards = await Promise.all(
       <div class="border-t border-rule"></div>
     </div>
 
-    {/* 2 · Artigo de capa · texto à esquerda + aquarela preta à direita */}
-    <FeaturedEssay essay={essayContent} />
+    {/* 2 · Fragmento de capa · aquarela preta à esquerda + texto integral
+         à direita (sem link — o texto completo vive aqui na home). */}
+    <section>
+      <div class="max-w-7xl mx-auto px-6 lg:px-12 py-20 lg:py-28">
+        <div
+          class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start"
+        >
+          {/* Coluna esquerda · aquarela preta (peça gráfica, fixa ao rolar) */}
+          <div
+            class="lg:col-span-5 flex justify-center lg:justify-start lg:sticky lg:top-28 self-start"
+          >
+            <img
+              src="/watercolors/black-figure.webp"
+              alt=""
+              role="presentation"
+              aria-hidden="true"
+              loading="lazy"
+              decoding="async"
+              class="pointer-events-none select-none w-[320px] sm:w-[400px] lg:w-[440px] h-auto"
+            />
+          </div>
+
+          {/* Coluna direita · eyebrow + título + autora + texto integral */}
+          <div class="lg:col-span-7">
+            <p class="eyebrow">Fragmentos</p>
+            <h2
+              class="font-serif text-[28px] sm:text-[32px] lg:text-[38px] leading-[1.12] mt-4 font-normal tracking-[-0.01em]"
+            >
+              Deus, a morte e a infinitude
+            </h2>
+            <p class="meta mt-2">Eleonora C. Santos</p>
+
+            <div
+              class="font-serif text-[15px] lg:text-[16px] leading-[1.65] mt-6 space-y-4 text-ink-soft"
+            >
+              {fragmentoParagraphs.map((p) => <p>{p}</p>)}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     {/* Divisor de seção · eyebrow centralizado entre linhas finas */}
     <div class="max-w-7xl mx-auto px-6 lg:px-12">
@@ -178,13 +223,25 @@ const recommendationCards = await Promise.all(
                 class="block"
               >
                 {card.image ? (
-                  <img
-                    src={card.image}
-                    alt={card.imageAlt}
-                    class={`w-full aspect-[4/3] object-cover ${card.imagePosition ?? ""} transition-[filter] duration-300 group-hover:brightness-95`}
-                    loading="lazy"
-                    decoding="async"
-                  />
+                  card.imageContain ? (
+                    <div class="w-full aspect-[4/3] bg-paper-soft overflow-hidden flex items-center justify-center">
+                      <img
+                        src={card.image}
+                        alt={card.imageAlt}
+                        class="max-h-full max-w-full object-contain transition-[filter] duration-300 group-hover:brightness-95"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </div>
+                  ) : (
+                    <img
+                      src={card.image}
+                      alt={card.imageAlt}
+                      class={`w-full aspect-[4/3] object-cover ${card.imagePosition ?? ""} transition-[filter] duration-300 group-hover:brightness-95`}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  )
                 ) : (
                   <div class="relative w-full aspect-[4/3] overflow-hidden bg-paper-soft">
                     <img
