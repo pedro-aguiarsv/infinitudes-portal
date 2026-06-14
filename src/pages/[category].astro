@@ -61,6 +61,16 @@ const whatIsLabel = ARTICULATED_CATEGORIES.has(category.value)
   : `O que é ${category.title}?`;
 
 const hasRealPosts = posts.length > 0;
+
+// Aquarelas de fallback para posts sem `mainImage` — cada item da lista
+// recebe uma diferente (ciclando) para dar variedade visual às capas.
+const FALLBACK_WATERCOLORS = [
+  "/watercolors/rouge-blob.webp",
+  "/watercolors/black-figure.webp",
+  "/watercolors/black-blob.webp",
+  "/watercolors/black-ink.webp",
+  "/watercolors/rouge-blob-hero.webp",
+];
 ---
 
 <Layout
@@ -104,9 +114,14 @@ const hasRealPosts = posts.length > 0;
       <Divider variant="rouge" />
       {
         hasRealPosts ? (
-          posts.map((post) => (
+          posts.map((post, idx) => (
             <>
-              <PostListItem post={post} />
+              <PostListItem
+                post={post}
+                fallbackWatercolor={
+                  FALLBACK_WATERCOLORS[idx % FALLBACK_WATERCOLORS.length]
+                }
+              />
               <Divider variant="rouge" />
             </>
           ))

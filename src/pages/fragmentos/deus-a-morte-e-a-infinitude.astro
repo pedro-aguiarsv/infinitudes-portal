@@ -22,11 +22,8 @@ const paragraphs = [
   "A escuta é o passo para o acolhimento. A escuta interior é o maior passo para a superação. É o olhar para dentro, o escutar das batidas do coração embaladas por notas de presença divina — o refúgio mais certo.",
   "Na dicotomia da escuta, a dor se ocupa dos espaços do vazio interior, mas o esvaziamento interior preenche e aquece, constrói a ponte do amor acalentador.",
   "A dor da morte questiona a presença de Deus, ocupa o corpo e a mente, traz novo sentido ao existir, em especial ao existir que não mais existe.",
+  "E onde está Deus? Está ali onde aparenta nada mais existir. Ocupa todo o vazio infinito, reconstituí o propósito e produz mudança pelo sentido. Onde está o inalcançável, o infinito, Deus lá está a nos esperar.",
 ];
-
-// Parágrafo de fecho — destacado em itálico para encerrar o fragmento.
-const closing =
-  "E onde está Deus? Está ali onde aparenta nada mais existir. Ocupa todo o vazio infinito, reconstituí o propósito e produz mudança pelo sentido. Onde está o inalcançável, o infinito, Deus lá está a nos esperar.";
 ---
 
 <Layout
@@ -48,13 +45,12 @@ const closing =
         <div class="mx-auto mt-8 w-24 h-px bg-rouge-line"></div>
       </header>
 
-      {/* Corpo · parágrafos + fecho em itálico */}
+      {/* Corpo · parágrafos uniformes */}
       <div class="max-w-2xl mx-auto px-6 pb-14 lg:pb-20">
         <div
           class="font-serif text-[18px] lg:text-[19px] leading-[1.75] space-y-5 text-ink-soft"
         >
           {paragraphs.map((p) => <p>{p}</p>)}
-          <p class="italic text-ink mt-8">{closing}</p>
         </div>
       </div>
 

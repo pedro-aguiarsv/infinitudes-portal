@@ -20,9 +20,17 @@ export interface Props {
   post: PostPreview;
   author?: string; // Ex.: "Por Eleonora Cruz Santos"
   imageRatio?: string; // Tailwind aspect, default "aspect-[4/3]"
+  /** Aquarela usada como capa quando o post não tem `mainImage`. Ex.:
+   *  "/watercolors/rouge-blob.webp". Quando ausente, cai no placeholder neutro. */
+  fallbackWatercolor?: string | null;
 }
 
-const { post, author, imageRatio = "aspect-[4/3]" } = Astro.props;
+const {
+  post,
+  author,
+  imageRatio = "aspect-[4/3]",
+  fallbackWatercolor = null,
+} = Astro.props;
 
 // Byline: usa o prop explícito ou, se ausente, o campo `authors` do post.
 const byline = author ?? post.authors ?? null;
@@ -101,6 +109,19 @@ const formattedDate = post.publishedAt
             loading="lazy"
             decoding="async"
           />
+        ) : fallbackWatercolor ? (
+          <div class={`relative w-full ${imageRatio} overflow-hidden bg-paper-soft`}>
+            <img
+              src={fallbackWatercolor}
+              alt=""
+              role="presentation"
+              aria-hidden="true"
+              class="pointer-events-none select-none absolute inset-0 w-full h-full object-cover transition-[filter] duration-300 group-hover:brightness-95"
+              loading="lazy"
+              decoding="async"
+              draggable="false"
+            />
+          </div>
         ) : (
           <div class={`ph w-full ${imageRatio}`} data-label="Imagem" />
         )
