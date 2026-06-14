@@ -24,9 +24,21 @@ export interface Props {
 
 const { post, author, imageRatio = "aspect-[4/3]" } = Astro.props;
 
-const postHref = post.category
-  ? `/${post.category}/${post.slug}`
-  : `/${post.slug}`;
+// Byline: usa o prop explícito ou, se ausente, o campo `authors` do post.
+const byline = author ?? post.authors ?? null;
+
+// Quando o post tem `externalUrl` (ex.: artigos de terceiros no Hub Infinito),
+// o item aponta para o link externo e abre em nova aba; caso contrário usa a
+// rota interna do post.
+const hasExternal = Boolean(post.externalUrl);
+const postHref = hasExternal
+  ? post.externalUrl!
+  : post.category
+    ? `/${post.category}/${post.slug}`
+    : `/${post.slug}`;
+const linkAttrs = hasExternal
+  ? { target: "_blank", rel: "noopener noreferrer" }
+  : {};
 
 const imageUrl = post.mainImage
   ? urlFor(post.mainImage).width(700).height(525).fit("crop").auto("format").url()
@@ -44,6 +56,7 @@ const formattedDate = post.publishedAt
 <article class="group">
   <a
     href={postHref}
+    {...linkAttrs}
     class="grid grid-cols-12 gap-6 lg:gap-12 py-10 lg:py-12 items-center"
   >
     {/* Texto · 7-8 colunas */}
@@ -63,9 +76,9 @@ const formattedDate = post.publishedAt
       }
 
       {
-        author && (
+        byline && (
           <div class="mt-5 font-sans text-[10px] font-medium tracking-[0.20em] uppercase text-rouge">
-            {author}
+            {byline}
           </div>
         )
       }

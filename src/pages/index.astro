@@ -25,7 +25,6 @@ import PostCard from "../components/PostCard.astro";
 import BookSection from "../components/BookSection.astro";
 import NewsletterSection from "../components/NewsletterSection.astro";
 import { getAllPosts } from "../lib/sanity";
-import { getCategory } from "../lib/categories";
 import { resolveExternalThumb } from "../lib/recommend-thumbs";
 
 const posts = await getAllPosts();
@@ -48,6 +47,9 @@ type FeaturedCard = {
    *  cai no placeholder visual (aquarela + logo) controlado pela `variant`. */
   image: string | null;
   imageAlt: string;
+  /** Classe Tailwind opcional de object-position (ex.: "object-[center_20%]")
+   *  para ajustar o enquadramento da imagem no recorte 4:3. */
+  imagePosition?: string;
   /** Variante do placeholder (rouge/black) — só usada quando `image === null`. */
   variant: "rouge" | "black";
 };
@@ -59,8 +61,8 @@ const featuredCards: FeaturedCard[] = [
     eyebrow: "Divã Infinito",
     title: "Episódio 1 — estreia em junho",
     excerpt:
-      "Estreia do podcast Divã Infinito. Disponível no YouTube e Spotify a partir de 23 de junho.",
-    meta: "23 de jun. de 2026",
+      "Estreia do podcast Divã Infinito. Disponível no YouTube e no Spotify a partir de 23 de junho.",
+    meta: "Divã Infinito",
     image: null,
     imageAlt: "(In)finitudes — Divã Infinito",
     variant: "rouge",
@@ -85,8 +87,9 @@ const featuredCards: FeaturedCard[] = [
     excerpt:
       "Coluna sobre as decisões editoriais mais honestas do livro (In)finitudes — a recusa da “superação obrigatória” e as 20 vozes que atravessam a obra.",
     meta: "BHAZ · Coluna “Siga essa mulher” · Nalu Saad",
-    image: null,
+    image: "/watercolors/black-ink.webp",
     imageAlt: "As infinitas vozes de Eleonora Santos — coluna na BHAZ",
+    imagePosition: "object-[center_20%]",
     variant: "black",
   },
 ];
@@ -98,20 +101,16 @@ const heroContent = {
   edition: "Projeto cultural idealizado por Eleonora Santos",
 };
 
-// FeaturedEssay (bloco "artigo de capa") · vitrine de HUB INFINITO
-// Procura o post mais recente da categoria hub-infinito; se não houver,
-// cai no FAKE do próprio componente (que já é Hub Infinito coerente).
-const hubFeatured = posts.find((p) => p.category === "hub-infinito");
-const essayContent = hubFeatured
-  ? {
-      eyebrow: getCategory(hubFeatured.category ?? "")?.title ?? "Hub Infinito",
-      title: hubFeatured.title,
-      dek: hubFeatured.excerpt,
-      byline: null,
-      readingTime: null,
-      href: `/hub-infinito/${hubFeatured.slug}`,
-    }
-  : undefined;
+// FeaturedEssay (bloco "artigo de capa") · destaque do fragmento avulso
+// "Deus, a morte e a infinitude" (sem categoria, acessível só por aqui).
+const essayContent = {
+  eyebrow: "Fragmentos",
+  title: "Deus, a morte e a infinitude",
+  dek: "Quantos de nós somos realmente capazes de nos sentir acolhidos por Deus quando vivemos a morte de uma pessoa muito amada?",
+  byline: null,
+  readingTime: null,
+  href: "/fragmentos/deus-a-morte-e-a-infinitude",
+};
 
 // Vitrine "Recomendamos" · grid das 3 últimas publicações da
 // categoria recomenda (mesmo layout do grid de 3 posts acima).
@@ -132,7 +131,10 @@ const recommendationCards = await Promise.all(
 
 ---
 
-<Layout title="(In)finitudes — Divã Infinito">
+<Layout
+  title="(In)finitudes"
+  description="Projeto cultural idealizado por Eleonora Santos: vozes reais sobre adoecimento, finitude e os laços que nos sustentam. Escuta, cuidado e a arte de acompanhar — da finitude da vida à infinitude das relações."
+>
   <Header />
 
   <main>
@@ -180,7 +182,7 @@ const recommendationCards = await Promise.all(
                   <img
                     src={card.image}
                     alt={card.imageAlt}
-                    class="w-full aspect-[4/3] object-cover transition-[filter] duration-300 group-hover:brightness-95"
+                    class={`w-full aspect-[4/3] object-cover ${card.imagePosition ?? ""} transition-[filter] duration-300 group-hover:brightness-95`}
                     loading="lazy"
                     decoding="async"
                   />
@@ -251,7 +253,7 @@ const recommendationCards = await Promise.all(
           <div class="max-w-7xl mx-auto px-6 lg:px-12">
             <div class="flex items-center gap-6 py-10 lg:py-14">
               <span class="flex-1 h-px bg-rule" />
-              <span class="eyebrow whitespace-nowrap">Recomendamos</span>
+              <span class="eyebrow whitespace-nowrap">Recomenda</span>
               <span class="flex-1 h-px bg-rule" />
             </div>
           </div>

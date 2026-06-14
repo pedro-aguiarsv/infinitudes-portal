@@ -2,13 +2,13 @@
 // =============================================================
 // Footer.astro · Rodapé institucional (In)finitudes
 //   · Linha de links das seções (em creme)
-//   · Bloco PRETO com redes sociais + Patrocínio + Realização
+//   · Bloco PRETO com a régua de fomento + redes sociais (mesma linha)
 //   · Bloco CREME com copyright + links legais
 //
-// Bloco de fomento (modelo enxuto):
+// Régua de fomento (logos individuais claros, em uma única fileira):
 //   · Patrocínio   → Lei Rouanet · Itaú
 //   · Realização   → Ministério da Cultura · Governo do Brasil
-// Os PNGs/WebPs em /public/footer/sponsors/ são versões claras
+// Os PNGs/WebPs em /public/footer/sponsors/ já são versões claras
 // (texto branco + cores oficiais) preparadas pra fundo escuro.
 // =============================================================
 import { getNavItems } from "../lib/categories";
@@ -22,6 +22,7 @@ const [settings, navItems] = await Promise.all([
 // ----- Patrocinadores / Realização -------------------------
 // Se o Sanity tem itens cadastrados, usa eles. Senão, fallback
 // estático com os logos já existentes em /public/footer/sponsors/.
+// Patrocínio + Realização são renderizados numa única fileira.
 type FooterLogo = {
   label: string;
   src: string;
@@ -35,13 +36,13 @@ const FALLBACK_SPONSORS: FooterLogo[] = [
     label: "Lei Rouanet",
     src: "/footer/sponsors/lei-rouanet.png",
     srcWebp: "/footer/sponsors/lei-rouanet.webp",
-    h: "h-10",
+    h: "h-11",
   },
   {
     label: "Itaú",
     src: "/footer/sponsors/itau.png",
     srcWebp: "/footer/sponsors/itau.webp",
-    h: "h-12",
+    h: "h-14",
   },
 ];
 
@@ -50,13 +51,13 @@ const FALLBACK_REALIZATION: FooterLogo[] = [
     label: "Ministério da Cultura",
     src: "/footer/sponsors/min-cultura.png",
     srcWebp: "/footer/sponsors/min-cultura.webp",
-    h: "h-8",
+    h: "h-9",
   },
   {
     label: "Governo do Brasil",
     src: "/footer/sponsors/governo-brasil.png",
     srcWebp: "/footer/sponsors/governo-brasil.webp",
-    h: "h-12",
+    h: "h-14",
   },
 ];
 
@@ -64,7 +65,7 @@ function mapSanityLogo(s: SponsorLogo): FooterLogo {
   return {
     label: s.label,
     src: s.logo ? urlFor(s.logo).width(400).auto("format").url() : "",
-    h: "h-10",
+    h: "h-9",
   };
 }
 
@@ -77,6 +78,21 @@ const realization: FooterLogo[] =
   settings?.realization && settings.realization.length > 0
     ? settings.realization.map(mapSanityLogo)
     : FALLBACK_REALIZATION;
+
+// Fileira única de logos. O rótulo "Patrocínio" fica acima do último
+// patrocinador (Itaú) e "Realização" acima do primeiro realizador
+// (Ministério da Cultura), espelhando o layout da régua original.
+type RowLogo = FooterLogo & { heading?: string };
+const fomentoRow: RowLogo[] = [
+  ...sponsors.map((s, i) => ({
+    ...s,
+    heading: i === sponsors.length - 1 ? "Patrocínio" : undefined,
+  })),
+  ...realization.map((s, i) => ({
+    ...s,
+    heading: i === 0 ? "Realização" : undefined,
+  })),
+];
 
 // ----- Redes sociais ---------------------------------------
 type SocialLink = {
@@ -129,25 +145,49 @@ const copyrightText =
   </nav>
 </div>
 
-{/* Rodapé preto institucional · redes sociais + fomento */}
+{/* Rodapé preto institucional · régua de fomento + redes sociais */}
 <footer class="bg-black text-paper">
-  <div class="max-w-7xl mx-auto px-6 lg:px-12 py-12">
-    {/* Redes sociais centralizadas */}
-    <div class="flex justify-center">
-      <div class="flex flex-col items-center gap-3">
-        <p
-          class="font-sans text-[9px] tracking-[0.30em] uppercase text-paper/55"
-        >
-          {SOCIAL.map((s) => s.label).join(" · ")}
-        </p>
-        <div class="flex items-center gap-4">
-          {
-            SOCIAL.map((s) => (
-              <a
-                href={s.href}
-                aria-label={s.label}
-                class="w-9 h-9 rounded-full border border-paper/40 flex items-center justify-center text-paper/85 hover:text-rouge hover:border-rouge transition-colors"
-              >
+  <div class="max-w-7xl mx-auto px-6 lg:px-12 py-10">
+    <div
+      class="relative flex flex-col items-center gap-8"
+    >
+      {/* Régua de fomento · centralizada (rótulos na mesma altura, logos pela base) */}
+      <div
+        class="flex items-end justify-center gap-6 sm:gap-8 flex-wrap"
+      >
+        {
+          fomentoRow.map((s) => (
+            <div class="flex flex-col items-center gap-3">
+              <p class="font-sans text-[8px] tracking-[0.30em] uppercase text-paper/55 leading-none min-h-[0.7rem]">
+                {s.heading ?? ""}
+              </p>
+              <div class="flex h-16 items-end">
+                <picture>
+                  {s.srcWebp && <source srcset={s.srcWebp} type="image/webp" />}
+                  <img
+                    src={s.src}
+                    alt={s.label}
+                    class={`${s.h} w-auto object-contain select-none`}
+                    loading="lazy"
+                    decoding="async"
+                    draggable="false"
+                  />
+                </picture>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+
+      {/* Redes sociais · à direita no desktop, abaixo (centralizado) no mobile */}
+      <div class="flex items-center gap-4 shrink-0 md:absolute md:right-0 md:top-1/2 md:-translate-y-1/2">
+        {
+          SOCIAL.map((s) => (
+            <a
+              href={s.href}
+              aria-label={s.label}
+              class="w-9 h-9 rounded-full border border-paper/40 flex items-center justify-center text-paper/85 hover:text-rouge hover:border-rouge transition-colors"
+            >
                 {s.icon === "instagram" && (
                   <svg
                     viewBox="0 0 24 24"
@@ -208,103 +248,38 @@ const copyrightText =
               </a>
             ))
           }
-        </div>
-      </div>
-    </div>
-
-    {/* Linha divisória sutil entre redes sociais e fomento */}
-    <div class="mt-12 border-t border-paper/15"></div>
-
-    {/* Patrocínio + Realização · 2 colunas equilibradas */}
-    <div
-      class="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-12 sm:gap-16 items-start text-center"
-    >
-      {/* Patrocínio */}
-      <div>
-        <p
-          class="font-sans text-[9px] tracking-[0.30em] uppercase text-paper/55 mb-5"
-        >
-          Patrocínio
-        </p>
-        <div class="flex items-center justify-center gap-8 flex-wrap">
-          {
-            sponsors.map((s) => (
-              <picture>
-                {s.srcWebp && (
-                  <source srcset={s.srcWebp} type="image/webp" />
-                )}
-                <img
-                  src={s.src}
-                  alt={s.label}
-                  class={`${s.h} w-auto object-contain select-none`}
-                  loading="lazy"
-                  decoding="async"
-                  draggable="false"
-                />
-              </picture>
-            ))
-          }
-        </div>
-      </div>
-
-      {/* Realização */}
-      <div>
-        <p
-          class="font-sans text-[9px] tracking-[0.30em] uppercase text-paper/55 mb-5"
-        >
-          Realização
-        </p>
-        <div class="flex items-center justify-center gap-8 flex-wrap">
-          {
-            realization.map((s) => (
-              <picture>
-                {s.srcWebp && (
-                  <source srcset={s.srcWebp} type="image/webp" />
-                )}
-                <img
-                  src={s.src}
-                  alt={s.label}
-                  class={`${s.h} w-auto object-contain select-none`}
-                  loading="lazy"
-                  decoding="async"
-                  draggable="false"
-                />
-              </picture>
-            ))
-          }
-        </div>
       </div>
     </div>
   </div>
 </footer>
 
-{/* Linha de copyright + links legais · faixa creme */}
-<section class="bg-paper text-ink border-t border-rule/60">
+{/* Linha de copyright + links legais · mesma faixa preta */}
+<section class="bg-black text-paper border-t border-paper/15">
   <div
     class="max-w-7xl mx-auto px-6 lg:px-12 py-4 flex flex-col sm:flex-row gap-3 sm:gap-6 justify-between items-center"
   >
     <div class="flex items-center gap-5">
       <a
         href="/privacidade"
-        class="font-sans text-[10px] tracking-[0.22em] uppercase text-ink/55 hover:text-ink link-ed"
+        class="font-sans text-[10px] tracking-[0.22em] uppercase text-paper/55 hover:text-paper link-ed"
       >
         Privacidade
       </a>
       <a
         href="/termos"
-        class="font-sans text-[10px] tracking-[0.22em] uppercase text-ink/55 hover:text-ink link-ed"
+        class="font-sans text-[10px] tracking-[0.22em] uppercase text-paper/55 hover:text-paper link-ed"
       >
         Termos
       </a>
       <a
         href="/contato"
-        class="font-sans text-[10px] tracking-[0.22em] uppercase text-ink/55 hover:text-ink link-ed"
+        class="font-sans text-[10px] tracking-[0.22em] uppercase text-paper/55 hover:text-paper link-ed"
       >
         Contato
       </a>
     </div>
     <p
-      class="font-sans text-[10px] tracking-[0.22em] uppercase text-ink/55"
+      class="font-sans text-[10px] tracking-[0.22em] uppercase text-paper/55"
     >
       {copyrightText}
     </p>

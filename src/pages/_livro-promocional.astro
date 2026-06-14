@@ -1,5 +1,14 @@
 ---
 // =============================================================
+// BACKUP · Versão PROMOCIONAL da página /livro (preço com desconto)
+// -------------------------------------------------------------
+// Este arquivo é prefixado com "_" de propósito: o Astro NÃO gera
+// rota para ele, então fica guardado/inativo. É a cópia da /livro
+// com a promoção "De R$ 69,00 / Por R$ 42,00 (100 primeiros)".
+//
+// Para REATIVAR a promoção depois: copie o conteúdo deste arquivo
+// de volta para `src/pages/livro.astro` (ou renomeie/troque).
+// =============================================================
 // /livro · Página de venda do livro "(In)finitudes"
 // -------------------------------------------------------------
 // Conteúdo vem do Sanity (`bookInfo` singleton + `testimonial`).
@@ -32,9 +41,11 @@ const bookSubtitle =
   book?.subtitle ??
   "Além da própria autora, o livro traz relatos de outros 19 pacientes diagnosticados com câncer, além de visões de pessoas que estão do outro lado da história — os filhos da autora e uma mãe que perdeu seu jovem filho.";
 const bookAuthor = book?.author ?? "Eleonora C. Santos";
-// Preço cheio do livro (sem promoção). A versão promocional "De/Por"
-// fica guardada em `_livro-promocional.astro` para reativação futura.
-const bookPrice = book?.price ?? "R$ 69,00";
+const bookPrice = book?.price ?? "R$ 42,00";
+// Preço original (de tabela), exibido com strikethrough antes do bookPrice
+// promocional. Configurável via Sanity (`bookInfo.originalPrice`); cai no
+// fallback editorial enquanto não é preenchido no Studio.
+const bookOriginalPrice = book?.originalPrice ?? "R$ 69,00";
 const launchEdition = book?.launchEdition ?? "Edição 2026";
 const ctaText = book?.ctaText ?? "Compre aqui";
 // Loja oficial hospedada na Nuvem Shop. Link aponta direto pro produto;
@@ -215,15 +226,26 @@ const ptComponents = {
               por {bookAuthor}
             </p>
 
-            {/* Preço cheio + CTA · "R$ 69,00 + frete" alinhado ao botão. */}
+            {/*
+              Preço + CTA · "De" em linha solo no topo, "Por R$ 42,00 * + frete"
+              alinhado verticalmente ao botão "Comprar agora" (mesma baseline).
+            */}
             <div class="mt-8">
+              <p
+                class="text-center sm:text-left font-sans text-[12px] tracking-[0.06em] text-ink/55 line-through decoration-rouge/70 decoration-[1.5px]"
+              >
+                De {bookOriginalPrice}
+              </p>
               <div
-                class="flex flex-col sm:flex-row sm:items-center sm:justify-center lg:justify-start gap-4"
+                class="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-center lg:justify-start gap-4"
               >
                 <span
                   class="font-display italic text-[26px] lg:text-[28px] text-ink leading-none text-center sm:text-left"
                 >
-                  {bookPrice}
+                  Por {bookPrice}
+                  <span class="font-sans not-italic text-rouge ml-0.5 align-middle">
+                    *
+                  </span>
                   <span class="font-sans not-italic text-[10px] font-medium tracking-[0.22em] uppercase text-ink/55 ml-1.5 align-middle relative -top-1">
                     + frete
                   </span>
@@ -275,6 +297,12 @@ const ptComponents = {
                 </details>
               )
             }
+
+            <p
+              class="mt-4 font-sans text-[10px] leading-[1.5] tracking-[0.04em] text-ink/55"
+            >
+              * Desconto válido para os 100 primeiros exemplares.
+            </p>
           </div>
         </div>
       </div>
@@ -323,7 +351,7 @@ const ptComponents = {
         ============================================================ */}
     <section class="max-w-5xl mx-auto px-6 lg:px-12 py-16 lg:py-24">
       <div class="grid grid-cols-1 md:grid-cols-12 gap-10 lg:gap-16 items-center">
-        <div class="md:col-span-5 flex justify-center">
+        <div class="md:col-span-5 flex justify-center md:justify-end">
           <div class="relative w-[240px] sm:w-[280px] aspect-[3/4]">
             <picture class="relative block w-full h-full overflow-hidden">
               <source srcset="/authors/eleonora.webp" type="image/webp" />
@@ -589,13 +617,24 @@ const ptComponents = {
         <div
           class="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center"
         >
-          {/* Preço cheio + frete (versão clara sobre bordô) */}
+          {/* Preço · original riscado + promocional + frete (versão clara sobre bordô) */}
           <div class="flex flex-col items-center gap-1">
+            <span class="font-sans text-[12px] tracking-[0.06em] text-paper/60 line-through decoration-paper/80 decoration-[1.5px]">
+              De {bookOriginalPrice}
+            </span>
             <span class="font-display italic text-[28px] text-paper leading-none">
-              {bookPrice}
+              Por {bookPrice}
+              <span class="font-sans not-italic text-paper ml-0.5 align-middle">
+                *
+              </span>
               <span class="font-sans not-italic text-[10px] font-medium tracking-[0.22em] uppercase text-paper/70 ml-1.5 align-middle relative -top-1">
                 + frete
               </span>
+            </span>
+            <span
+              class="font-sans text-[11px] leading-[1.5] text-paper/70 mt-1 max-w-[32ch]"
+            >
+              * Desconto válido para os 100 primeiros exemplares.
             </span>
           </div>
           <a

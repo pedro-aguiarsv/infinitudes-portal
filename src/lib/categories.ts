@@ -74,7 +74,7 @@ export const CATEGORIES: Category[] = [
     order: 70,
   },
   {
-    title: "Recomendamos",
+    title: "Recomenda",
     value: "recomenda",
     href: "/recomenda",
     description: "Sugestões de eventos, palestras e podcasts.",
@@ -131,7 +131,7 @@ export const NAV_ITEMS: NavItem[] = [
   { title: "Divã Infinito — Podcast", href: "/diva-infinito" },
   { title: "Hub Infinito", href: "/hub-infinito" },
   { title: "Curadoria", href: "/curadoria" },
-  { title: "Recomendamos", href: "/recomenda" },
+  { title: "Recomenda", href: "/recomenda" },
   { title: "Sobre", href: "/sobre" },
 ];
 

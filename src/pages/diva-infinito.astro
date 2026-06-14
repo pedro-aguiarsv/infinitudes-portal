@@ -96,6 +96,12 @@ const FAKE_MAKING_OFF: MakingOffEntry[] = [
   },
 ];
 
+// Detecta Shorts do YouTube (vídeo vertical) para usar proporção 9:16;
+// demais vídeos seguem em 16:9.
+function detectOrientation(url: string | null): "portrait" | "landscape" {
+  return url && /\/shorts\//.test(url) ? "portrait" : "landscape";
+}
+
 const makingOffList: MakingOffEntry[] =
   realMakingOff.length > 0
     ? realMakingOff.map((ep) => ({
@@ -105,7 +111,7 @@ const makingOffList: MakingOffEntry[] =
         videoUrl: ep.videoUrl ?? null,
         poster: null,
         slug: ep.slug,
-        orientation: "landscape" as const,
+        orientation: detectOrientation(ep.videoUrl ?? null),
       }))
     : FAKE_MAKING_OFF;
 ---
@@ -186,7 +192,8 @@ const makingOffList: MakingOffEntry[] =
           <p
             class="font-display text-[20px] sm:text-[22px] lg:text-[24px] leading-[1.2] mt-2 font-medium tracking-[-0.005em] text-ink"
           >
-            Lançamento pelos canais YouTube e Spotify no dia&nbsp;23/06/2026.
+            Inicio dos lançamentos, pelos canais YouTube e Spotify, a partir do
+            dia&nbsp;23/06/2026.
           </p>
           <p
             class="font-serif text-[15px] lg:text-[16px] leading-[1.5] mt-3 text-ink/80"

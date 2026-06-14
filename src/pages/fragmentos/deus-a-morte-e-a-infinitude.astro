@@ -1,0 +1,77 @@
+---
+// =============================================================
+// /fragmentos/deus-a-morte-e-a-infinitude · Texto avulso (page-10)
+// -------------------------------------------------------------
+// Artigo SEM categoria — não aparece nas listagens das seções.
+// É acessado apenas pelo destaque "Fragmentos" na home.
+// Layout clássico centralizado: eyebrow bordô "Fragmentos" + título
+// display em itálico + corpo serif com leitura generosa. A primeira
+// pergunta é tratada como "lead" (texto-guia) para dar respiro.
+// =============================================================
+import Layout from "../../layouts/Layout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import NewsletterSection from "../../components/NewsletterSection.astro";
+import Divider from "../../components/Divider.astro";
+
+const paragraphs = [
+  "Quantos de nós somos realmente capazes de nos sentir acolhidos por Deus quando vivemos a morte de uma pessoa muito amada?",
+  "Quantos de nós vivemos muito mais o clamor da piedade para estancar a dor do que a confiança de que Deus está realmente acolhendo?",
+  "Nos sentimos realmente amados em meio a profundas dores e sentimentos de desamparo? Dores viscerais de desamparo e abandono, dores cobertas de medo e desproteção, dores da alma, dores…",
+  "Nem sempre a dor vem como resultado de um ato concreto; ela pode ser fruto do intangível, da história não contada de um ambiente silenciado. Sua origem, talvez pouco importa, mas sua permanência, em muito importa.",
+  "A escuta é o passo para o acolhimento. A escuta interior é o maior passo para a superação. É o olhar para dentro, o escutar das batidas do coração embaladas por notas de presença divina — o refúgio mais certo.",
+  "Na dicotomia da escuta, a dor se ocupa dos espaços do vazio interior, mas o esvaziamento interior preenche e aquece, constrói a ponte do amor acalentador.",
+  "A dor da morte questiona a presença de Deus, ocupa o corpo e a mente, traz novo sentido ao existir, em especial ao existir que não mais existe.",
+];
+
+// Parágrafo de fecho — destacado em itálico para encerrar o fragmento.
+const closing =
+  "E onde está Deus? Está ali onde aparenta nada mais existir. Ocupa todo o vazio infinito, reconstituí o propósito e produz mudança pelo sentido. Onde está o inalcançável, o infinito, Deus lá está a nos esperar.";
+---
+
+<Layout
+  title="Deus, a morte e a infinitude — (In)finitudes"
+  description="Um fragmento sobre fé, dor e acolhimento: onde a morte questiona a presença de Deus, a escuta interior reabre a ponte do amor e do sentido."
+>
+  <Header />
+
+  <main>
+    <article>
+      {/* Cabeçalho centralizado · eyebrow bordô + título em itálico */}
+      <header class="max-w-3xl mx-auto px-6 pt-12 lg:pt-20 pb-10 text-center">
+        <p class="eyebrow text-rouge">Fragmentos</p>
+        <h1
+          class="font-display italic text-[36px] sm:text-[48px] lg:text-[60px] leading-[1.05] mt-5 font-normal tracking-[-0.01em]"
+        >
+          Deus, a morte e a infinitude
+        </h1>
+        <div class="mx-auto mt-8 w-24 h-px bg-rouge-line"></div>
+      </header>
+
+      {/* Corpo · parágrafos + fecho em itálico */}
+      <div class="max-w-2xl mx-auto px-6 pb-14 lg:pb-20">
+        <div
+          class="font-serif text-[18px] lg:text-[19px] leading-[1.75] space-y-5 text-ink-soft"
+        >
+          {paragraphs.map((p) => <p>{p}</p>)}
+          <p class="italic text-ink mt-8">{closing}</p>
+        </div>
+      </div>
+
+      {/* Rodapé do artigo · divisor bordô + retorno à home */}
+      <div class="max-w-2xl mx-auto px-6 pb-16 lg:pb-20 text-center">
+        <Divider variant="rouge" gap="mb-10" />
+        <a
+          href="/"
+          class="font-sans text-[11px] font-medium tracking-[0.22em] uppercase text-rouge link-ed"
+        >
+          ← Voltar à página inicial
+        </a>
+      </div>
+    </article>
+
+    <NewsletterSection />
+  </main>
+
+  <Footer />
+</Layout>

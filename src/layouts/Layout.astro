@@ -15,8 +15,8 @@ export interface Props {
 }
 
 const {
-  title = "(In)finitudes — Divã Infinito",
-  description = "Artigos, relatos e curadoria sobre humanização na saúde, cuidado e a arte de acompanhar.",
+  title = "(In)finitudes",
+  description = "Projeto cultural idealizado por Eleonora Santos: vozes reais sobre adoecimento, finitude e os laços que nos sustentam. Escuta, cuidado e a arte de acompanhar — da finitude da vida à infinitude das relações.",
   image = "/og-image.png",
 } = Astro.props;
 
@@ -64,7 +64,7 @@ const ogImage = new URL(image, Astro.site ?? Astro.url).toString();
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="(In)finitudes — capa do livro de Eleonora C. Santos" />
+    <meta property="og:image:alt" content="(In)finitudes — aquarela e logotipo do projeto" />
 
     {/* Twitter Card */}
     <meta name="twitter:card" content="summary_large_image" />
