@@ -15,7 +15,8 @@ import MakingOffItem from "../components/MakingOffItem.astro";
 import NewsletterSection from "../components/NewsletterSection.astro";
 import Divider from "../components/Divider.astro";
 import { getCategoriesMerged } from "../lib/categories";
-import { getAllEpisodes } from "../lib/sanity";
+import { getAllEpisodes, urlFor } from "../lib/sanity";
+import { getYouTubeId, getYouTubeThumbnail } from "../lib/embeds";
 
 const [episodes, merged] = await Promise.all([
   getAllEpisodes(),
@@ -50,12 +51,23 @@ function withVariants<T>(items: T[]): (T & { variant: "rouge" | "black" })[] {
 }
 
 const temporadasList = withVariants(
-  realTemporadas.map((ep) => ({
-    number: ep.number,
-    title: ep.title,
-    description: ep.description,
-    slug: ep.slug,
-  })),
+  realTemporadas.map((ep) => {
+    // Link direto pro YouTube só quando o vídeo é de fato do YouTube.
+    const youtubeUrl = getYouTubeId(ep.videoUrl) ? (ep.videoUrl ?? null) : null;
+    // Capa: prioriza a thumbnail cadastrada no Sanity; senão usa a capa
+    // oficial do YouTube derivada da URL do vídeo.
+    const thumbUrl = ep.thumbnail
+      ? urlFor(ep.thumbnail).width(440).height(440).fit("crop").auto("format").url()
+      : getYouTubeThumbnail(ep.videoUrl);
+    return {
+      number: ep.number,
+      title: ep.title,
+      description: ep.description,
+      slug: ep.slug,
+      thumbUrl,
+      youtubeUrl,
+    };
+  }),
 );
 
 // Making-off · layout side-by-side (vídeo + texto). Quando ainda
@@ -258,6 +270,8 @@ const makingOffList: MakingOffEntry[] =
                     href={`/diva-infinito/${ep.slug}`}
                     variant={ep.variant}
                     showAllLink={idx > 0}
+                    thumbUrl={ep.thumbUrl}
+                    youtubeUrl={ep.youtubeUrl}
                   />
                   <Divider variant="rule" />
                 </>

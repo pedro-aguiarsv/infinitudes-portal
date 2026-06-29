@@ -25,6 +25,8 @@ export interface Props {
   allHref?: string; // link de "Todos os Episódios" (default /diva-infinito)
   variant?: "rouge" | "black"; // aquarela usada (alterna por episódio)
   showAllLink?: boolean; // mostra botão "Todos os Episódios" (default true)
+  thumbUrl?: string | null; // capa do episódio (ex.: thumb do YouTube)
+  youtubeUrl?: string | null; // link direto pro vídeo no YouTube
 }
 
 const {
@@ -35,6 +37,8 @@ const {
   allHref = "/diva-infinito",
   variant = "rouge",
   showAllLink = true,
+  thumbUrl = null,
+  youtubeUrl = null,
 } = Astro.props;
 
 const watercolor = variant === "rouge" ? "rouge-blob" : "black-blob";
@@ -67,6 +71,28 @@ const displayTitle = title ?? `Divã Infinito Episódio ${number}`;
         Começar a ver
       </a>
       {
+        youtubeUrl && (
+          <a
+            href={youtubeUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center justify-center gap-2 text-center border border-ink/20 text-ink px-6 py-2.5 text-[11px] font-medium tracking-[0.22em] uppercase hover:border-rouge hover:text-rouge transition-colors"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="14"
+              height="14"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z" />
+            </svg>
+            Ver no YouTube
+            <span aria-hidden="true">↗</span>
+          </a>
+        )
+      }
+      {
         showAllLink && (
           <a
             href={allHref}
@@ -79,23 +105,73 @@ const displayTitle = title ?? `Divã Infinito Episódio ${number}`;
     </div>
   </div>
 
-  {/* Thumb · aquarela com logo (IN)FINITUDES sobreposto + número */}
+  {/* Thumb · usa a capa do YouTube quando disponível (clicável, leva ao
+      vídeo); senão cai na aquarela com o logo (IN)FINITUDES sobreposto. */}
   <div class="col-span-12 sm:col-span-4 order-1 sm:order-2 flex justify-center sm:justify-end">
     <div class="relative w-[200px] h-[200px] sm:w-[180px] sm:h-[180px] lg:w-[220px] lg:h-[220px]">
-      <WatercolorAccent
-        variant={watercolor}
-        class="absolute inset-0 w-full h-full object-cover"
-      />
-      <div
-        class="absolute inset-0 flex items-center justify-center p-6"
-      >
-        <Logo
-          variant="mini"
-          class="w-[70%] h-auto"
-        />
-      </div>
+      {
+        thumbUrl ? (
+          youtubeUrl ? (
+            <a
+              href={youtubeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="group absolute inset-0 block overflow-hidden"
+              aria-label={`Assistir "${displayTitle}" no YouTube`}
+            >
+              <img
+                src={thumbUrl}
+                alt={`Capa do episódio ${numStr} — ${displayTitle}`}
+                loading="lazy"
+                decoding="async"
+                draggable="false"
+                onerror="this.onerror=null;this.src=this.src.replace('maxresdefault','mqdefault')"
+                class="absolute inset-0 w-full h-full object-cover select-none"
+              />
+              <span class="absolute inset-0 flex items-center justify-center bg-ink/10 group-hover:bg-ink/30 transition-colors">
+                <span class="w-12 h-12 rounded-full bg-rouge/90 group-hover:bg-rouge text-paper flex items-center justify-center transition-colors">
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="20"
+                    height="20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </span>
+              </span>
+            </a>
+          ) : (
+            <img
+              src={thumbUrl}
+              alt={`Capa do episódio ${numStr} — ${displayTitle}`}
+              loading="lazy"
+              decoding="async"
+              draggable="false"
+              onerror="this.onerror=null;this.src=this.src.replace('maxresdefault','mqdefault')"
+              class="absolute inset-0 w-full h-full object-cover select-none"
+            />
+          )
+        ) : (
+          <>
+            <WatercolorAccent
+              variant={watercolor}
+              class="absolute inset-0 w-full h-full object-cover"
+            />
+            <div class="absolute inset-0 flex items-center justify-center p-6">
+              <Logo variant="mini" class="w-[70%] h-auto" />
+            </div>
+          </>
+        )
+      }
       <span
-        class="absolute top-2 right-3 font-sans text-[12px] font-medium text-ink/80"
+        class:list={[
+          "absolute top-2 right-3 font-sans text-[12px] font-medium",
+          thumbUrl
+            ? "text-paper bg-ink/65 px-2 py-0.5 leading-none"
+            : "text-ink/80",
+        ]}
       >
         {numStr}
       </span>
