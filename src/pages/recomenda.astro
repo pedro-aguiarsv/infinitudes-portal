@@ -37,12 +37,22 @@ const [postsRaw, merged] = await Promise.all([
 // posts que ainda não têm `mainImage` no Sanity. Posts com mainImage
 // cadastrada continuam tendo prioridade — esse fallback só atua quando
 // a Eleonora ainda não subiu uma capa pelo Studio.
+// Capas locais para recomendações cujo serviço de origem NÃO expõe
+// thumbnail automática (ex.: LinkedIn, que exige login). Chaveado pelo
+// slug do post; o arquivo fica em /public/recomenda-thumbs/.
+// Ordem de prioridade da capa: mainImage (Sanity) > capa local > thumb
+// externa resolvida em build (YouTube/Spotify).
+const LOCAL_THUMBS: Record<string, string> = {
+  "lancamento-infinitudes-palacio-das-artes":
+    "/recomenda-thumbs/lancamento-palacio-das-artes.webp",
+};
+
 const posts = await Promise.all(
   postsRaw.map(async (p) => ({
     ...p,
     externalImageUrl: p.mainImage
       ? null
-      : await resolveExternalThumb(p.externalUrl),
+      : (LOCAL_THUMBS[p.slug] ?? (await resolveExternalThumb(p.externalUrl))),
   })),
 );
 

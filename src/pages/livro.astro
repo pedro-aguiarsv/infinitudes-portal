@@ -34,7 +34,7 @@ const bookSubtitle =
 const bookAuthor = book?.author ?? "Eleonora Santos";
 // Preço cheio do livro (sem promoção). A versão promocional "De/Por"
 // fica guardada em `_livro-promocional.astro` para reativação futura.
-const bookPrice = book?.price ?? "R$ 55,00";
+const bookPrice = book?.price ?? "R$ 55,33";
 // Preço original (de tabela), exibido riscado antes do promocional.
 const bookOriginalPrice = book?.originalPrice ?? "R$ 69,00";
 const launchEdition = book?.launchEdition ?? "Edição 2026";
@@ -217,7 +217,7 @@ const ptComponents = {
               por {bookAuthor}
             </p>
 
-            {/* Preço promocional · "De R$ 69,00" riscado + "Por R$ 55,00 + frete". */}
+            {/* Preço promocional · "De R$ 69,00" riscado + "Por R$ 55,33 + frete". */}
             <div class="mt-8">
               <p
                 class="text-center sm:text-left font-sans text-[12px] tracking-[0.06em] text-ink/55 line-through decoration-rouge/70 decoration-[1.5px]"
