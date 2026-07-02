@@ -32,6 +32,8 @@ export interface Props {
    * pai (em build time) via `lib/recommend-thumbs`.
    */
   externalImageUrl?: string | null;
+  /** Ajuste de enquadramento da capa (object-position). Padrão: centro. */
+  imagePosition?: "top" | "center" | "bottom" | null;
   authors?: string | null;
 }
 
@@ -42,8 +44,16 @@ const {
   externalUrl,
   mainImage,
   externalImageUrl,
+  imagePosition,
   authors,
 } = Astro.props;
+
+const objectPositionClass =
+  imagePosition === "top"
+    ? "object-top"
+    : imagePosition === "bottom"
+      ? "object-bottom"
+      : "object-center";
 
 const hasExternal = Boolean(externalUrl);
 const linkHref = hasExternal ? externalUrl! : internalHref;
@@ -127,7 +137,7 @@ const imageAlt = mainImage?.alt ?? title;
           <img
             src={imageUrl}
             alt={imageAlt}
-            class="w-full h-full object-cover transition-[filter] duration-300 group-hover:brightness-95"
+            class={`w-full h-full object-cover ${objectPositionClass} transition-[filter] duration-300 group-hover:brightness-95`}
             loading="lazy"
             decoding="async"
           />

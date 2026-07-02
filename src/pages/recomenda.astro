@@ -42,18 +42,30 @@ const [postsRaw, merged] = await Promise.all([
 // slug do post; o arquivo fica em /public/recomenda-thumbs/.
 // Ordem de prioridade da capa: mainImage (Sanity) > capa local > thumb
 // externa resolvida em build (YouTube/Spotify).
-const LOCAL_THUMBS: Record<string, string> = {
-  "lancamento-infinitudes-palacio-das-artes":
-    "/recomenda-thumbs/lancamento-palacio-das-artes.webp",
+// `position` controla o object-position da capa (útil quando a foto é
+// retrato e o corte central esconderia o topo — ex.: "top" preserva o
+// topo e corta a base).
+const LOCAL_THUMBS: Record<
+  string,
+  { url: string; position?: "top" | "center" | "bottom" }
+> = {
+  "lancamento-infinitudes-palacio-das-artes": {
+    url: "/recomenda-thumbs/lancamento-palacio-das-artes.webp",
+    position: "top",
+  },
 };
 
 const posts = await Promise.all(
-  postsRaw.map(async (p) => ({
-    ...p,
-    externalImageUrl: p.mainImage
-      ? null
-      : (LOCAL_THUMBS[p.slug] ?? (await resolveExternalThumb(p.externalUrl))),
-  })),
+  postsRaw.map(async (p) => {
+    const local = LOCAL_THUMBS[p.slug];
+    return {
+      ...p,
+      externalImageUrl: p.mainImage
+        ? null
+        : (local?.url ?? (await resolveExternalThumb(p.externalUrl))),
+      imagePosition: local?.position ?? null,
+    };
+  }),
 );
 
 const category = merged.find((c) => c.value === "recomenda");
@@ -152,6 +164,7 @@ const hasReal = posts.length > 0;
                   externalUrl={post.externalUrl}
                   mainImage={post.mainImage}
                   externalImageUrl={post.externalImageUrl}
+                  imagePosition={post.imagePosition}
                   authors={post.authors}
                 />
                 <Divider variant="rule" />
