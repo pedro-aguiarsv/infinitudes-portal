@@ -8,8 +8,15 @@
 //   · Título display "Receba nossos artigos"
 //   · Input + botão bordô lado a lado
 //
+// Integração: envia direto pro formulário do MailerLite (sem backend),
+// mantendo o nosso visual. O endpoint abaixo é público (vem do embed
+// do MailerLite) — não é segredo. Para trocar de conta/form, basta
+// atualizar `MAILERLITE_ACTION`.
+//
 // Pode ser inserido em qualquer página antes do Footer.
 // =============================================================
+const MAILERLITE_ACTION =
+  "https://assets.mailerlite.com/jsonp/2498082/forms/192445426502207435/subscribe";
 ---
 
 <section id="newsletter" class="border-t border-rule/60 bg-paper">
@@ -25,24 +32,87 @@
     </p>
 
     <form
+      id="newsletter-form"
+      data-ml-action={MAILERLITE_ACTION}
       class="mt-10 flex flex-col sm:flex-row gap-3 max-w-lg mx-auto"
-      onsubmit="event.preventDefault();"
     >
       <label for="newsletter-email" class="sr-only">Seu e-mail</label>
       <input
         id="newsletter-email"
+        name="fields[email]"
         type="email"
         required
+        autocomplete="email"
         placeholder="seu@email.com"
-        class="flex-1 bg-transparent border border-rule px-5 py-3.5 text-[14px] placeholder:text-muted/70 focus:outline-none focus:border-rouge transition-colors"
+        class="flex-1 bg-transparent border border-rule px-5 py-3.5 text-[14px] placeholder:text-muted/70 focus:outline-none focus:border-rouge transition-colors disabled:opacity-60"
       />
       <button
         type="submit"
-        class="bg-rouge text-paper px-8 py-3.5 text-[11px] font-medium tracking-[0.20em] uppercase hover:bg-rouge-deep transition-colors"
+        class="bg-rouge text-paper px-8 py-3.5 text-[11px] font-medium tracking-[0.20em] uppercase hover:bg-rouge-deep transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
       >
         Assine
       </button>
     </form>
-    <p class="meta mt-4">Grátis · cancele quando quiser</p>
+    <p
+      id="newsletter-status"
+      role="status"
+      aria-live="polite"
+      class="meta mt-4"
+      data-default="Grátis · cancele quando quiser"
+    >
+      Grátis · cancele quando quiser
+    </p>
   </div>
 </section>
+
+<script>
+  // Envia a inscrição direto pro MailerLite mantendo o design do site.
+  // Usamos `mode: "no-cors"` porque o endpoint do MailerLite não expõe
+  // cabeçalhos CORS — a resposta é opaca, então tratamos o envio como
+  // sucesso quando a requisição não falha na rede. O double opt-in do
+  // MailerLite garante a confirmação real via e-mail.
+  const form = document.getElementById("newsletter-form") as HTMLFormElement | null;
+
+  if (form) {
+    const input = document.getElementById("newsletter-email") as HTMLInputElement;
+    const status = document.getElementById("newsletter-status");
+    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+    const action = form.dataset.mlAction;
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      // Validação nativa (required + type=email) já garante e-mail válido.
+      if (!action || !button) return;
+
+      button.disabled = true;
+      input.disabled = true;
+      const previousLabel = button.textContent;
+      button.textContent = "Enviando…";
+      if (status) status.classList.remove("text-rouge");
+
+      const body = new URLSearchParams();
+      body.set("fields[email]", input.value.trim());
+      body.set("ml-submit", "1");
+      body.set("anticsrf", "true");
+
+      try {
+        await fetch(action, { method: "POST", mode: "no-cors", body });
+        form.reset();
+        form.style.display = "none";
+        if (status) {
+          status.textContent =
+            "Quase lá! Enviamos um e-mail de confirmação — clique no link para concluir sua inscrição.";
+        }
+      } catch {
+        button.disabled = false;
+        input.disabled = false;
+        button.textContent = previousLabel ?? "Assine";
+        if (status) {
+          status.textContent =
+            "Não foi possível enviar agora. Tente novamente em instantes.";
+          status.classList.add("text-rouge");
+        }
+      }
+    });
+  }
+</script>
