@@ -34,24 +34,43 @@ const MAILERLITE_ACTION =
     <form
       id="newsletter-form"
       data-ml-action={MAILERLITE_ACTION}
-      class="mt-10 flex flex-col sm:flex-row gap-3 max-w-lg mx-auto"
+      class="mt-10 max-w-lg mx-auto"
     >
-      <label for="newsletter-email" class="sr-only">Seu e-mail</label>
-      <input
-        id="newsletter-email"
-        name="fields[email]"
-        type="email"
-        required
-        autocomplete="email"
-        placeholder="seu@email.com"
-        class="flex-1 bg-transparent border border-rule px-5 py-3.5 text-[14px] placeholder:text-muted/70 focus:outline-none focus:border-rouge transition-colors disabled:opacity-60"
-      />
-      <button
-        type="submit"
-        class="bg-rouge text-paper px-8 py-3.5 text-[11px] font-medium tracking-[0.20em] uppercase hover:bg-rouge-deep transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+      <div class="flex flex-col sm:flex-row gap-3">
+        <label for="newsletter-email" class="sr-only">Seu e-mail</label>
+        <input
+          id="newsletter-email"
+          name="fields[email]"
+          type="email"
+          required
+          autocomplete="email"
+          placeholder="seu@email.com"
+          class="flex-1 bg-transparent border border-rule px-5 py-3.5 text-[14px] placeholder:text-muted/70 focus:outline-none focus:border-rouge transition-colors disabled:opacity-60"
+        />
+        <button
+          type="submit"
+          class="bg-rouge text-paper px-8 py-3.5 text-[11px] font-medium tracking-[0.20em] uppercase hover:bg-rouge-deep transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+        >
+          Assine
+        </button>
+      </div>
+
+      <label
+        for="newsletter-consent"
+        class="mt-4 flex items-start gap-2.5 text-left cursor-pointer"
       >
-        Assine
-      </button>
+        <input
+          id="newsletter-consent"
+          name="consent"
+          type="checkbox"
+          required
+          class="mt-0.5 h-4 w-4 shrink-0 accent-rouge disabled:opacity-60"
+        />
+        <span class="font-sans text-[12px] leading-[1.5] text-muted">
+          Concordo em receber e-mails do (In)finitudes e li a
+          <a href="/privacidade" class="underline hover:text-rouge">Política de Privacidade</a>.
+        </span>
+      </label>
     </form>
     <p
       id="newsletter-status"
@@ -69,23 +88,27 @@ const MAILERLITE_ACTION =
   // Envia a inscrição direto pro MailerLite mantendo o design do site.
   // Usamos `mode: "no-cors"` porque o endpoint do MailerLite não expõe
   // cabeçalhos CORS — a resposta é opaca, então tratamos o envio como
-  // sucesso quando a requisição não falha na rede. O double opt-in do
-  // MailerLite garante a confirmação real via e-mail.
+  // sucesso quando a requisição não falha na rede. O double opt-in está
+  // desligado (o consentimento é coletado pelo checkbox obrigatório do
+  // formulário), então o inscrito já entra ativo na lista.
   const form = document.getElementById("newsletter-form") as HTMLFormElement | null;
 
   if (form) {
     const input = document.getElementById("newsletter-email") as HTMLInputElement;
+    const consent = document.getElementById("newsletter-consent") as HTMLInputElement;
     const status = document.getElementById("newsletter-status");
     const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
     const action = form.dataset.mlAction;
 
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
-      // Validação nativa (required + type=email) já garante e-mail válido.
+      // Validação nativa (required + type=email + checkbox) já garante
+      // e-mail válido e consentimento marcado antes de chegar aqui.
       if (!action || !button) return;
 
       button.disabled = true;
       input.disabled = true;
+      consent.disabled = true;
       const previousLabel = button.textContent;
       button.textContent = "Enviando…";
       if (status) status.classList.remove("text-rouge");
@@ -101,11 +124,12 @@ const MAILERLITE_ACTION =
         form.style.display = "none";
         if (status) {
           status.textContent =
-            "Quase lá! Enviamos um e-mail de confirmação — clique no link para concluir sua inscrição.";
+            "Inscrição feita! A partir de agora você recebe nossas publicações por e-mail.";
         }
       } catch {
         button.disabled = false;
         input.disabled = false;
+        consent.disabled = false;
         button.textContent = previousLabel ?? "Assine";
         if (status) {
           status.textContent =
