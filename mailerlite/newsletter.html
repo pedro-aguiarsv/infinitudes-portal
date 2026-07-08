@@ -1,183 +1,114 @@
 <!--
   ============================================================================
-  (IN)finitudes — Template de newsletter para MailerLite (envio MANUAL / grátis)
+  (IN)finitudes — Newsletter (campanha regular + bloco RSS) · plano gratuito
   ============================================================================
 
-  COMO USAR (plano gratuito)
-  --------------------------
-  1) No MailerLite: Campaigns → Create campaign → tipo "Regular campaign".
-  2) No editor, escolha "Custom HTML" e cole TODO este arquivo.
-  3) Troque os 5 marcadores abaixo pelo conteúdo do material novo:
+  IDEIA
+  -----
+  Campanha regular (grátis) com um BLOCO RSS que puxa sozinho os últimos
+  posts do feed do site. Você salva como template e, a cada semana com
+  novidade, cria a campanha a partir dele e clica enviar — o bloco já vem
+  atualizado com o que estiver no feed naquele momento.
 
-       [[SECAO]]   → seção do material. Ex.: Divã Infinito / Hub Infinito / Recomenda
-       [[TITULO]]  → título do episódio ou artigo
-       [[RESUMO]]  → 1–2 frases de resumo
-       [[LINK]]    → URL da página no site (ex.: https://infinitudes.com.br/diva-infinito/ep-03-...)
-       [[IMAGEM]]  → URL absoluta da imagem de capa
+  MONTAGEM (uma vez)
+  ------------------
+  1) Campaigns → Create campaign → tipo "Regular campaign".
+  2) Assunto: ex. "Novidades do (IN)finitudes" · Remetente: (IN)finitudes.
+  3) Editor "Drag & drop". Monte 3 blocos, nesta ordem:
 
-  DICA — jeito mais rápido de pegar tudo pronto:
-    Abra  https://infinitudes.com.br/rss.xml  e copie do item mais recente:
-      • <title>        → [[TITULO]]
-      • <description>  → [[RESUMO]]
-      • <link>         → [[LINK]]
-      • a URL do <img> dentro de <content:encoded> → [[IMAGEM]]
-    (Nos episódios, a imagem é a thumb do YouTube: https://i.ytimg.com/vi/ID/maxresdefault.jpg)
+     [1] CABEÇALHO → adicione um bloco "HTML" e cole a parte [1] deste arquivo.
 
-  4) Selecione o grupo de inscritos → revise → envie. Pronto.
+     [2] BLOCO RSS → na aba de blocos, seção "Blog and RSS", arraste um bloco
+         RSS e configure:
+           • RSS feed URL ...... https://infinitudes.com.br/rss.xml
+           • Nº de posts ....... 1 a 3
+           • Exibir ............ título + imagem + resumo
+           • Cor do título .... #B8252B   | Fonte: Playfair Display (ou serifada)
+           • Cor do resumo .... #2B2B2B   | Fonte: Inter (ou sans-serif)
+           • Botão "Ler / Ouvir": fundo #B8252B | texto #FAF5E8
+           • Cor de fundo do bloco .... #FAF5E8
+
+     [3] RODAPÉ → adicione outro bloco "HTML" e cole a parte [3] deste arquivo.
+
+  4) Salve como TEMPLATE. Selecione o grupo de inscritos.
+
+  ENVIO SEMANAL
+  -------------
+  • Toda semana com material novo: Create campaign → a partir do template →
+    o bloco RSS se atualiza sozinho → revise → envie.
+  • Sem novidade na semana? Não envie (a campanha regular não "pula" sozinha
+    e repetiria os mesmos posts).
+
+  Obs.: no plano gratuito o logo do MailerLite aparece no rodapé do e-mail.
   ============================================================================
 -->
-<!DOCTYPE html>
-<html lang="pt-BR" xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>(IN)finitudes</title>
-    <!-- Web fonts: funcionam no Apple Mail/iOS; demais clientes usam o fallback. -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      body { margin: 0; padding: 0; background-color: #ece7d4; }
-      table { border-collapse: collapse; }
-      img { border: 0; line-height: 100%; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; }
-      a { color: #b8252b; }
-      .serif { font-family: "Playfair Display", Georgia, "Times New Roman", serif; }
-      .sans  { font-family: "Inter", Arial, Helvetica, sans-serif; }
-      @media only screen and (max-width: 620px) {
-        .container { width: 100% !important; }
-        .px { padding-left: 24px !important; padding-right: 24px !important; }
-      }
-    </style>
-  </head>
-  <body style="margin:0; padding:0; background-color:#ece7d4;">
-    <!-- Preheader (texto de pré-visualização na caixa de entrada) -->
-    <div style="display:none; max-height:0; overflow:hidden; opacity:0; color:#ece7d4; font-size:1px; line-height:1px;">
-      Um novo conteúdo acabou de sair no (IN)finitudes — literatura, empatia e vida.
-    </div>
 
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#ece7d4;">
-      <tr>
-        <td align="center" style="padding:28px 12px;">
-          <table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0"
-                 style="width:600px; max-width:600px; background-color:#faf5e8; border:1px solid #e7e1d0;">
+<!-- =========================================================================
+     [1] CABEÇALHO  → colar num bloco "HTML" no TOPO do e-mail
+     ========================================================================= -->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#faf5e8;">
+  <tr>
+    <td align="center" style="padding:36px 40px 8px 40px;">
+      <a href="https://infinitudes.com.br" target="_blank" style="text-decoration:none;">
+        <img src="https://infinitudes.com.br/logo/logo-header.png"
+             alt="(IN)finitudes" width="220"
+             style="display:block; width:220px; max-width:70%; height:auto; border:0;" />
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" style="padding:0 40px 6px 40px;">
+      <div style="height:1px; width:56px; background-color:#b8252b; margin:16px auto 0 auto;"></div>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" style="padding:14px 48px 24px 48px; font-family:'Inter',Arial,Helvetica,sans-serif;">
+      <p style="margin:0; font-size:13px; line-height:20px; letter-spacing:0.06em; text-transform:uppercase; color:#6b6558;">
+        Novo no (IN)finitudes
+      </p>
+      <p style="margin:10px 0 0 0; font-size:15px; line-height:24px; color:#2b2b2b;">
+        Um instante do seu dia para literatura, empatia e as muitas dimensões da vida.
+      </p>
+    </td>
+  </tr>
+</table>
 
-            <!-- ===================== CABEÇALHO ============================== -->
-            <tr>
-              <td align="center" class="px" style="padding:36px 40px 8px 40px;">
-                <a href="https://infinitudes.com.br" target="_blank" style="text-decoration:none;">
-                  <img src="https://infinitudes.com.br/logo/logo-header.png"
-                       alt="(IN)finitudes" width="220"
-                       style="display:block; width:220px; max-width:70%; height:auto;" />
-                </a>
-              </td>
-            </tr>
-            <tr>
-              <td align="center" style="padding:0 40px 6px 40px;">
-                <div style="height:1px; width:56px; background-color:#b8252b; margin:16px auto 0 auto;"></div>
-              </td>
-            </tr>
-            <tr>
-              <td align="center" class="px sans" style="padding:14px 48px 24px 48px;">
-                <p style="margin:0; font-size:13px; line-height:20px; letter-spacing:0.06em; text-transform:uppercase; color:#6b6558;">
-                  Novo no (IN)finitudes
-                </p>
-                <p style="margin:10px 0 0 0; font-size:15px; line-height:24px; color:#2b2b2b;">
-                  Um novo material acabou de sair. Reservamos um instante do seu dia para
-                  literatura, empatia e as muitas dimensões da vida.
-                </p>
-              </td>
-            </tr>
+<!-- =========================================================================
+     [2] Aqui, no editor, entra o BLOCO RSS nativo do MailerLite
+         (não é HTML — ver instruções no topo).
+     ========================================================================= -->
 
-            <!-- ===================== CONTEÚDO =============================== -->
-            <!-- Troque os marcadores [[...]] pelo material novo.              -->
-            <tr>
-              <td class="px" style="padding:0 40px;">
-                <div style="height:1px; background-color:#e7e1d0;"></div>
-              </td>
-            </tr>
-            <tr>
-              <td class="px" style="padding:28px 40px 0 40px;">
-                <a href="[[LINK]]" target="_blank" style="text-decoration:none;">
-                  <img src="[[IMAGEM]]"
-                       alt="[[TITULO]]" width="520"
-                       style="display:block; width:100%; max-width:520px; height:auto; border-radius:12px;" />
-                </a>
-              </td>
-            </tr>
-            <tr>
-              <td class="px" style="padding:22px 40px 0 40px;">
-                <p class="sans" style="margin:0 0 8px 0; font-size:12px; line-height:18px; letter-spacing:0.08em; text-transform:uppercase; color:#6b6558;">
-                  [[SECAO]]
-                </p>
-                <h1 class="serif" style="margin:0; font-size:26px; line-height:32px; font-weight:700; color:#b8252b;">
-                  [[TITULO]]
-                </h1>
-                <p class="sans" style="margin:14px 0 0 0; font-size:15px; line-height:24px; color:#2b2b2b;">
-                  [[RESUMO]]
-                </p>
-              </td>
-            </tr>
-            <tr>
-              <td class="px" style="padding:24px 40px 0 40px;">
-                <table role="presentation" cellpadding="0" cellspacing="0">
-                  <tr>
-                    <td align="center" style="background-color:#b8252b; border-radius:4px;">
-                      <a href="[[LINK]]" target="_blank" class="sans"
-                         style="display:inline-block; padding:13px 28px; font-size:14px; font-weight:600; letter-spacing:0.03em; color:#faf5e8; text-decoration:none;">
-                        Ler / Ouvir &rarr;
-                      </a>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-            <tr>
-              <td class="px" style="padding:32px 40px 8px 40px;">
-                <div style="height:1px; background-color:#e7e1d0;"></div>
-              </td>
-            </tr>
 
-            <!-- ===================== RODAPÉ ================================= -->
-            <tr>
-              <td align="center" style="padding:0;">
-                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#0c0c0c; margin-top:24px;">
-                  <tr>
-                    <td align="center" class="px" style="padding:32px 40px 10px 40px;">
-                      <p class="serif" style="margin:0; font-size:20px; line-height:26px; color:#faf5e8;">
-                        (IN)finitudes
-                      </p>
-                      <p class="sans" style="margin:10px 0 0 0; font-size:13px; line-height:20px; color:#9a9488;">
-                        Literatura, empatia e vida.
-                      </p>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td align="center" class="px sans" style="padding:8px 40px 4px 40px;">
-                      <a href="https://infinitudes.com.br/diva-infinito" target="_blank" style="color:#e7e1d0; text-decoration:none; font-size:13px; margin:0 10px;">Divã Infinito</a>
-                      <a href="https://infinitudes.com.br/hub-infinito" target="_blank" style="color:#e7e1d0; text-decoration:none; font-size:13px; margin:0 10px;">Hub Infinito</a>
-                      <a href="https://infinitudes.com.br/livro" target="_blank" style="color:#e7e1d0; text-decoration:none; font-size:13px; margin:0 10px;">O Livro</a>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td align="center" class="px sans" style="padding:18px 40px 32px 40px;">
-                      <p style="margin:0; font-size:12px; line-height:18px; color:#6b6558;">
-                        Você recebe este e-mail porque se inscreveu em infinitudes.com.br.
-                      </p>
-                      <p style="margin:8px 0 0 0; font-size:12px; line-height:18px; color:#6b6558;">
-                        <a href="{$unsubscribe}" style="color:#9a9488; text-decoration:underline;">Cancelar inscrição</a>
-                        &nbsp;·&nbsp; {$company}
-                      </p>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-
-          </table>
-        </td>
-      </tr>
-    </table>
-  </body>
-</html>
+<!-- =========================================================================
+     [3] RODAPÉ  → colar num bloco "HTML" no FIM do e-mail
+     ========================================================================= -->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#0c0c0c;">
+  <tr>
+    <td align="center" style="padding:32px 40px 10px 40px; font-family:'Playfair Display',Georgia,serif;">
+      <p style="margin:0; font-size:20px; line-height:26px; color:#faf5e8;">(IN)finitudes</p>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" style="padding:0 40px 8px 40px; font-family:'Inter',Arial,Helvetica,sans-serif;">
+      <p style="margin:0; font-size:13px; line-height:20px; color:#9a9488;">Literatura, empatia e vida.</p>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" style="padding:8px 40px 4px 40px; font-family:'Inter',Arial,Helvetica,sans-serif;">
+      <a href="https://infinitudes.com.br/diva-infinito" target="_blank" style="color:#e7e1d0; text-decoration:none; font-size:13px; margin:0 10px;">Divã Infinito</a>
+      <a href="https://infinitudes.com.br/hub-infinito" target="_blank" style="color:#e7e1d0; text-decoration:none; font-size:13px; margin:0 10px;">Hub Infinito</a>
+      <a href="https://infinitudes.com.br/livro" target="_blank" style="color:#e7e1d0; text-decoration:none; font-size:13px; margin:0 10px;">O Livro</a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" style="padding:18px 40px 32px 40px; font-family:'Inter',Arial,Helvetica,sans-serif;">
+      <p style="margin:0; font-size:12px; line-height:18px; color:#6b6558;">
+        Você recebe este e-mail porque se inscreveu em infinitudes.com.br.
+      </p>
+      <p style="margin:8px 0 0 0; font-size:12px; line-height:18px; color:#6b6558;">
+        <a href="{$unsubscribe}" style="color:#9a9488; text-decoration:underline;">Cancelar inscrição</a>
+        &nbsp;·&nbsp; {$company}
+      </p>
+    </td>
+  </tr>
+</table>
