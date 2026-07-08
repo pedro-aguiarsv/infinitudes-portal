@@ -23,10 +23,37 @@ import HeroFeatured from "../components/HeroFeatured.astro";
 import PostCard from "../components/PostCard.astro";
 import BookSection from "../components/BookSection.astro";
 import NewsletterSection from "../components/NewsletterSection.astro";
-import { getAllPosts } from "../lib/sanity";
+import { getAllPosts, getAllEpisodes, urlFor } from "../lib/sanity";
+import { getYouTubeThumbnail } from "../lib/embeds";
 import { resolveExternalThumb } from "../lib/recommend-thumbs";
 
 const posts = await getAllPosts();
+const episodes = await getAllEpisodes();
+
+// Último episódio do Divã Infinito (temporada), usado no card dinâmico do
+// grid superior. `getAllEpisodes` já vem ordenado por número desc, então o
+// primeiro episódio de temporada é o mais recente.
+const latestEpisode =
+  episodes.find((e) => e.type === "temporada") ?? episodes[0] ?? null;
+
+const latestEpisodeThumb = latestEpisode
+  ? (latestEpisode.thumbnail
+      ? urlFor(latestEpisode.thumbnail)
+          .width(800)
+          .height(600)
+          .fit("crop")
+          .auto("format")
+          .url()
+      : getYouTubeThumbnail(latestEpisode.videoUrl))
+  : null;
+
+const latestEpisodeMeta = latestEpisode?.publishedAt
+  ? new Intl.DateTimeFormat("pt-BR", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    }).format(new Date(latestEpisode.publishedAt))
+  : "Divã Infinito";
 
 // Grid superior · "Em Alta & Podcasts da semana"
 // Vitrine editorial fixa (curadoria manual) com três destaques:
@@ -57,19 +84,35 @@ type FeaturedCard = {
   variant: "rouge" | "black";
 };
 
+// 1º card · sempre o último episódio do Divã Infinito (dinâmico via Sanity).
+// Se ainda não houver episódio publicado, cai no card de estreia estático.
+const divaCard: FeaturedCard = latestEpisode
+  ? {
+      href: `/diva-infinito/${latestEpisode.slug}`,
+      external: false,
+      eyebrow: "Divã Infinito",
+      title: latestEpisode.title,
+      excerpt: latestEpisode.description,
+      meta: latestEpisodeMeta,
+      image: latestEpisodeThumb,
+      imageAlt: latestEpisode.title,
+      variant: "rouge",
+    }
+  : {
+      href: "/diva-infinito",
+      external: false,
+      eyebrow: "Divã Infinito",
+      title: "Episódio 1 — estreia em junho",
+      excerpt:
+        "Estreia do podcast Divã Infinito. Disponível no YouTube e no Spotify a partir de 23 de junho.",
+      meta: "Divã Infinito",
+      image: "/diva-infinito/capa-episodio-1.webp",
+      imageAlt: "(In)finitudes — Divã Infinito",
+      variant: "rouge",
+    };
+
 const featuredCards: FeaturedCard[] = [
-  {
-    href: "/diva-infinito",
-    external: false,
-    eyebrow: "Divã Infinito",
-    title: "Episódio 1 — estreia em junho",
-    excerpt:
-      "Estreia do podcast Divã Infinito. Disponível no YouTube e no Spotify a partir de 23 de junho.",
-    meta: "Divã Infinito",
-    image: "/diva-infinito/capa-episodio-1.webp",
-    imageAlt: "(In)finitudes — Divã Infinito",
-    variant: "rouge",
-  },
+  divaCard,
   {
     href: "https://www.youtube.com/watch?v=cy-jyQ3kpDw",
     external: true,
@@ -125,13 +168,29 @@ const recommendationsRaw = posts
   .filter((p) => p.category === "recomenda")
   .slice(0, 3);
 
+// Capas locais para recomendações sem `mainImage` no Sanity (mesmo mapeamento
+// usado em /recomenda). `position` ajusta o object-position no recorte 4:3.
+const LOCAL_THUMBS: Record<
+  string,
+  { url: string; position?: "top" | "center" | "bottom" }
+> = {
+  "lancamento-infinitudes-palacio-das-artes": {
+    url: "/recomenda-thumbs/lancamento-palacio-das-artes.webp",
+    position: "top",
+  },
+};
+
 const recommendationCards = await Promise.all(
-  recommendationsRaw.map(async (p) => ({
-    post: p,
-    externalImageUrl: p.mainImage
-      ? null
-      : await resolveExternalThumb(p.externalUrl),
-  })),
+  recommendationsRaw.map(async (p) => {
+    const local = LOCAL_THUMBS[p.slug];
+    return {
+      post: p,
+      externalImageUrl: p.mainImage
+        ? null
+        : (local?.url ?? (await resolveExternalThumb(p.externalUrl))),
+      imagePosition: local?.position ?? null,
+    };
+  }),
 );
 
 ---
@@ -240,6 +299,7 @@ const recommendationCards = await Promise.all(
                       class={`w-full aspect-[4/3] object-cover ${card.imagePosition ?? ""} transition-[filter] duration-300 group-hover:brightness-95`}
                       loading="lazy"
                       decoding="async"
+                      onerror="this.onerror=null;this.src=this.src.replace('maxresdefault','mqdefault')"
                     />
                   )
                 ) : (
@@ -315,10 +375,11 @@ const recommendationCards = await Promise.all(
           </div>
           <section class="max-w-7xl mx-auto px-6 lg:px-12 pb-16 lg:pb-24">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-y-14 md:gap-x-10 lg:gap-x-14">
-              {recommendationCards.map(({ post, externalImageUrl }) => (
+              {recommendationCards.map(({ post, externalImageUrl, imagePosition }) => (
                 <PostCard
                   post={post}
                   externalImageUrl={externalImageUrl}
+                  imagePosition={imagePosition}
                 />
               ))}
             </div>

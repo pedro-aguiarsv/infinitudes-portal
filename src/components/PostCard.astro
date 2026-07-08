@@ -29,6 +29,8 @@ export interface Props {
   /** Fallback de thumbnail para posts sem mainImage (ex.: thumb do YouTube/Spotify
    * resolvida via resolveExternalThumb na página). */
   externalImageUrl?: string | null;
+  /** Ajusta o object-position da capa no recorte (útil p/ fotos retrato). */
+  imagePosition?: "top" | "center" | "bottom" | null;
 }
 
 const {
@@ -39,7 +41,15 @@ const {
   imageRatio = "aspect-[4/3]",
   size = "md",
   externalImageUrl = null,
+  imagePosition = null,
 } = Astro.props;
+
+const objectPositionClass =
+  imagePosition === "top"
+    ? "object-top"
+    : imagePosition === "bottom"
+      ? "object-bottom"
+      : "";
 
 const categoryLabel =
   category ?? (post.category ? (getCategory(post.category)?.title ?? null) : null);
@@ -76,7 +86,7 @@ const titleSize = {
         <img
           src={imageUrl}
           alt={post.mainImage?.alt ?? post.title}
-          class={`w-full ${imageRatio} object-cover transition-[filter] duration-300 group-hover:brightness-95`}
+          class={`w-full ${imageRatio} object-cover ${objectPositionClass} transition-[filter] duration-300 group-hover:brightness-95`}
           loading="lazy"
           decoding="async"
         />
