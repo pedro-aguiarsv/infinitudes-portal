@@ -1,0 +1,191 @@
+<!--
+  ============================================================================
+  (IN)finitudes — Template de newsletter (RSS) para MailerLite
+  ============================================================================
+
+  COMO USAR NO MAILERLITE
+  -----------------------
+  O MailerLite monta os itens do feed através de um "bloco RSS" no editor
+  arrasta-e-solta — não dá para puxar os posts por HTML puro. Então este
+  arquivo se divide em 3 partes, marcadas abaixo:
+
+    [1] CABEÇALHO  → cole num bloco de HTML no topo do e-mail
+    [2] ITEM       → é só um EXEMPLO do visual. No MailerLite, apague-o e
+                     coloque um "bloco RSS" no lugar, configurando as cores
+                     conforme a tabela no fim deste comentário.
+    [3] RODAPÉ     → cole num bloco de HTML no rodapé do e-mail
+
+  Você também pode abrir este arquivo no navegador para ver o visual final.
+
+  CONFIGURAÇÃO DO BLOCO RSS (para casar com a marca):
+    • Cor do texto do título .......... #B8252B (bordô)
+    • Fonte do título ................. Playfair Display (ou serifada)
+    • Cor do texto do resumo .......... #2B2B2B
+    • Fonte do resumo/corpo ........... Inter (ou sans-serif)
+    • Botão "Ler / Ouvir": fundo ...... #B8252B  |  texto ...... #FAF5E8
+    • Nº de posts por e-mail .......... 1 a 3
+    • "Show only new posts" ........... ATIVADO
+  ============================================================================
+-->
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>(IN)finitudes</title>
+    <!-- Web fonts: funcionam no Apple Mail/iOS; demais clientes usam o fallback. -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body { margin: 0; padding: 0; background-color: #ece7d4; }
+      table { border-collapse: collapse; }
+      img { border: 0; line-height: 100%; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; }
+      a { color: #b8252b; }
+      .serif { font-family: "Playfair Display", Georgia, "Times New Roman", serif; }
+      .sans  { font-family: "Inter", Arial, Helvetica, sans-serif; }
+      @media only screen and (max-width: 620px) {
+        .container { width: 100% !important; }
+        .px { padding-left: 24px !important; padding-right: 24px !important; }
+      }
+    </style>
+  </head>
+  <body style="margin:0; padding:0; background-color:#ece7d4;">
+    <!-- Preheader (texto de pré-visualização na caixa de entrada) -->
+    <div style="display:none; max-height:0; overflow:hidden; opacity:0; color:#ece7d4; font-size:1px; line-height:1px;">
+      Um novo conteúdo acabou de sair no (IN)finitudes — literatura, empatia e vida.
+    </div>
+
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#ece7d4;">
+      <tr>
+        <td align="center" style="padding:28px 12px;">
+          <table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0"
+                 style="width:600px; max-width:600px; background-color:#faf5e8; border:1px solid #e7e1d0;">
+
+            <!-- ================================================================ -->
+            <!-- [1] CABEÇALHO                                                    -->
+            <!-- ================================================================ -->
+            <tr>
+              <td align="center" class="px" style="padding:36px 40px 8px 40px;">
+                <a href="https://infinitudes.com.br" target="_blank" style="text-decoration:none;">
+                  <img src="https://infinitudes.com.br/logo/logo-header.png"
+                       alt="(IN)finitudes" width="220"
+                       style="display:block; width:220px; max-width:70%; height:auto;" />
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <td align="center" style="padding:0 40px 6px 40px;">
+                <div style="height:1px; width:56px; background-color:#b8252b; margin:16px auto 0 auto;"></div>
+              </td>
+            </tr>
+            <tr>
+              <td align="center" class="px sans" style="padding:14px 48px 24px 48px;">
+                <p style="margin:0; font-size:13px; line-height:20px; letter-spacing:0.06em; text-transform:uppercase; color:#6b6558;">
+                  Novo no (IN)finitudes
+                </p>
+                <p style="margin:10px 0 0 0; font-size:15px; line-height:24px; color:#2b2b2b;">
+                  Um novo material acabou de sair. Reservamos um instante do seu dia para
+                  literatura, empatia e as muitas dimensões da vida.
+                </p>
+              </td>
+            </tr>
+
+            <!-- ================================================================ -->
+            <!-- [2] ITEM — APENAS EXEMPLO. No MailerLite, troque por um BLOCO RSS -->
+            <!-- ================================================================ -->
+            <tr>
+              <td class="px" style="padding:0 40px;">
+                <div style="height:1px; background-color:#e7e1d0;"></div>
+              </td>
+            </tr>
+            <tr>
+              <td class="px" style="padding:28px 40px 0 40px;">
+                <a href="https://infinitudes.com.br" target="_blank" style="text-decoration:none;">
+                  <img src="https://infinitudes.com.br/og-image.png"
+                       alt="" width="520"
+                       style="display:block; width:100%; max-width:520px; height:auto; border-radius:12px;" />
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <td class="px" style="padding:22px 40px 0 40px;">
+                <p class="sans" style="margin:0 0 8px 0; font-size:12px; line-height:18px; letter-spacing:0.08em; text-transform:uppercase; color:#6b6558;">
+                  Divã Infinito
+                </p>
+                <h1 class="serif" style="margin:0; font-size:26px; line-height:32px; font-weight:700; color:#b8252b;">
+                  Título do novo conteúdo
+                </h1>
+                <p class="sans" style="margin:14px 0 0 0; font-size:15px; line-height:24px; color:#2b2b2b;">
+                  Aqui entra o resumo do material publicado — o MailerLite preenche
+                  automaticamente com o texto vindo do feed RSS do site.
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td class="px" style="padding:24px 40px 0 40px;">
+                <table role="presentation" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td align="center" style="background-color:#b8252b; border-radius:4px;">
+                      <a href="https://infinitudes.com.br" target="_blank" class="sans"
+                         style="display:inline-block; padding:13px 28px; font-size:14px; font-weight:600; letter-spacing:0.03em; color:#faf5e8; text-decoration:none;">
+                        Ler / Ouvir &rarr;
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td class="px" style="padding:32px 40px 8px 40px;">
+                <div style="height:1px; background-color:#e7e1d0;"></div>
+              </td>
+            </tr>
+            <!-- ================== FIM DO EXEMPLO / BLOCO RSS =================== -->
+
+            <!-- ================================================================ -->
+            <!-- [3] RODAPÉ                                                       -->
+            <!-- ================================================================ -->
+            <tr>
+              <td align="center" style="padding:0;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#0c0c0c; margin-top:24px;">
+                  <tr>
+                    <td align="center" class="px" style="padding:32px 40px 10px 40px;">
+                      <p class="serif" style="margin:0; font-size:20px; line-height:26px; color:#faf5e8;">
+                        (IN)finitudes
+                      </p>
+                      <p class="sans" style="margin:10px 0 0 0; font-size:13px; line-height:20px; color:#9a9488;">
+                        Literatura, empatia e vida.
+                      </p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td align="center" class="px sans" style="padding:8px 40px 4px 40px;">
+                      <a href="https://infinitudes.com.br/diva-infinito" target="_blank" style="color:#e7e1d0; text-decoration:none; font-size:13px; margin:0 10px;">Divã Infinito</a>
+                      <a href="https://infinitudes.com.br/hub-infinito" target="_blank" style="color:#e7e1d0; text-decoration:none; font-size:13px; margin:0 10px;">Hub Infinito</a>
+                      <a href="https://infinitudes.com.br/livro" target="_blank" style="color:#e7e1d0; text-decoration:none; font-size:13px; margin:0 10px;">O Livro</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td align="center" class="px sans" style="padding:18px 40px 32px 40px;">
+                      <p style="margin:0; font-size:12px; line-height:18px; color:#6b6558;">
+                        Você recebe este e-mail porque se inscreveu em infinitudes.com.br.
+                      </p>
+                      <p style="margin:8px 0 0 0; font-size:12px; line-height:18px; color:#6b6558;">
+                        <a href="{$unsubscribe}" style="color:#9a9488; text-decoration:underline;">Cancelar inscrição</a>
+                        &nbsp;·&nbsp; {$company}
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
