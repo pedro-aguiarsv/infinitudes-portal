@@ -309,6 +309,130 @@ const INCENTIVO_FISCAL_TEXTO =
       </div>
     </section>
 
+    {/* 4.5 · Registro de doação · formulário (Netlify Forms) */}
+    <section class="bg-paper-soft border-y border-rule/60">
+      <div class="max-w-2xl mx-auto px-6 py-16 lg:py-20">
+        <div class="text-center mb-8">
+          <p class="eyebrow text-rouge">Registro</p>
+          <h2
+            class="font-display text-[26px] sm:text-[32px] lg:text-[38px] leading-[1.1] mt-3 font-normal tracking-[-0.005em]"
+          >
+            Já doou? Conte pra gente
+          </h2>
+          <p class="font-serif text-[15px] lg:text-[16px] leading-[1.6] mt-4 text-ink/75">
+            O registro é opcional, mas ajuda a gente a <strong>agradecer você</strong> e a
+            manter a transparência sobre os recursos. Seus dados não são compartilhados.
+          </p>
+        </div>
+
+        {/* Netlify Forms: detecção em build via `data-netlify`. O envio é
+            feito por fetch (AJAX) para manter o visual e exibir o retorno
+            inline. O campo `bot-field` é o honeypot anti-spam. */}
+        <form
+          id="doacao-form"
+          name="doacao"
+          method="POST"
+          data-netlify="true"
+          netlify-honeypot="bot-field"
+          class="grid grid-cols-1 sm:grid-cols-2 gap-4"
+        >
+          <input type="hidden" name="form-name" value="doacao" />
+          <p class="hidden">
+            <label>Não preencha: <input name="bot-field" /></label>
+          </p>
+
+          <div class="sm:col-span-1">
+            <label for="doacao-nome" class="meta block mb-2">Nome*</label>
+            <input
+              id="doacao-nome"
+              name="nome"
+              type="text"
+              required
+              autocomplete="name"
+              class="w-full bg-transparent border border-rule px-4 py-3 text-[14px] focus:outline-none focus:border-rouge transition-colors disabled:opacity-60"
+            />
+          </div>
+
+          <div class="sm:col-span-1">
+            <label for="doacao-email" class="meta block mb-2">E-mail*</label>
+            <input
+              id="doacao-email"
+              name="email"
+              type="email"
+              required
+              autocomplete="email"
+              class="w-full bg-transparent border border-rule px-4 py-3 text-[14px] focus:outline-none focus:border-rouge transition-colors disabled:opacity-60"
+            />
+          </div>
+
+          <div class="sm:col-span-1">
+            <label for="doacao-valor" class="meta block mb-2">Valor doado (opcional)</label>
+            <input
+              id="doacao-valor"
+              name="valor"
+              type="text"
+              inputmode="decimal"
+              placeholder="R$"
+              class="w-full bg-transparent border border-rule px-4 py-3 text-[14px] placeholder:text-muted/70 focus:outline-none focus:border-rouge transition-colors disabled:opacity-60"
+            />
+          </div>
+
+          <div class="sm:col-span-1">
+            <label for="doacao-data" class="meta block mb-2">Data do PIX (opcional)</label>
+            <input
+              id="doacao-data"
+              name="data"
+              type="date"
+              class="w-full bg-transparent border border-rule px-4 py-3 text-[14px] focus:outline-none focus:border-rouge transition-colors disabled:opacity-60"
+            />
+          </div>
+
+          <div class="sm:col-span-2">
+            <label for="doacao-mensagem" class="meta block mb-2">Mensagem (opcional)</label>
+            <textarea
+              id="doacao-mensagem"
+              name="mensagem"
+              rows="3"
+              class="w-full bg-transparent border border-rule px-4 py-3 text-[14px] focus:outline-none focus:border-rouge transition-colors disabled:opacity-60"
+            ></textarea>
+          </div>
+
+          <label
+            for="doacao-consent"
+            class="sm:col-span-2 flex items-start gap-2.5 text-left cursor-pointer"
+          >
+            <input
+              id="doacao-consent"
+              name="consent"
+              type="checkbox"
+              required
+              class="mt-0.5 h-4 w-4 shrink-0 accent-rouge disabled:opacity-60"
+            />
+            <span class="font-sans text-[12px] leading-[1.5] text-muted">
+              Autorizo o (In)finitudes a guardar meus dados para registro e agradecimento
+              da doação, conforme a
+              <a href="/privacidade" class="underline hover:text-rouge">Política de Privacidade</a>.
+            </span>
+          </label>
+
+          <div class="sm:col-span-2 flex flex-col items-center mt-2">
+            <button
+              type="submit"
+              class="bg-rouge text-paper px-8 py-3.5 text-[11px] font-medium tracking-[0.20em] uppercase hover:bg-rouge-deep transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+            >
+              Registrar doação
+            </button>
+            <p
+              id="doacao-status"
+              role="status"
+              aria-live="polite"
+              class="meta mt-4 text-center min-h-[1em]"
+            ></p>
+          </div>
+        </form>
+      </div>
+    </section>
+
     {/* 5 · Incentivo fiscal — só aparece se ativo */}
     {
       INCENTIVO_FISCAL_ATIVO && (
@@ -386,6 +510,51 @@ const INCENTIVO_FISCAL_TEXTO =
           if (status) status.textContent = "Não foi possível copiar — selecione a chave manualmente.";
         }
         document.body.removeChild(ta);
+      }
+    });
+  }
+
+  // Formulário de registro de doação → Netlify Forms (envio via fetch).
+  // Netlify captura submissões por POST com `form-name`. Enviamos como
+  // application/x-www-form-urlencoded e mostramos o retorno inline.
+  const doacaoForm = document.getElementById("doacao-form") as HTMLFormElement | null;
+
+  if (doacaoForm) {
+    const dStatus = document.getElementById("doacao-status");
+    const dButton = doacaoForm.querySelector<HTMLButtonElement>('button[type="submit"]');
+
+    doacaoForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!dButton) return;
+
+      const previousLabel = dButton.textContent;
+      dButton.disabled = true;
+      dButton.textContent = "Enviando…";
+      if (dStatus) dStatus.classList.remove("text-rouge");
+
+      const data = new FormData(doacaoForm);
+      const body = new URLSearchParams();
+      data.forEach((value, key) => body.append(key, value.toString()));
+
+      try {
+        await fetch("/", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: body.toString(),
+        });
+        doacaoForm.reset();
+        doacaoForm.style.display = "none";
+        if (dStatus)
+          dStatus.textContent =
+            "Obrigado! Sua doação foi registrada — em breve entraremos em contato para agradecer.";
+      } catch {
+        dButton.disabled = false;
+        dButton.textContent = previousLabel ?? "Registrar doação";
+        if (dStatus) {
+          dStatus.textContent =
+            "Não foi possível registrar agora. Tente novamente em instantes.";
+          dStatus.classList.add("text-rouge");
+        }
       }
     });
   }
