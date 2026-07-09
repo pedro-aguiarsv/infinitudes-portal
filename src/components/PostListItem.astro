@@ -23,6 +23,9 @@ export interface Props {
   /** Aquarela usada como capa quando o post não tem `mainImage`. Ex.:
    *  "/watercolors/rouge-blob.webp". Quando ausente, cai no placeholder neutro. */
   fallbackWatercolor?: string | null;
+  /** Classes de tamanho do título (Tailwind). Permite reduzir o título em
+   *  listagens específicas (ex.: Curadoria) sem afetar as demais. */
+  titleSize?: string;
 }
 
 const {
@@ -30,6 +33,7 @@ const {
   author,
   imageRatio = "aspect-[4/3]",
   fallbackWatercolor = null,
+  titleSize = "text-[24px] sm:text-[28px] lg:text-[32px]",
 } = Astro.props;
 
 // Byline: usa o prop explícito ou, se ausente, o campo `authors` do post.
@@ -70,7 +74,7 @@ const formattedDate = post.publishedAt
     {/* Texto · 7-8 colunas */}
     <div class="col-span-12 sm:col-span-8 order-2 sm:order-1">
       <h3
-        class="font-display text-[24px] sm:text-[28px] lg:text-[32px] leading-[1.15] font-medium tracking-[-0.005em] transition-colors group-hover:text-rouge"
+        class={`font-display ${titleSize} leading-[1.15] font-medium tracking-[-0.005em] transition-colors group-hover:text-rouge`}
       >
         {post.title}
       </h3>

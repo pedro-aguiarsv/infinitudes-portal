@@ -37,9 +37,10 @@ const longDescription = category?.longDescription ?? FALLBACK_LONG_DESCRIPTION;
 // reais cadastrados, a aba aparece vazia (sem placeholders): o banner
 // de lançamento acima já comunica que o podcast estreia em 23/06/2026.
 // Isso evita expor episódios fictícios ao público antes do go-live.
-const realTemporadas = episodes.filter(
-  (ep) => (ep.type ?? "temporada") === "temporada",
-);
+// Ordena do mais antigo (menor número) no topo para o mais novo embaixo.
+const realTemporadas = episodes
+  .filter((ep) => (ep.type ?? "temporada") === "temporada")
+  .sort((a, b) => a.number - b.number);
 const realMakingOff = episodes.filter((ep) => ep.type === "making-off");
 
 // Helper para alternar a cor do bloco (rouge/black) por índice.
