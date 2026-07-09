@@ -20,7 +20,6 @@ import Footer from "../../components/Footer.astro";
 import NewsletterSection from "../../components/NewsletterSection.astro";
 import PostHeaderClassic from "../../components/PostHeaderClassic.astro";
 import PostHeaderCover from "../../components/PostHeaderCover.astro";
-import PostFavorites from "../../components/PostFavorites.astro";
 import RelatedPosts from "../../components/RelatedPosts.astro";
 import WatercolorAccent from "../../components/WatercolorAccent.astro";
 import Divider from "../../components/Divider.astro";
@@ -145,7 +144,6 @@ const components = {
                 class="lg:col-span-6 font-serif text-[17px] lg:text-[18px] leading-[1.7] space-y-5 text-ink-soft"
               >
                 <PortableText value={post.body} components={components} />
-                <PostFavorites />
               </div>
 
               {/* Aquarela decorativa à direita */}
@@ -164,7 +162,6 @@ const components = {
             >
               <PortableText value={post.body} components={components} />
             </div>
-            <PostFavorites />
           </div>
         )
       }

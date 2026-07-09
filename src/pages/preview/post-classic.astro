@@ -9,7 +9,6 @@ import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
 import NewsletterSection from "../../components/NewsletterSection.astro";
 import PostHeaderClassic from "../../components/PostHeaderClassic.astro";
-import PostFavorites from "../../components/PostFavorites.astro";
 import Divider from "../../components/Divider.astro";
 
 const paragraphs = [
@@ -43,7 +42,6 @@ const paragraphs = [
         >
           {paragraphs.map((p) => <p>{p}</p>)}
         </div>
-        <PostFavorites />
       </div>
 
       <div class="max-w-2xl mx-auto px-6 pb-16 lg:pb-20 text-center">
