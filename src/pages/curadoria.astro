@@ -94,9 +94,8 @@ const hasRealPosts = posts.length > 0;
         <p
           class="font-serif text-[16px] lg:text-[17px] leading-[1.55] mt-5 text-ink/80"
         >
-          Você pode escrever direto no formulário abaixo OU anexar um arquivo
-          .doc / .docx. Imagens são opcionais. Lemos cada envio com cuidado e
-          respondemos individualmente.
+          Anexe sua história em um arquivo .doc / .docx. Imagens são opcionais.
+          Lemos cada envio com cuidado e respondemos individualmente.
         </p>
       </header>
 
@@ -131,25 +130,6 @@ const hasRealPosts = posts.length > 0;
             class="bg-transparent border border-rule px-4 py-3 text-[15px] focus:outline-none focus:border-rouge transition-colors"
           />
         </label>
-
-        {/* História · texto */}
-        <label class="flex flex-col gap-2 sm:col-span-2">
-          <span class="meta">Sua história · texto</span>
-          <textarea
-            id="curadoria-story"
-            name="historia"
-            rows="10"
-            placeholder="Escreva direto aqui se preferir. Sem limite de palavras."
-            class="bg-transparent border border-rule px-4 py-3 text-[15px] leading-[1.6] focus:outline-none focus:border-rouge transition-colors resize-y"
-          ></textarea>
-        </label>
-
-        {/* OU separador */}
-        <div class="sm:col-span-2 flex items-center gap-4 text-ink/40">
-          <span class="flex-1 h-px bg-rule/60"></span>
-          <span class="meta text-ink/55">OU</span>
-          <span class="flex-1 h-px bg-rule/60"></span>
-        </div>
 
         {/* História · arquivo .doc/.docx */}
         <label class="flex flex-col gap-2 sm:col-span-2">
@@ -253,35 +233,32 @@ const hasRealPosts = posts.length > 0;
   <Footer />
 
   {/* ============================================================
-      Validação cliente: pelo menos um dos campos (texto OU arquivo)
-      precisa estar preenchido. Mensagem de erro nativa do navegador.
+      Validação cliente: o arquivo com a história (.doc/.docx)
+      precisa estar anexado. Mensagem de erro nativa do navegador.
       ============================================================ */}
   <script is:inline>
     (function () {
       const form = document.getElementById("curadoria-form");
       if (!form) return;
-      const story = document.getElementById("curadoria-story");
       const storyFile = document.getElementById("curadoria-story-file");
-      if (!story || !storyFile) return;
+      if (!storyFile) return;
 
       form.addEventListener("submit", (event) => {
-        const hasText = story.value.trim().length > 0;
         const hasFile = storyFile.files && storyFile.files.length > 0;
-        if (!hasText && !hasFile) {
+        if (!hasFile) {
           event.preventDefault();
           event.stopImmediatePropagation();
-          story.setCustomValidity(
-            "Escreva sua história OU anexe um arquivo .doc/.docx.",
+          storyFile.setCustomValidity(
+            "Anexe sua história em um arquivo .doc ou .docx.",
           );
-          story.reportValidity();
+          storyFile.reportValidity();
           return;
         }
-        story.setCustomValidity("");
+        storyFile.setCustomValidity("");
       });
 
-      story.addEventListener("input", () => story.setCustomValidity(""));
       storyFile.addEventListener("change", () =>
-        story.setCustomValidity(""),
+        storyFile.setCustomValidity(""),
       );
     })();
   </script>
