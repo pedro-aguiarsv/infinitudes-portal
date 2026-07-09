@@ -26,6 +26,9 @@ export interface Props {
   /** Classes de tamanho do título (Tailwind). Permite reduzir o título em
    *  listagens específicas (ex.: Curadoria) sem afetar as demais. */
   titleSize?: string;
+  /** Classes de tamanho do excerpt (Tailwind). Permite ajustar o corpo em
+   *  listagens específicas (ex.: Curadoria) sem afetar as demais. */
+  excerptSize?: string;
 }
 
 const {
@@ -34,6 +37,7 @@ const {
   imageRatio = "aspect-[4/3]",
   fallbackWatercolor = null,
   titleSize = "text-[24px] sm:text-[28px] lg:text-[32px]",
+  excerptSize = "text-[15px] lg:text-[16px]",
 } = Astro.props;
 
 // Byline: usa o prop explícito ou, se ausente, o campo `authors` do post.
@@ -81,7 +85,7 @@ const formattedDate = post.publishedAt
 
       {
         post.excerpt && (
-          <p class="font-serif text-[15px] lg:text-[16px] leading-[1.5] mt-3 text-ink/80 max-w-prose">
+          <p class={`font-serif ${excerptSize} leading-[1.5] mt-3 text-ink/80 max-w-prose`}>
             {post.excerpt}
           </p>
         )
