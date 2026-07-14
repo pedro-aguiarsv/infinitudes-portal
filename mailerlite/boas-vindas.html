@@ -1,0 +1,180 @@
+<!--
+  ============================================================================
+  (IN)finitudes — E-mail de boas-vindas (português) para MailerLite
+  ============================================================================
+
+  QUANDO USAR
+  -----------
+  Como o double opt-in foi desligado (o consentimento é coletado pelo checkbox
+  no formulário do site), o inscrito entra direto na lista. Este e-mail de
+  boas-vindas substitui, em português e com a cara do site, aquele e-mail de
+  confirmação que vinha em inglês.
+
+  COMO CONFIGURAR (automação — disponível no plano gratuito)
+  ----------------------------------------------------------
+  1) No MailerLite: Automations → Create automation.
+  2) Trigger (gatilho): "When subscriber joins a group" → selecione o grupo
+     que o formulário do site alimenta.
+  3) Adicione um passo "Email" → editor "Custom HTML" → cole TODO este arquivo.
+  4) Assunto sugerido: "Seja bem-vindo(a) ao (IN)finitudes"
+     Remetente: (IN)finitudes <e-mail do domínio de vocês>
+  5) Salve e ative a automação. Pronto — todo novo inscrito recebe este e-mail.
+  ============================================================================
+-->
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Seja bem-vindo(a) ao (IN)finitudes</title>
+    <!-- Web fonts: funcionam no Apple Mail/iOS; demais clientes usam o fallback. -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body { margin: 0; padding: 0; background-color: #ece7d4; }
+      table { border-collapse: collapse; }
+      img { border: 0; line-height: 100%; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; }
+      a { color: #b8252b; }
+      .serif { font-family: "Playfair Display", Georgia, "Times New Roman", serif; }
+      .sans  { font-family: "Inter", Arial, Helvetica, sans-serif; }
+      @media only screen and (max-width: 620px) {
+        .container { width: 100% !important; }
+        .px { padding-left: 24px !important; padding-right: 24px !important; }
+      }
+    </style>
+  </head>
+  <body style="margin:0; padding:0; background-color:#ece7d4;">
+    <!-- Preheader (texto de pré-visualização na caixa de entrada) -->
+    <div style="display:none; max-height:0; overflow:hidden; opacity:0; color:#ece7d4; font-size:1px; line-height:1px;">
+      Sua inscrição está confirmada. Bem-vindo(a) a uma travessia de literatura, empatia e vida.
+    </div>
+
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#ece7d4;">
+      <tr>
+        <td align="center" style="padding:28px 12px;">
+          <table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0"
+                 style="width:600px; max-width:600px; background-color:#faf5e8; border:1px solid #e7e1d0;">
+
+            <!-- ===================== CABEÇALHO ============================== -->
+            <tr>
+              <td align="center" class="px" style="padding:40px 40px 8px 40px;">
+                <a href="https://infinitudes.com.br" target="_blank" style="text-decoration:none;">
+                  <img src="https://infinitudes.com.br/logo/logo-header.png"
+                       alt="(IN)finitudes" width="220"
+                       style="display:block; width:220px; max-width:70%; height:auto;" />
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <td align="center" style="padding:0 40px;">
+                <div style="height:1px; width:56px; background-color:#b8252b; margin:18px auto 0 auto;"></div>
+              </td>
+            </tr>
+
+            <!-- ===================== MENSAGEM =============================== -->
+            <tr>
+              <td align="center" class="px" style="padding:26px 48px 0 48px;">
+                <p class="sans" style="margin:0; font-size:13px; line-height:20px; letter-spacing:0.08em; text-transform:uppercase; color:#6b6558;">
+                  Inscrição confirmada
+                </p>
+                <h1 class="serif" style="margin:12px 0 0 0; font-size:30px; line-height:36px; font-weight:700; color:#b8252b;">
+                  Seja bem-vindo(a)
+                </h1>
+              </td>
+            </tr>
+            <tr>
+              <td class="px sans" style="padding:20px 48px 0 48px;">
+                <p style="margin:0; font-size:16px; line-height:26px; color:#2b2b2b;">
+                  Que bom ter você aqui. O (IN)finitudes é um projeto cultural que
+                  vai da finitude da vida à infinitude das relações — um convite a
+                  construir pontes de acolhimento em meio às incertezas.
+                </p>
+                <p style="margin:16px 0 0 0; font-size:16px; line-height:26px; color:#2b2b2b;">
+                  A partir de agora, você recebe em primeira mão nossos novos
+                  materiais: artigos, curadorias e os episódios do
+                  <strong>Divã Infinito</strong>.
+                </p>
+              </td>
+            </tr>
+
+            <!-- ===================== BOTÃO ================================== -->
+            <tr>
+              <td align="center" class="px" style="padding:28px 40px 0 40px;">
+                <table role="presentation" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td align="center" style="background-color:#b8252b; border-radius:4px;">
+                      <a href="https://infinitudes.com.br/diva-infinito" target="_blank" class="sans"
+                         style="display:inline-block; padding:14px 30px; font-size:14px; font-weight:600; letter-spacing:0.03em; color:#faf5e8; text-decoration:none;">
+                        Conhecer o Divã Infinito &rarr;
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- ===================== ASSINATURA ============================= -->
+            <tr>
+              <td class="px" style="padding:34px 48px 0 48px;">
+                <div style="height:1px; background-color:#e7e1d0;"></div>
+              </td>
+            </tr>
+            <tr>
+              <td class="px sans" style="padding:20px 48px 40px 48px;">
+                <p style="margin:0; font-size:15px; line-height:24px; color:#2b2b2b;">
+                  Com carinho,
+                </p>
+                <p class="serif" style="margin:6px 0 0 0; font-size:18px; line-height:24px; color:#1a1a1a;">
+                  Eleonora Santos
+                </p>
+                <p style="margin:2px 0 0 0; font-size:13px; line-height:20px; color:#6b6558;">
+                  Idealizadora do (IN)finitudes
+                </p>
+              </td>
+            </tr>
+
+            <!-- ===================== RODAPÉ ================================= -->
+            <tr>
+              <td align="center" style="padding:0;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#0c0c0c;">
+                  <tr>
+                    <td align="center" class="px" style="padding:32px 40px 10px 40px;">
+                      <p class="serif" style="margin:0; font-size:20px; line-height:26px; color:#faf5e8;">
+                        (IN)finitudes
+                      </p>
+                      <p class="sans" style="margin:10px 0 0 0; font-size:13px; line-height:20px; color:#9a9488;">
+                        Literatura, empatia e vida.
+                      </p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td align="center" class="px sans" style="padding:8px 40px 4px 40px;">
+                      <a href="https://infinitudes.com.br/diva-infinito" target="_blank" style="color:#e7e1d0; text-decoration:none; font-size:13px; margin:0 10px;">Divã Infinito</a>
+                      <a href="https://infinitudes.com.br/hub-infinito" target="_blank" style="color:#e7e1d0; text-decoration:none; font-size:13px; margin:0 10px;">Hub Infinito</a>
+                      <a href="https://infinitudes.com.br/livro" target="_blank" style="color:#e7e1d0; text-decoration:none; font-size:13px; margin:0 10px;">O Livro</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td align="center" class="px sans" style="padding:18px 40px 32px 40px;">
+                      <p style="margin:0; font-size:12px; line-height:18px; color:#6b6558;">
+                        Você recebe este e-mail porque se inscreveu em infinitudes.com.br.
+                      </p>
+                      <p style="margin:8px 0 0 0; font-size:12px; line-height:18px; color:#6b6558;">
+                        <a href="{$unsubscribe}" style="color:#9a9488; text-decoration:underline;">Cancelar inscrição</a>
+                        &nbsp;·&nbsp; {$company}
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
