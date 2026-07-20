@@ -1,18 +1,21 @@
-# InFinitudes — Portal Editorial
+# (In)finitudes — Portal Editorial
 
-Portal editorial da InFinitudes, com foco em humanização em saúde e cuidados paliativos.
+Portal do projeto cultural (In)finitudes, com foco em humanização em saúde e cuidados paliativos.
 
-🔗 **[infinitudes-portal.vercel.app](https://infinitudes-portal.vercel.app)**
+🔗 **[infinitudes.com.br](https://infinitudes.com.br)**
 
 ## Sobre o projeto
 
-[PREENCHER: 2-3 frases sobre o propósito do InFinitudes — o que é o portal, pra quem é, e como se conecta ao livro/eventos do projeto]
+O (In)finitudes é um projeto cultural idealizado por Eleonora Santos, que reúne
+livro, podcast, curadoria de conteúdo e uma comunidade em torno de temas como
+finitude, saúde e espiritualidade — com relatos reais de pacientes em
+tratamento oncológico. Contribuí no desenvolvimento técnico do portal que
+reúne o livro, o podcast "Divã Infinito" e os demais conteúdos do projeto.
 
 ## Tech stack
 
 - **[Astro](https://astro.build/)** — framework de conteúdo, geração estática
 - **TypeScript**
-- **MailerLite** — [PREENCHER: integração pra quê exatamente? captura de newsletter, disparo de campanha?]
 - Deploy via Vercel, domínio próprio configurado com Hostinger
 
 ## Estrutura do projeto
@@ -20,8 +23,6 @@ Portal editorial da InFinitudes, com foco em humanização em saúde e cuidados 
 ​```
 infinitudes-portal/
 ├── src/                  # Páginas e componentes Astro
-├── infinitudes-studio/   # [PREENCHER: o que essa pasta faz?]
-├── mailerlite/           # Integração com MailerLite
 ├── public/               # Assets estáticos
 ├── DEPLOY.md             # Guia de deploy
 └── DNS-HOSTINGER.md      # Configuração de domínio próprio
