@@ -1,43 +1,41 @@
-# Astro Starter Kit: Minimal
+# InFinitudes — Portal Editorial
 
-```sh
-npm create astro@latest -- --template minimal
-```
+Portal editorial da InFinitudes, com foco em humanização em saúde e cuidados paliativos.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+🔗 **[infinitudes-portal.vercel.app](https://infinitudes-portal.vercel.app)**
 
-## 🚀 Project Structure
+## Sobre o projeto
 
-Inside of your Astro project, you'll see the following folders and files:
+[PREENCHER: 2-3 frases sobre o propósito do InFinitudes — o que é o portal, pra quem é, e como se conecta ao livro/eventos do projeto]
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+## Tech stack
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+- **[Astro](https://astro.build/)** — framework de conteúdo, geração estática
+- **TypeScript**
+- **MailerLite** — [PREENCHER: integração pra quê exatamente? captura de newsletter, disparo de campanha?]
+- Deploy via Vercel, domínio próprio configurado com Hostinger
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+## Estrutura do projeto
 
-Any static assets, like images, can be placed in the `public/` directory.
+​```
+infinitudes-portal/
+├── src/                  # Páginas e componentes Astro
+├── infinitudes-studio/   # [PREENCHER: o que essa pasta faz?]
+├── mailerlite/           # Integração com MailerLite
+├── public/               # Assets estáticos
+├── DEPLOY.md             # Guia de deploy
+└── DNS-HOSTINGER.md      # Configuração de domínio próprio
+​```
 
-## 🧞 Commands
+## Rodando localmente
 
-All commands are run from the root of the project, from a terminal:
+​```bash
+npm install
+npm run dev
+​```
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+Acesse `http://localhost:4321`.
 
-## 👀 Want to learn more?
+## Deploy
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Ver [DEPLOY.md](./DEPLOY.md) e [DNS-HOSTINGER.md](./DNS-HOSTINGER.md) para o passo a passo completo.
