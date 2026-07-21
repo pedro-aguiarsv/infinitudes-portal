@@ -34,9 +34,7 @@ const bookSubtitle =
 const bookAuthor = book?.author ?? "Eleonora Santos";
 // Preço cheio do livro (sem promoção). A versão promocional "De/Por"
 // fica guardada em `_livro-promocional.astro` para reativação futura.
-const bookPrice = book?.price ?? "R$ 59,00";
-// Preço original (de tabela), exibido riscado antes do promocional.
-const bookOriginalPrice = book?.originalPrice ?? "R$ 69,00";
+const bookPrice = book?.price ?? "R$ 69,00";
 const launchEdition = book?.launchEdition ?? "Edição 2026";
 const ctaText = book?.ctaText ?? "Compre aqui";
 // Loja oficial hospedada na Nuvem Shop. Link aponta direto pro produto;
@@ -217,20 +215,15 @@ const ptComponents = {
               por {bookAuthor}
             </p>
 
-            {/* Preço promocional · "De R$ 69,00" riscado + "Por R$ 59,00 + frete". */}
+            {/* Preço cheio · "R$ 69,00 + frete" (sem promoção). */}
             <div class="mt-8">
-              <p
-                class="text-center sm:text-left font-sans text-[12px] tracking-[0.06em] text-ink/55 line-through decoration-rouge/70 decoration-[1.5px]"
-              >
-                De {bookOriginalPrice}
-              </p>
               <div
-                class="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-center lg:justify-start gap-4"
+                class="flex flex-col sm:flex-row sm:items-center sm:justify-center lg:justify-start gap-4"
               >
                 <span
                   class="font-display italic text-[26px] lg:text-[28px] text-ink leading-none text-center sm:text-left"
                 >
-                  Por {bookPrice}
+                  {bookPrice}
                   <span class="font-sans not-italic text-[10px] font-medium tracking-[0.22em] uppercase text-ink/55 ml-1.5 align-middle relative -top-1">
                     + frete
                   </span>
@@ -596,13 +589,10 @@ const ptComponents = {
         <div
           class="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center"
         >
-          {/* Preço promocional · original riscado + promocional + frete (versão clara sobre bordô) */}
+          {/* Preço cheio + frete (versão clara sobre bordô) */}
           <div class="flex flex-col items-center gap-1">
-            <span class="font-sans text-[12px] tracking-[0.06em] text-paper/60 line-through decoration-paper/80 decoration-[1.5px]">
-              De {bookOriginalPrice}
-            </span>
             <span class="font-display italic text-[28px] text-paper leading-none">
-              Por {bookPrice}
+              {bookPrice}
               <span class="font-sans not-italic text-[10px] font-medium tracking-[0.22em] uppercase text-paper/70 ml-1.5 align-middle relative -top-1">
                 + frete
               </span>
