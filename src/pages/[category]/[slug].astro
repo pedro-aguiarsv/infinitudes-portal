@@ -54,9 +54,13 @@ if (!post) {
 const category = post.category ? getCategory(post.category) : null;
 const variant = post.layoutVariant ?? "classic";
 
-const heroImage = post.mainImage
-  ? urlFor(post.mainImage).width(1600).height(1067).fit("crop").auto("format").url()
-  : null;
+const heroImage = post.coverUrl
+  ? post.coverUrl
+  : post.mainImage
+    ? urlFor(post.mainImage).width(1600).height(1067).fit("crop").auto("format").url()
+    : null;
+const heroAlt = post.coverAlt ?? post.mainImage?.alt ?? post.title;
+const heroCaption = post.coverAlt ?? post.mainImage?.alt ?? null;
 
 const formattedDate = post.publishedAt
   ? new Intl.DateTimeFormat("pt-BR", {
@@ -101,7 +105,7 @@ const components = {
             authors={post.authors ?? null}
             date={formattedDate}
             imageUrl={heroImage}
-            imageAlt={post.mainImage?.alt}
+            imageAlt={heroAlt}
           />
         ) : (
           <PostHeaderClassic
@@ -120,14 +124,14 @@ const components = {
           <figure class="max-w-4xl mx-auto px-6 mt-2">
             <img
               src={heroImage}
-              alt={post.mainImage?.alt ?? post.title}
+              alt={heroAlt}
               class="w-full aspect-[3/2] object-cover"
               loading="eager"
               fetchpriority="high"
             />
-            {post.mainImage?.alt && (
+            {heroCaption && (
               <figcaption class="meta mt-3 text-center">
-                {post.mainImage.alt}
+                {heroCaption}
               </figcaption>
             )}
           </figure>

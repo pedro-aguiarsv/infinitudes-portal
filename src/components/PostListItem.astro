@@ -56,9 +56,12 @@ const linkAttrs = hasExternal
   ? { target: "_blank", rel: "noopener noreferrer" }
   : {};
 
-const imageUrl = post.mainImage
-  ? urlFor(post.mainImage).width(700).height(525).fit("crop").auto("format").url()
-  : null;
+const imageUrl = post.coverUrl
+  ? post.coverUrl
+  : post.mainImage
+    ? urlFor(post.mainImage).width(700).height(525).fit("crop").auto("format").url()
+    : null;
+const imageAlt = post.coverAlt ?? post.mainImage?.alt ?? post.title;
 
 const formattedDate = post.publishedAt
   ? new Intl.DateTimeFormat("pt-BR", {
@@ -112,7 +115,7 @@ const formattedDate = post.publishedAt
         imageUrl ? (
           <img
             src={imageUrl}
-            alt={post.mainImage?.alt ?? post.title}
+            alt={imageAlt}
             class={`w-full ${imageRatio} object-cover transition-[filter] duration-300 group-hover:brightness-95`}
             loading="lazy"
             decoding="async"

@@ -47,6 +47,10 @@ export type PostPreview = {
   authors?: string | null;
   /** Link externo (usado em /recomenda). Quando preenchido, o botão "Acessar" abre em nova aba. */
   externalUrl?: string | null;
+  /** Capa servida por URL estática (ex.: "/curadoria/o-elixir.png"), usada quando não há `mainImage` no Sanity. */
+  coverUrl?: string | null;
+  /** Texto alternativo/legenda da capa quando servida por `coverUrl`. */
+  coverAlt?: string | null;
 };
 
 export type PostFull = PostPreview & {
@@ -198,7 +202,9 @@ export const postsQuery = groq`
     category,
     excerpt,
     authors,
-    externalUrl
+    externalUrl,
+    coverUrl,
+    coverAlt
   }
 `;
 
@@ -214,7 +220,9 @@ export const postBySlugQuery = groq`
     body,
     layoutVariant,
     authors,
-    externalUrl
+    externalUrl,
+    coverUrl,
+    coverAlt
   }
 `;
 
@@ -228,7 +236,9 @@ export const postsByCategoryQuery = groq`
     category,
     excerpt,
     authors,
-    externalUrl
+    externalUrl,
+    coverUrl,
+    coverAlt
   }
 `;
 
