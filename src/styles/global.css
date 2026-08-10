@@ -97,7 +97,7 @@
   --color-rouge-deep: #8f1a1f; /* hover / variação escura */
   --color-rule: #e7e1d0; /* linha fina padrão (off-white quente) */
   --color-rouge-line: #b8252b; /* linha vermelha decorativa */
-  --color-black: #0c0c0c; /* footer preto profundo */
+  --color-black: #000000; /* footer preto puro (casa com o fundo das logos) */
 
   /* Alias temporário · componentes antigos usam `amber`. Será removido
      conforme a Fase 2 reescreve cada componente. */
