@@ -72,6 +72,14 @@ export const collaboratorType = defineType({
         'Como o nome dela aparece na autoria dos posts. Deixe vazio se ela não assina artigos.',
     }),
     defineField({
+      name: 'featured',
+      title: 'Destaque (coordenação)',
+      type: 'boolean',
+      description:
+        'Se marcado, aparece em destaque no topo do roster, ocupando a largura toda. Use para a coordenação do Hub.',
+      initialValue: false,
+    }),
+    defineField({
       name: 'order',
       title: 'Ordem manual (opcional)',
       type: 'number',

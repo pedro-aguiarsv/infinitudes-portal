@@ -140,6 +140,8 @@ export type Collaborator = {
   photoAlt?: string | null;
   /** Nome como assina os posts — usado para linkar aos artigos dela. */
   authorName?: string | null;
+  /** Destaque no topo do roster, ocupando as duas colunas (ex.: coordenação). */
+  featured?: boolean | null;
   order?: number | null;
 };
 
@@ -383,6 +385,7 @@ export const collaboratorsQuery = groq`
     photoUrl,
     photoAlt,
     authorName,
+    featured,
     order
   }
 `;
