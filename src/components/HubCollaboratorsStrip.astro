@@ -1,0 +1,91 @@
+---
+// =============================================================
+// HubCollaboratorsStrip.astro · Faixa-teaser "Quem faz o Hub?"
+// -------------------------------------------------------------
+// Faixa compacta (uma linha) exibida na /hub-infinito, logo abaixo
+// do bloco "O que é o Hub Infinito?". Mostra uma pilha de retratos
+// sobrepostos + chamada + link para a página dedicada, sem empurrar
+// os artigos para longe. O roster completo vive em COLABORADORAS_HREF.
+// =============================================================
+import CollaboratorAvatar from "./CollaboratorAvatar.astro";
+import Divider from "./Divider.astro";
+import {
+  COLABORADORAS_HREF,
+  extensoFeminino,
+  capitalizar,
+  type Collaborator,
+} from "../lib/collaborators";
+
+interface Props {
+  items: Collaborator[];
+  href?: string;
+}
+
+const { items, href = COLABORADORAS_HREF } = Astro.props;
+
+const total = items.length;
+// Mostra menos avatares no mobile (via CSS) e no máximo 8 no desktop.
+const MAX_AVATARS = 8;
+const preview = items.slice(0, MAX_AVATARS);
+const remaining = total - preview.length;
+
+const chamada =
+  total === 1
+    ? "Uma mulher compõe o Hub Infinito"
+    : `${capitalizar(extensoFeminino(total))} mulheres compõem o Hub Infinito`;
+---
+
+{
+  total > 0 && (
+    <section
+      class="max-w-5xl mx-auto px-6 lg:px-12 pt-14 lg:pt-20"
+      aria-label="Quem faz o Hub Infinito"
+    >
+      <Divider variant="rouge" />
+      <div class="py-8 lg:py-10 flex flex-col sm:flex-row sm:items-center gap-6 sm:gap-8">
+        {/* Pilha de retratos sobrepostos */}
+        <a
+          href={href}
+          class="flex items-center shrink-0 -space-x-3 sm:-space-x-4"
+          aria-hidden="true"
+          tabindex="-1"
+        >
+          {preview.map((c, i) => (
+            <div
+              class:list={[
+                "transition-transform",
+                // No mobile some os avatares além do 5º para caber numa linha.
+                i >= 5 && "hidden sm:block",
+              ]}
+              style={`z-index:${preview.length - i}`}
+            >
+              <CollaboratorAvatar collaborator={c} size="sm" ring />
+            </div>
+          ))}
+          {remaining > 0 && (
+            <div
+              class="w-16 h-16 sm:w-[72px] sm:h-[72px] rounded-full ring-2 ring-paper bg-ink text-paper flex items-center justify-center font-sans text-[13px] font-medium shrink-0"
+              style="z-index:0"
+            >
+              +{remaining}
+            </div>
+          )}
+        </a>
+
+        {/* Chamada + link */}
+        <div class="min-w-0">
+          <p class="eyebrow text-rouge">Colaboradoras</p>
+          <p class="font-serif text-[20px] lg:text-[24px] leading-[1.2] mt-2 text-ink">
+            {chamada}
+          </p>
+          <a
+            href={href}
+            class="link-ed inline-block mt-3 font-sans text-[13px] font-medium tracking-[0.08em] uppercase text-rouge hover:text-rouge-deep"
+          >
+            Conheça quem faz o Hub →
+          </a>
+        </div>
+      </div>
+    </section>
+  )
+}

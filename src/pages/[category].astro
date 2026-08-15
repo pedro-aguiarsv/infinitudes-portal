@@ -17,8 +17,10 @@ import SectionTitle from "../components/SectionTitle.astro";
 import PostListItem from "../components/PostListItem.astro";
 import NewsletterSection from "../components/NewsletterSection.astro";
 import Divider from "../components/Divider.astro";
+import HubCollaboratorsStrip from "../components/HubCollaboratorsStrip.astro";
 import { CATEGORIES, getCategoriesMerged } from "../lib/categories";
 import { getPostsByCategory } from "../lib/sanity";
+import { resolveCollaborators } from "../lib/collaborators";
 
 export async function getStaticPaths() {
   // Categorias que JÁ TÊM página dedicada (sobrescrevem a rota dinâmica).
@@ -71,6 +73,9 @@ const bylineOverride = (authors?: string | null) =>
     ? authors.replace("Eleonora Cruz Santos", "Eleonora C. Santos")
     : undefined;
 
+// Colaboradoras do Hub Infinito (faixa-teaser). Só busca no Hub.
+const collaborators = isHubInfinito ? await resolveCollaborators() : [];
+
 // Aquarelas de fallback para posts sem `mainImage` — cada item da lista
 // recebe uma diferente (ciclando) para dar variedade visual às capas.
 const FALLBACK_WATERCOLORS = [
@@ -115,6 +120,10 @@ const FALLBACK_WATERCOLORS = [
         </section>
       )
     }
+
+    {/* 2.5 · Faixa "Quem faz o Hub Infinito?" — só no Hub, entre o
+         bloco "O que é?" e a lista de artigos. */}
+    {isHubInfinito && <HubCollaboratorsStrip items={collaborators} />}
 
     {/* 3 · Lista vertical com hairlines bordô entre os itens */}
     <section

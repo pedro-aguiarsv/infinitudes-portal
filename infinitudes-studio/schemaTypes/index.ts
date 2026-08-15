@@ -7,6 +7,7 @@ import {aboutPageType} from './aboutPage'
 import {episodeType} from './episode'
 import {galleryPhotoType} from './galleryPhoto'
 import {categoryType} from './category'
+import {collaboratorType} from './collaborator'
 
 export const schemaTypes = [
   // Conteúdo editorial
@@ -25,4 +26,5 @@ export const schemaTypes = [
   testimonialType,
   galleryPhotoType,
   categoryType,
+  collaboratorType,
 ]

@@ -126,6 +126,23 @@ export type CategoryOverride = {
   showInNav?: boolean | null;
 };
 
+// ----- Colaboradoras (Hub Infinito) -------------------------
+export type Collaborator = {
+  _id: string;
+  name: string;
+  slug: string;
+  role?: string | null;
+  bio: string;
+  /** Foto enviada pelo Studio (tem prioridade sobre `photoUrl`). */
+  photo?: SanityImage | null;
+  /** Caminho estático em /public (ex.: "/hub-infinito/colaboradoras/nome.webp"). */
+  photoUrl?: string | null;
+  photoAlt?: string | null;
+  /** Nome como assina os posts — usado para linkar aos artigos dela. */
+  authorName?: string | null;
+  order?: number | null;
+};
+
 // ----- Galeria ----------------------------------------------
 export type GalleryPhoto = {
   _id: string;
@@ -352,6 +369,24 @@ export const categoryOverridesQuery = groq`
   }
 `;
 
+// ----- Colaboradoras (Hub Infinito) -------------------------
+// Ordem alfabética pelo primeiro nome (o campo `name` começa pelo
+// primeiro nome). Só traz quem está com `active` != false.
+export const collaboratorsQuery = groq`
+  *[_type == "collaborator" && active != false] | order(name asc) {
+    _id,
+    name,
+    "slug": slug.current,
+    role,
+    bio,
+    photo,
+    photoUrl,
+    photoAlt,
+    authorName,
+    order
+  }
+`;
+
 // ----- Galeria ----------------------------------------------
 export const galleryPhotosQuery = groq`
   *[_type == "galleryPhoto"] | order(order asc) {
@@ -450,6 +485,11 @@ export async function getTestimonialsForBook(): Promise<Testimonial[]> {
 // Galeria
 export async function getGalleryPhotos(): Promise<GalleryPhoto[]> {
   return safeFetch<GalleryPhoto[]>(galleryPhotosQuery, undefined, []);
+}
+
+// Colaboradoras (Hub Infinito)
+export async function getCollaborators(): Promise<Collaborator[]> {
+  return safeFetch<Collaborator[]>(collaboratorsQuery, undefined, []);
 }
 
 // Categorias (overrides editáveis)
