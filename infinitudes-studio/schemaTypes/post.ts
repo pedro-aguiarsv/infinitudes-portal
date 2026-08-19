@@ -59,6 +59,18 @@ export const postType = defineType({
       description: 'Subtítulo editorial que aparece abaixo do título (1–2 frases).',
     }),
     // =============================================================
+    // authors · linha de assinatura ("Por Fulano"). Texto livre para
+    // acomodar um ou mais nomes. Aparece abaixo do título/dek na
+    // página do post e no card da listagem.
+    // =============================================================
+    defineField({
+      name: 'authors',
+      title: 'Autoria (Por…)',
+      type: 'string',
+      description:
+        'Assinatura que aparece abaixo do título e nos cards. Escreva incluindo o "Por". Ex.: "Por Carla Kirilos". Deixe vazio se não houver assinatura.',
+    }),
+    // =============================================================
     // externalUrl · usado principalmente em /recomenda. Quando
     // preenchido, o botão "Acessar" leva ao link externo (Amazon,
     // Spotify, site do evento etc.). Se vazio, o site usa o link
@@ -75,18 +87,6 @@ export const postType = defineType({
           // Validação opcional, sem mensagem agressiva
           return true
         }),
-    }),
-    // =============================================================
-    // authors · texto livre da linha de bylines (ex.: "Por Eleonora
-    // Cruz Santos" ou "Por A, B e C"). Mais flexível que referência
-    // a um schema de autores neste estágio.
-    // =============================================================
-    defineField({
-      name: 'authors',
-      title: 'Bylines (autores)',
-      type: 'string',
-      description:
-        'Linha de assinatura do post. Ex.: "Por Eleonora Cruz Santos".',
     }),
     // =============================================================
     // layoutVariant · escolhe o template da página de post detalhe.
