@@ -41,7 +41,9 @@ const {
 } = Astro.props;
 
 // Byline: usa o prop explícito ou, se ausente, o campo `authors` do post.
-const byline = author ?? post.authors ?? null;
+// Exibe apenas o nome, sem o prefixo "Por" (ex.: "Por Fulano" → "Fulano").
+const rawByline = author ?? post.authors ?? null;
+const byline = rawByline ? rawByline.replace(/^\s*por\s+/i, "").trim() : null;
 
 // Quando o post tem `externalUrl` (ex.: artigos de terceiros no Hub Infinito),
 // o item aponta para o link externo e abre em nova aba; caso contrário usa a

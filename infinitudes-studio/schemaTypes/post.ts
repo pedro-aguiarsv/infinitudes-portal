@@ -65,10 +65,10 @@ export const postType = defineType({
     // =============================================================
     defineField({
       name: 'authors',
-      title: 'Autoria (Por…)',
+      title: 'Autoria (nome do autor)',
       type: 'string',
       description:
-        'Assinatura que aparece abaixo do título e nos cards. Escreva incluindo o "Por". Ex.: "Por Carla Kirilos". Deixe vazio se não houver assinatura.',
+        'Nome do autor que aparece abaixo do título e nos cards. Escreva só o nome, sem "Por". Ex.: "Carla Kirilos". Deixe vazio se não houver assinatura.',
     }),
     // =============================================================
     // externalUrl · usado principalmente em /recomenda. Quando
