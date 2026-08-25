@@ -1,0 +1,158 @@
+---
+// =============================================================
+// /hub-infinito/colaboradoras/[slug] · Perfil da colaboradora
+// -------------------------------------------------------------
+// Página dedicada de cada colaboradora do Hub Infinito:
+//   1. Hero editorial — retrato grande + nome + função + bio
+//   2. Artigos assinados por ela (PostListItem), ligados por
+//      correspondência de nome (ver articlesForCollaborator).
+// Acessada pelos nomes/retratos da página /colaboradoras.
+// =============================================================
+import Layout from "../../../layouts/Layout.astro";
+import Header from "../../../components/Header.astro";
+import Footer from "../../../components/Footer.astro";
+import CollaboratorAvatar from "../../../components/CollaboratorAvatar.astro";
+import PostListItem from "../../../components/PostListItem.astro";
+import Divider from "../../../components/Divider.astro";
+import NewsletterSection from "../../../components/NewsletterSection.astro";
+import {
+  resolveCollaborators,
+  articlesForCollaborator,
+} from "../../../lib/collaborators";
+import { getAllPosts } from "../../../lib/sanity";
+
+export async function getStaticPaths() {
+  const [collaborators, posts] = await Promise.all([
+    resolveCollaborators(),
+    getAllPosts(),
+  ]);
+  return collaborators.map((collaborator) => ({
+    params: { slug: collaborator.slug },
+    props: {
+      collaborator,
+      articles: articlesForCollaborator(collaborator, posts),
+    },
+  }));
+}
+
+const { collaborator, articles } = Astro.props;
+const firstName = collaborator.name.split(/\s+/)[0];
+
+// Aquarelas de fallback para artigos sem capa (ciclando).
+const FALLBACK_WATERCOLORS = [
+  "/watercolors/rouge-blob.webp",
+  "/watercolors/black-figure.webp",
+  "/watercolors/black-blob.webp",
+  "/watercolors/black-ink.webp",
+  "/watercolors/rouge-blob-hero.webp",
+];
+---
+
+<Layout
+  title={`${collaborator.name} — Hub Infinito · (In)finitudes`}
+  description={collaborator.bio}
+>
+  <Header />
+
+  <main>
+    {/* 1 · Hero da colaboradora */}
+    <section class="relative overflow-hidden">
+      {/* Brilho atmosférico sutil por trás do retrato */}
+      <div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-10">
+        <div
+          class="absolute -top-32 left-1/2 -translate-x-1/2 w-[620px] h-[620px] rounded-full bg-rouge/[0.06] blur-3xl"
+        >
+        </div>
+      </div>
+
+      <div class="max-w-5xl mx-auto px-6 lg:px-12 pt-10 lg:pt-14">
+        <a
+          href="/hub-infinito/colaboradoras"
+          class="link-ed inline-flex items-center gap-2 font-sans text-[12px] font-medium tracking-[0.14em] uppercase text-ink/55 hover:text-rouge"
+        >
+          ← Colaboradoras
+        </a>
+      </div>
+
+      <div class="max-w-5xl mx-auto px-6 lg:px-12 py-10 lg:py-16">
+        <div
+          class="flex flex-col items-center text-center md:flex-row md:items-start md:text-left gap-8 lg:gap-14"
+        >
+          <div class="shrink-0">
+            <CollaboratorAvatar collaborator={collaborator} size="2xl" />
+          </div>
+          <div class="min-w-0 md:pt-3">
+            <p class="eyebrow text-rouge">Hub Infinito · Colaboradora</p>
+            <h1
+              class="font-display text-[34px] sm:text-[44px] lg:text-[54px] leading-[1.05] font-normal mt-3 tracking-[-0.01em]"
+            >
+              {collaborator.name}
+            </h1>
+            {
+              collaborator.role && (
+                <p class="font-sans text-[12px] font-medium tracking-[0.18em] uppercase text-rouge/90 mt-3">
+                  {collaborator.role}
+                </p>
+              )
+            }
+            <p
+              class="font-serif text-[17px] lg:text-[19px] leading-[1.65] mt-6 text-ink/80 max-w-2xl"
+            >
+              {collaborator.bio}
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* 2 · Artigos assinados por ela */}
+    <section class="max-w-5xl mx-auto px-6 lg:px-12 pb-16 lg:pb-24">
+      <div class="border-t border-rule/60 pt-10 lg:pt-14">
+        <p class="eyebrow text-rouge">Artigos</p>
+        <h2
+          class="font-display text-[26px] lg:text-[32px] leading-[1.1] font-normal mt-2"
+        >
+          Textos de {firstName}
+        </h2>
+      </div>
+
+      {
+        articles.length > 0 ? (
+          <div class="mt-6">
+            <Divider variant="rouge" />
+            {articles.map((post, idx) => (
+              <>
+                <PostListItem
+                  post={post}
+                  author=""
+                  fallbackWatercolor={
+                    FALLBACK_WATERCOLORS[idx % FALLBACK_WATERCOLORS.length]
+                  }
+                />
+                <Divider variant="rouge" />
+              </>
+            ))}
+          </div>
+        ) : (
+          <div class="text-center py-14 lg:py-20">
+            <p class="font-serif italic text-[18px] lg:text-[20px] leading-[1.55] text-ink-soft max-w-xl mx-auto">
+              {firstName} ainda não tem artigos publicados no Hub Infinito. Em
+              breve, novos textos.
+            </p>
+            <a
+              href="/hub-infinito"
+              class="link-ed inline-block mt-6 font-sans text-[12px] font-medium tracking-[0.14em] uppercase text-rouge hover:text-rouge-deep"
+            >
+              Ver todos os artigos do Hub →
+            </a>
+          </div>
+        )
+      }
+    </section>
+
+    {/* 3 · Newsletter */}
+    <NewsletterSection />
+  </main>
+
+  <Footer />
+</Layout>

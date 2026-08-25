@@ -11,14 +11,14 @@ import { collaboratorInitials } from "../lib/collaborators";
 
 interface Props {
   collaborator: Collaborator;
-  size?: "sm" | "lg" | "xl";
+  size?: "sm" | "lg" | "xl" | "2xl";
   /** Anel creme ao redor — usado na pilha sobreposta da faixa-teaser. */
   ring?: boolean;
 }
 
 const { collaborator, size = "lg", ring = false } = Astro.props;
 
-const imgDim = size === "xl" ? 480 : 320;
+const imgDim = size === "2xl" ? 640 : size === "xl" ? 480 : 320;
 const src = collaborator.photo
   ? urlFor(collaborator.photo)
       .width(imgDim)
@@ -36,7 +36,9 @@ const sizeCls =
     ? "w-16 h-16 sm:w-[72px] sm:h-[72px] text-[15px]"
     : size === "xl"
       ? "w-32 h-32 md:w-40 md:h-40 text-4xl"
-      : "w-24 h-24 md:w-28 md:h-28 text-2xl";
+      : size === "2xl"
+        ? "w-44 h-44 md:w-56 md:h-56 text-5xl"
+        : "w-24 h-24 md:w-28 md:h-28 text-2xl";
 const ringCls = ring ? "ring-2 ring-paper" : "";
 ---
 

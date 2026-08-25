@@ -10,12 +10,17 @@
 // - `extensoFeminino()` escreve o número por extenso no feminino
 //   ("dezoito mulheres"), usado no texto da faixa-teaser.
 // =============================================================
-import { getCollaborators, type Collaborator } from "./sanity";
+import { getCollaborators, type Collaborator, type PostPreview } from "./sanity";
 
 export type { Collaborator };
 
 /** Rota pública da página dedicada com o roster completo. */
 export const COLABORADORAS_HREF = "/hub-infinito/colaboradoras";
+
+/** Rota da página de perfil de uma colaboradora. */
+export function collaboratorHref(slug: string): string {
+  return `${COLABORADORAS_HREF}/${slug}`;
+}
 
 export function collaboratorInitials(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean);
@@ -252,4 +257,65 @@ export const FALLBACK_COLLABORATORS: Collaborator[] = [
 export async function resolveCollaborators(): Promise<Collaborator[]> {
   const items = await getCollaborators();
   return items.length > 0 ? items : FALLBACK_COLLABORATORS;
+}
+
+// =============================================================
+// Ponte autora ↔ artigos
+// -------------------------------------------------------------
+// Os posts guardam a assinatura como texto livre (`authors`), então
+// ligamos cada colaboradora aos seus artigos por correspondência de
+// nome, tolerante a acentos, pontuação, prefixo "Por" e inicial do
+// meio (ex.: colaboradora "Daniele O. Xavier" casa com o artigo
+// assinado "Daniele Xavier").
+// =============================================================
+const NAME_STOPWORDS = new Set(["de", "da", "do", "dos", "das", "e"]);
+
+/** minúsculas, sem acentos, sem "Por", sem pontuação e espaços normalizados. */
+export function normalizeName(input: string): string {
+  return input
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/^\s*por\s+/i, "")
+    .replace(/[.,;]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/** Tokens significativos do nome (descarta iniciais soltas e conectivos). */
+function significantTokens(name: string): string[] {
+  return normalizeName(name)
+    .split(" ")
+    .filter((t) => t.length >= 2 && !NAME_STOPWORDS.has(t));
+}
+
+/** Nome com que a colaboradora assina (authorName tem prioridade sobre name). */
+export function collaboratorAuthorName(c: Collaborator): string {
+  return (c.authorName?.trim() || c.name).trim();
+}
+
+/** true se a assinatura do post corresponde à colaboradora. */
+export function postMatchesCollaborator(
+  postAuthors: string | null | undefined,
+  c: Collaborator,
+): boolean {
+  if (!postAuthors) return false;
+  const postSet = new Set(normalizeName(postAuthors).split(" ").filter(Boolean));
+  const tokens = significantTokens(collaboratorAuthorName(c));
+  if (tokens.length === 0) return false;
+  // Exige o primeiro nome presente...
+  const [first, ...others] = tokens;
+  if (!postSet.has(first)) return false;
+  // ...e, havendo sobrenome, ao menos um sobrenome em comum (evita
+  // falsos positivos entre pessoas de mesmo primeiro nome).
+  if (others.length === 0) return true;
+  return others.some((t) => postSet.has(t));
+}
+
+/** Artigos assinados pela colaboradora, mais recentes primeiro. */
+export function articlesForCollaborator(
+  c: Collaborator,
+  posts: PostPreview[],
+): PostPreview[] {
+  return posts.filter((p) => postMatchesCollaborator(p.authors, c));
 }
