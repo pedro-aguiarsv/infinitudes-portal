@@ -62,6 +62,15 @@ const heroImage = post.coverUrl
 const heroAlt = post.coverAlt ?? post.mainImage?.alt ?? post.title;
 const heroCaption = post.coverAlt ?? post.mainImage?.alt ?? null;
 
+// Imagem de compartilhamento (Open Graph): usa a capa do próprio artigo,
+// recortada em 1200×630. Cai no padrão do Layout (/og-image.png) quando
+// o post não tem capa.
+const ogImage = post.coverUrl
+  ? post.coverUrl
+  : post.mainImage
+    ? urlFor(post.mainImage).width(1200).height(630).fit("crop").auto("format").url()
+    : undefined;
+
 const formattedDate = post.publishedAt
   ? new Intl.DateTimeFormat("pt-BR", {
       day: "numeric",
@@ -91,6 +100,7 @@ const components = {
 <Layout
   title={`${post.title} — (In)finitudes`}
   description={post.excerpt ?? undefined}
+  image={ogImage}
 >
   <Header />
 
