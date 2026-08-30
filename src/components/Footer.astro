@@ -7,7 +7,8 @@
 //
 // Régua de fomento (logos individuais claros, em uma única fileira):
 //   · Patrocínio   → Lei Rouanet · Itaú
-//   · Realização   → Ministério da Cultura · Governo do Brasil
+//   · Realização   → Ministério da Cultura · Bandeira do Brasil
+//                     (período eleitoral; fora dele, Governo do Brasil)
 // Os PNGs/WebPs em /public/footer/sponsors/ já são versões claras
 // (texto branco + cores oficiais) preparadas pra fundo escuro.
 // =============================================================
@@ -54,10 +55,13 @@ const FALLBACK_REALIZATION: FooterLogo[] = [
     h: "h-9",
   },
   {
-    label: "Governo do Brasil",
-    src: "/footer/sponsors/governo-brasil.png",
-    srcWebp: "/footer/sponsors/governo-brasil.webp",
-    h: "h-14",
+    // Período eleitoral: a marca institucional "Governo do Brasil" dá
+    // lugar à Bandeira Nacional. Os arquivos governo-brasil.* seguem em
+    // /public/footer/sponsors/ para facilitar reverter depois do pleito.
+    label: "Bandeira do Brasil",
+    src: "/footer/sponsors/bandeira-brasil.png",
+    srcWebp: "/footer/sponsors/bandeira-brasil.webp",
+    h: "h-12",
   },
 ];
 
