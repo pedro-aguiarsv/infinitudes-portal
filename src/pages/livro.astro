@@ -32,9 +32,9 @@ const bookSubtitle =
   book?.subtitle ??
   "Além da própria autora, o livro traz relatos de outros 19 pacientes diagnosticados com câncer, além de visões de pessoas que estão do outro lado da história — os filhos da autora e uma mãe que perdeu seu jovem filho.";
 const bookAuthor = book?.author ?? "Eleonora Santos";
-// Preço cheio do livro (sem promoção). A versão promocional "De/Por"
-// fica guardada em `_livro-promocional.astro` para reativação futura.
-const bookPrice = book?.price ?? "R$ 69,00";
+// Preço do livro. A versão promocional "De/Por" fica guardada em
+// `_livro-promocional.astro` para reativação futura.
+const bookPrice = book?.price ?? "R$ 42,00";
 const launchEdition = book?.launchEdition ?? "Edição 2026";
 const ctaText = book?.ctaText ?? "Compre aqui";
 // Loja oficial hospedada na Nuvem Shop. Link aponta direto pro produto;
@@ -215,7 +215,7 @@ const ptComponents = {
               por {bookAuthor}
             </p>
 
-            {/* Preço cheio · "R$ 69,00 + frete" (sem promoção). */}
+            {/* Preço · "R$ 42,00 + frete". */}
             <div class="mt-8">
               <div
                 class="flex flex-col sm:flex-row sm:items-center sm:justify-center lg:justify-start gap-4"
