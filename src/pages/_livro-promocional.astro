@@ -48,10 +48,9 @@ const bookPrice = book?.price ?? "R$ 42,00";
 const bookOriginalPrice = book?.originalPrice ?? "R$ 69,00";
 const launchEdition = book?.launchEdition ?? "Edição 2026";
 const ctaText = book?.ctaText ?? "Compre aqui";
-// Loja oficial hospedada na Nuvem Shop. Link aponta direto pro produto;
+// Loja oficial (StoreOn). Link aponta direto pro produto;
 // abre em nova aba via target="_blank" nos dois <a> que usam `cartHref`.
-const cartHref =
-  "https://projetoinfinitudes.lojavirtualnuvem.com.br/produtos/livro-infinitudes/";
+const cartHref = "https://storeon.up.railway.app/store/in-finitudes/livro";
 
 const coverUrl = book?.cover
   ? urlFor(book.cover).width(720).height(960).fit("crop").auto("format").url()
