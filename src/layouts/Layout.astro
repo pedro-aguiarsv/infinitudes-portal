@@ -37,7 +37,8 @@ const GA_ID = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="generator" content={Astro.generator} />
-    <meta name="description" content={description} />
+    {/* description vazia ("") = página sem síntese na prévia do link */}
+    {description && <meta name="description" content={description} />}
 
     {/* Google Analytics 4 · só renderiza quando PUBLIC_GA_MEASUREMENT_ID existe */}
     {
@@ -82,7 +83,7 @@ const GA_ID = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
     <meta property="og:locale" content="pt_BR" />
     <meta property="og:site_name" content="(In)finitudes" />
     <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
+    {description && <meta property="og:description" content={description} />}
     <meta property="og:url" content={canonicalURL.toString()} />
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
@@ -92,7 +93,7 @@ const GA_ID = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
     {/* Twitter Card */}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
+    {description && <meta name="twitter:description" content={description} />}
     <meta name="twitter:image" content={ogImage} />
   </head>
   <body class="font-sans bg-paper text-ink">

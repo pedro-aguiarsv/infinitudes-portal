@@ -89,7 +89,7 @@ const FALLBACK_WATERCOLORS = [
 
 <Layout
   title={`${category.title} — (In)finitudes`}
-  description={category.description}
+  description={category.value === "hub-infinito" ? "" : category.description}
 >
   <Header />
 
