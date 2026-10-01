@@ -26,7 +26,7 @@ import Divider from "../../components/Divider.astro";
 import { PortableText } from "astro-portabletext";
 import {
   getAllPosts,
-  getPostBySlug,
+  getAllPostsFull,
   urlFor,
   type PostFull,
   type PostPreview,
@@ -36,20 +36,16 @@ import PTBlock from "../../components/portable-text/PTBlock.astro";
 import PTImage from "../../components/portable-text/PTImage.astro";
 
 export async function getStaticPaths() {
-  const posts = await getAllPosts();
+  const posts = await getAllPostsFull();
   return posts
     .filter((p) => p.category)
     .map((post) => ({
       params: { category: post.category!, slug: post.slug },
+      props: { post },
     }));
 }
 
-const { slug } = Astro.params;
-const post = (await getPostBySlug(slug!)) as PostFull | null;
-
-if (!post) {
-  return Astro.redirect("/404");
-}
+const { post } = Astro.props as { post: PostFull };
 
 const category = post.category ? getCategory(post.category) : null;
 const variant = post.layoutVariant ?? "classic";

@@ -227,8 +227,7 @@ export const postsQuery = groq`
   }
 `;
 
-export const postBySlugQuery = groq`
-  *[_type == "post" && slug.current == $slug][0] {
+const postFullProjection = groq`
     _id,
     title,
     "slug": slug.current,
@@ -242,6 +241,17 @@ export const postBySlugQuery = groq`
     externalUrl,
     coverUrl,
     coverAlt
+`;
+
+export const postBySlugQuery = groq`
+  *[_type == "post" && slug.current == $slug][0] {
+    ${postFullProjection}
+  }
+`;
+
+export const allPostsFullQuery = groq`
+  *[_type == "post" && defined(slug.current)] | order(publishedAt desc) {
+    ${postFullProjection}
   }
 `;
 
@@ -450,6 +460,10 @@ export async function getAllPosts(): Promise<PostPreview[]> {
 
 export async function getPostBySlug(slug: string): Promise<PostFull | null> {
   return safeFetch<PostFull | null>(postBySlugQuery, { slug }, null);
+}
+
+export async function getAllPostsFull(): Promise<PostFull[]> {
+  return safeFetch<PostFull[]>(allPostsFullQuery, undefined, []);
 }
 
 export async function getAllSlugs(): Promise<string[]> {
