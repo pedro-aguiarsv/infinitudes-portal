@@ -32,6 +32,7 @@ export async function getStaticPaths() {
     "sobre",
     "recomenda",
     "curadoria",
+    "na-midia",
   ]);
 
   return CATEGORIES.filter((cat) => !DEDICATED_ROUTES.has(cat.value)).map(

@@ -14,6 +14,7 @@ export type CategoryValue =
   | 'hub-infinito'
   | 'diva-infinito'
   | 'curadoria'
+  | 'na-midia'
   | 'sobre'
   | 'recomenda'
 
@@ -38,6 +39,11 @@ export const CATEGORIES: Category[] = [
     title: 'Curadoria',
     value: 'curadoria',
     description: 'Histórias enviadas por leitores, selecionadas pela redação.',
+  },
+  {
+    title: 'Na Mídia',
+    value: 'na-midia',
+    description: 'Matérias e aparições do projeto na imprensa e na internet.',
   },
   {
     title: 'Sobre',

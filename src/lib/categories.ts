@@ -20,6 +20,7 @@ export type CategoryValue =
   | "hub-infinito"
   | "diva-infinito"
   | "curadoria"
+  | "na-midia"
   | "sobre"
   | "recomenda";
 
@@ -65,6 +66,16 @@ export const CATEGORIES: Category[] = [
     description:
       "Histórias reais trazidas por leitores, selecionadas por nossa curadoria",
     order: 40,
+  },
+  {
+    title: "Na Mídia",
+    value: "na-midia",
+    href: "/na-midia",
+    description:
+      "Matérias, entrevistas e aparições do (In)finitudes na imprensa e na internet.",
+    longDescription:
+      "Um arquivo das matérias, entrevistas e reportagens publicadas na internet sobre o projeto (In)finitudes — o que se disse de nós, em voz de terceiros.",
+    order: 50,
   },
   {
     title: "Sobre",
@@ -131,6 +142,7 @@ export const NAV_ITEMS: NavItem[] = [
   { title: "Divã Infinito — Podcast", href: "/diva-infinito" },
   { title: "Hub Infinito", href: "/hub-infinito" },
   { title: "Curadoria", href: "/curadoria" },
+  { title: "Na Mídia", href: "/na-midia" },
   { title: "Recomenda", href: "/recomenda" },
   { title: "Sobre", href: "/sobre" },
 ];

@@ -1,0 +1,125 @@
+---
+// =============================================================
+// /na-midia · Recortes de imprensa sobre o (In)finitudes
+// -------------------------------------------------------------
+// Sobrescreve a rota dinâmica `[category].astro` para `/na-midia`.
+// Mesmo layout de /recomenda (lista flat + "Acesse aqui"), mas
+// dedicado a matérias, entrevistas e aparições do projeto.
+// =============================================================
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import SectionTitle from "../components/SectionTitle.astro";
+import RecommendationListItem from "../components/RecommendationListItem.astro";
+import NewsletterSection from "../components/NewsletterSection.astro";
+import Divider from "../components/Divider.astro";
+import { getCategoriesMerged } from "../lib/categories";
+import { getPostsByCategory } from "../lib/sanity";
+import { resolveExternalThumb } from "../lib/recommend-thumbs";
+
+const [postsRaw, merged] = await Promise.all([
+  getPostsByCategory("na-midia"),
+  getCategoriesMerged(),
+]);
+
+const posts = await Promise.all(
+  postsRaw.map(async (p) => ({
+    ...p,
+    externalImageUrl: p.mainImage
+      ? null
+      : await resolveExternalThumb(p.externalUrl),
+    imagePosition: null as "top" | "center" | "bottom" | null,
+  })),
+);
+
+const category = merged.find((c) => c.value === "na-midia");
+const hasReal = posts.length > 0;
+const subtitle =
+  category?.description ??
+  "Matérias, entrevistas e aparições do (In)finitudes na imprensa e na internet.";
+---
+
+<Layout
+  title="Na Mídia — (In)finitudes"
+  description={subtitle}
+>
+  <Header />
+
+  <main>
+    <section class="max-w-5xl mx-auto px-6 lg:px-12">
+      <SectionTitle
+        eyebrow="Seção"
+        title="Na Mídia"
+        subtitle={category?.longDescription ? undefined : subtitle}
+      />
+    </section>
+
+    {
+      category?.longDescription && (
+        <section class="bg-paper-soft border-y border-rule/60">
+          <div class="max-w-3xl mx-auto px-6 py-14 lg:py-20 text-center">
+            <p class="eyebrow text-rouge">O que é Na Mídia?</p>
+            <p class="font-serif text-[18px] lg:text-[20px] leading-[1.6] mt-5 text-ink-soft whitespace-pre-line">
+              {category.longDescription}
+            </p>
+          </div>
+        </section>
+      )
+    }
+
+    <section
+      class={`max-w-5xl mx-auto px-6 lg:px-12 ${category?.longDescription ? "pt-16 lg:pt-20" : ""} pb-16 lg:pb-24`}
+    >
+      <Divider variant="rouge" />
+      {
+        hasReal ? (
+          posts.map((post) => (
+            <>
+              <RecommendationListItem
+                title={post.title}
+                excerpt={post.excerpt}
+                internalHref={`/${post.category}/${post.slug}`}
+                externalUrl={post.externalUrl}
+                mainImage={post.mainImage}
+                externalImageUrl={post.externalImageUrl}
+                imagePosition={post.imagePosition}
+                authors={post.authors}
+              />
+              <Divider variant="rule" />
+            </>
+          ))
+        ) : (
+          <div class="text-center py-16 lg:py-24">
+            <p class="eyebrow text-rouge">Em breve</p>
+            <p class="font-serif italic text-[18px] lg:text-[20px] leading-[1.55] mt-5 text-ink-soft max-w-xl mx-auto">
+              Recortes de imprensa sobre o (In)finitudes — primeiras matérias
+              em curadoria.
+            </p>
+          </div>
+        )
+      }
+    </section>
+
+    {
+      category?.disclaimer && (
+        <aside
+          class="max-w-3xl mx-auto px-6 lg:px-12 pb-16 lg:pb-20"
+          aria-label="Aviso editorial"
+        >
+          <div class="border-t border-rule/50 pt-8">
+            <p class="font-sans text-[11px] font-medium tracking-[0.22em] uppercase text-rouge mb-3">
+              Aviso editorial
+            </p>
+            <p class="font-serif text-[13px] lg:text-[14px] leading-[1.6] text-ink/65">
+              {category.disclaimer}
+            </p>
+          </div>
+        </aside>
+      )
+    }
+
+    <NewsletterSection />
+  </main>
+
+  <Footer />
+</Layout>

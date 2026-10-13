@@ -71,17 +71,17 @@ export const postType = defineType({
         'Nome do autor que aparece abaixo do título e nos cards. Escreva só o nome, sem "Por". Ex.: "Carla Kirilos". Deixe vazio se não houver assinatura.',
     }),
     // =============================================================
-    // externalUrl · usado principalmente em /recomenda. Quando
-    // preenchido, o botão "Acessar" leva ao link externo (Amazon,
-    // Spotify, site do evento etc.). Se vazio, o site usa o link
-    // interno do post (/{categoria}/{slug}).
+    // externalUrl · usado principalmente em /recomenda e /na-midia.
+    // Quando preenchido, o botão "Acessar" leva ao link externo (Amazon,
+    // Spotify, site do evento, matéria da imprensa etc.). Se vazio, o
+    // site usa o link interno do post (/{categoria}/{slug}).
     // =============================================================
     defineField({
       name: 'externalUrl',
       title: 'Link externo (opcional)',
       type: 'url',
       description:
-        'Para recomendações de terceiros: link da Amazon, Spotify, site do evento etc. Quando preenchido, o botão "Acessar" abre esse link em nova aba.',
+        'Para Recomenda e Na Mídia: link da matéria, YouTube, Spotify, site do veículo etc. Quando preenchido, o botão "Acesse aqui" abre esse link em nova aba.',
       validation: (Rule) =>
         Rule.uri({scheme: ['http', 'https']}).custom((url) => {
           // Validação opcional, sem mensagem agressiva
