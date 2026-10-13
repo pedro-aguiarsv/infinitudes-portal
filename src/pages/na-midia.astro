@@ -22,14 +22,40 @@ const [postsRaw, merged] = await Promise.all([
   getCategoriesMerged(),
 ]);
 
+// Capas locais para veículos que não expõem thumbnail automática
+// (LinkedIn, Instagram, sites de notícia). YouTube cai no
+// resolveExternalThumb. Prioridade: mainImage > capa local > oEmbed.
+const LOCAL_THUMBS: Record<
+  string,
+  { url: string; position?: "top" | "center" | "bottom" }
+> = {
+  "midia-linkedin-lancamento-palacio-das-artes": {
+    url: "/na-midia-thumbs/linkedin-lancamento.webp",
+    position: "top",
+  },
+  "midia-revista-encontro-infinitudes": {
+    url: "/na-midia-thumbs/revista-encontro.jpg",
+  },
+  "midia-fcs-lancamento-palacio-das-artes": {
+    url: "/na-midia-thumbs/fcs-lancamento.png",
+  },
+  "midia-instagram-ana-alvarez-lancamento": {
+    url: "/na-midia-thumbs/instagram-ana-alvarez.jpg",
+    position: "top",
+  },
+};
+
 const posts = await Promise.all(
-  postsRaw.map(async (p) => ({
-    ...p,
-    externalImageUrl: p.mainImage
-      ? null
-      : await resolveExternalThumb(p.externalUrl),
-    imagePosition: null as "top" | "center" | "bottom" | null,
-  })),
+  postsRaw.map(async (p) => {
+    const local = LOCAL_THUMBS[p.slug];
+    return {
+      ...p,
+      externalImageUrl: p.mainImage
+        ? null
+        : (local?.url ?? (await resolveExternalThumb(p.externalUrl))),
+      imagePosition: local?.position ?? null,
+    };
+  }),
 );
 
 const category = merged.find((c) => c.value === "na-midia");
