@@ -23,8 +23,9 @@ const [postsRaw, merged] = await Promise.all([
 ]);
 
 // Capas locais para veículos que não expõem thumbnail automática
-// (LinkedIn, Instagram, sites de notícia). YouTube cai no
-// resolveExternalThumb. Prioridade: mainImage > capa local > oEmbed.
+// (LinkedIn, Instagram, sites de notícia). YouTube (TV Senado,
+// Bucket List, Brasil das Gerais) cai no resolveExternalThumb.
+// Prioridade: mainImage > capa local > oEmbed.
 const LOCAL_THUMBS: Record<
   string,
   { url: string; position?: "top" | "center" | "bottom" }
