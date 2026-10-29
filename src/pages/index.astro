@@ -22,45 +22,16 @@ import HeroFeatured from "../components/HeroFeatured.astro";
 import PostCard from "../components/PostCard.astro";
 import BookSection from "../components/BookSection.astro";
 import NewsletterSection from "../components/NewsletterSection.astro";
-import { getAllPosts, getAllEpisodes, urlFor } from "../lib/sanity";
-import { getYouTubeThumbnail } from "../lib/embeds";
+import { getAllPosts, urlFor, type PostPreview } from "../lib/sanity";
 import { resolveExternalThumb } from "../lib/recommend-thumbs";
+import { CATEGORIES } from "../lib/categories";
 
 const posts = await getAllPosts();
-const episodes = await getAllEpisodes();
-
-// Último episódio do Divã Infinito (temporada), usado no card dinâmico do
-// grid superior. `getAllEpisodes` já vem ordenado por número desc, então o
-// primeiro episódio de temporada é o mais recente.
-const latestEpisode =
-  episodes.find((e) => e.type === "temporada") ?? episodes[0] ?? null;
-
-const latestEpisodeThumb = latestEpisode
-  ? (latestEpisode.thumbnail
-      ? urlFor(latestEpisode.thumbnail)
-          .width(800)
-          .height(600)
-          .fit("crop")
-          .auto("format")
-          .url()
-      : getYouTubeThumbnail(latestEpisode.videoUrl))
-  : null;
-
-const latestEpisodeMeta = latestEpisode?.publishedAt
-  ? new Intl.DateTimeFormat("pt-BR", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    }).format(new Date(latestEpisode.publishedAt))
-  : "Divã Infinito";
 
 // Grid superior · "Em Alta & Podcasts da semana"
-// Vitrine editorial fixa (curadoria manual) com três destaques:
-//   1. Estreia do podcast Divã Infinito (interno, /diva-infinito).
-//   2. Conversa em vídeo no Bucket List PodCast (externo, YouTube).
-//   3. Coluna "As infinitas vozes de Eleonora Santos" (externo, BHAZ).
-// Os cards são renderizados inline (não vêm do Sanity) — quando esses
-// destaques mudarem, ajustar o markup no bloco "3 · Grid editorial".
+//   1. Canal do YouTube do projeto (não aponta para um episódio).
+//   2. Última publicação editorial do site (Hub, Curadoria, Na Mídia, Recomenda).
+//   3. Coluna BHAZ (curadoria manual).
 type FeaturedCard = {
   href: string;
   external: boolean;
@@ -83,47 +54,124 @@ type FeaturedCard = {
   variant: "rouge" | "black";
 };
 
-// 1º card · sempre o último episódio do Divã Infinito (dinâmico via Sanity).
-// Se ainda não houver episódio publicado, cai no card de estreia estático.
-const divaCard: FeaturedCard = latestEpisode
-  ? {
-      href: `/diva-infinito/${latestEpisode.slug}`,
-      external: false,
-      eyebrow: "Divã Infinito",
-      title: latestEpisode.title,
-      excerpt: latestEpisode.description,
-      meta: latestEpisodeMeta,
-      image: latestEpisodeThumb,
-      imageAlt: latestEpisode.title,
-      variant: "rouge",
-    }
+const youtubeChannelCard: FeaturedCard = {
+  href: "https://www.youtube.com/@projetoinfinitudes",
+  external: true,
+  eyebrow: "Divã Infinito",
+  title: "Assista ao Divã Infinito no YouTube",
+  excerpt:
+    "Conversas de Eleonora Santos com convidados sobre fé, cuidado, finitude e o sentido do infinito — todos os episódios no canal do projeto.",
+  meta: "YouTube · @projetoinfinitudes",
+  image: "/diva-infinito/equipe-canal.webp",
+  imageAlt:
+    "Equipe do Divã Infinito reunida na gravação, ao lado do banner (In)finitudes",
+  imagePosition: "object-[center_35%]",
+  variant: "rouge",
+};
+
+// Capas locais quando o post não tem mainImage (Na Mídia / Recomenda).
+const HOME_THUMBS: Record<
+  string,
+  { url: string; position?: "top" | "center" | "bottom" }
+> = {
+  "lancamento-infinitudes-palacio-das-artes": {
+    url: "/recomenda-thumbs/lancamento-palacio-das-artes.webp",
+    position: "top",
+  },
+  "jornada-de-um-paciente-oncologico-drauziocast-265": {
+    url: "/recomenda-thumbs/jornada-de-um-paciente-oncologico-drauziocast-265.webp",
+  },
+  "midia-linkedin-lancamento-palacio-das-artes": {
+    url: "/na-midia-thumbs/linkedin-lancamento.webp",
+    position: "top",
+  },
+  "midia-revista-encontro-infinitudes": {
+    url: "/na-midia-thumbs/revista-encontro.jpg",
+  },
+  "midia-fcs-lancamento-palacio-das-artes": {
+    url: "/na-midia-thumbs/fcs-lancamento.png",
+  },
+  "midia-instagram-ana-alvarez-lancamento": {
+    url: "/na-midia-thumbs/instagram-ana-alvarez.jpg",
+    position: "top",
+  },
+  "midia-instagram-voto-de-jubilo-cmsp": {
+    url: "/na-midia-thumbs/instagram-voto-de-jubilo.jpg",
+  },
+};
+
+const HOME_OBJECT_POSITION: Record<string, string> = {
+  top: "object-top",
+  center: "object-center",
+  bottom: "object-bottom",
+};
+
+const EDITORIAL_CATEGORIES = new Set([
+  "hub-infinito",
+  "curadoria",
+  "na-midia",
+  "recomenda",
+]);
+
+const latestPublication =
+  posts.find((p) => p.category && EDITORIAL_CATEGORIES.has(p.category)) ??
+  null;
+
+async function publicationCard(post: PostPreview): Promise<FeaturedCard> {
+  const cat = CATEGORIES.find((c) => c.value === post.category);
+  const local = HOME_THUMBS[post.slug];
+  const image =
+    post.mainImage
+      ? urlFor(post.mainImage).width(800).height(600).fit("crop").auto("format").url()
+      : (post.coverUrl ??
+        local?.url ??
+        (await resolveExternalThumb(post.externalUrl)));
+  const hasExternal = Boolean(post.externalUrl);
+  const formattedDate = post.publishedAt
+    ? new Intl.DateTimeFormat("pt-BR", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      }).format(new Date(post.publishedAt))
+    : null;
+  const metaParts = [post.authors?.trim() || cat?.title, formattedDate].filter(
+    Boolean,
+  );
+
+  return {
+    href: hasExternal ? post.externalUrl! : `${cat?.href ?? ""}/${post.slug}`,
+    external: hasExternal,
+    eyebrow: "Em alta",
+    title: post.title,
+    excerpt: post.excerpt ?? "",
+    meta: metaParts.join(" · "),
+    image,
+    imageAlt: post.title,
+    imagePosition: local?.position
+      ? HOME_OBJECT_POSITION[local.position]
+      : undefined,
+    variant: "rouge",
+  };
+}
+
+const emAltaCard: FeaturedCard = latestPublication
+  ? await publicationCard(latestPublication)
   : {
-      href: "/diva-infinito",
-      external: false,
-      eyebrow: "Divã Infinito",
-      title: "Episódio 1 — estreia em junho",
+      href: "https://www.youtube.com/watch?v=cy-jyQ3kpDw",
+      external: true,
+      eyebrow: "Em alta",
+      title: "Eleonora Santos no Bucket List PodCast",
       excerpt:
-        "Estreia do podcast Divã Infinito. Disponível no YouTube e no Spotify a partir de 23 de junho.",
-      meta: "Divã Infinito",
-      image: "/diva-infinito/capa-episodio-1.webp",
-      imageAlt: "(In)finitudes — Divã Infinito",
+        "Conversa de pouco mais de uma hora com Gustavo Ziller (Grupo Zelo) sobre o “vai dar tudo certo”, finitude, espiritualidade e o projeto.",
+      meta: "Bucket List PodCast · 1h07min",
+      image: "https://i.ytimg.com/vi/cy-jyQ3kpDw/hqdefault.jpg",
+      imageAlt: "Eleonora Santos no Bucket List PodCast",
       variant: "rouge",
     };
 
 const featuredCards: FeaturedCard[] = [
-  divaCard,
-  {
-    href: "https://www.youtube.com/watch?v=cy-jyQ3kpDw",
-    external: true,
-    eyebrow: "Em alta",
-    title: "Eleonora Santos no Bucket List PodCast",
-    excerpt:
-      "Conversa de pouco mais de uma hora com Gustavo Ziller (Grupo Zelo) sobre o “vai dar tudo certo”, finitude, espiritualidade e o projeto.",
-    meta: "Bucket List PodCast · 1h07min",
-    image: "https://i.ytimg.com/vi/cy-jyQ3kpDw/hqdefault.jpg",
-    imageAlt: "Eleonora Santos no Bucket List PodCast",
-    variant: "rouge",
-  },
+  youtubeChannelCard,
+  emAltaCard,
   {
     href: "https://bhaz.com.br/colunas/siga-essa-mulher/as-infinitas-vozes-de-eleonora-santos/",
     external: true,
