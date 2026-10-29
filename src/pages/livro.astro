@@ -118,6 +118,54 @@ const showTestimonials =
 const featuredTestimonialUrl: string | null =
   "https://bhaz.com.br/colunas/siga-essa-mulher/as-infinitas-vozes-de-eleonora-santos/";
 
+type OutraVoz = {
+  eyebrow: string;
+  href: string;
+  image: string;
+  imageAlt: string;
+  quote: string;
+  author: string;
+  role: string;
+  cta: "leia" | "youtube";
+};
+
+const outrasVozes: OutraVoz[] = [
+  {
+    eyebrow: "As infinitas vozes de Eleonora Santos",
+    href: "https://bhaz.com.br/colunas/siga-essa-mulher/as-infinitas-vozes-de-eleonora-santos/",
+    image: "/authors/eleonora-bhaz.webp",
+    imageAlt:
+      "As infinitas vozes de Eleonora Santos — coluna na BHAZ, por Nalu Saad",
+    quote: showTestimonials[0].quote,
+    author: showTestimonials[0].author,
+    role: showTestimonials[0].role ?? "",
+    cta: "leia",
+  },
+  {
+    eyebrow: "Conversa em vídeo · Bucket List",
+    href: "https://www.youtube.com/watch?v=cy-jyQ3kpDw",
+    image: "https://i.ytimg.com/vi/cy-jyQ3kpDw/hqdefault.jpg",
+    imageAlt: "Eleonora Santos no Bucket List PodCast",
+    quote:
+      "Toda vez que falavam comigo “vai dar tudo certo”, eu não tinha reação. Ficava calada olhando para a pessoa e, dentro de mim, pensava: o que você quer dizer com “vai dar tudo certo”? É a dificuldade que o outro tem de lidar com a finitude que está revelada no outro — e que é dele também.",
+    author: "Eleonora C. Santos",
+    role: "Bucket List PodCast · Grupo Zelo & Gustavo Ziller · 1h07min",
+    cta: "youtube",
+  },
+  {
+    eyebrow: "Conversa em vídeo · INCA",
+    href: "https://www.youtube.com/watch?v=xDhDND0i--g",
+    image: "https://i.ytimg.com/vi/xDhDND0i--g/hqdefault.jpg",
+    imageAlt:
+      "Infinitudes: humanização e cuidado integral em oncologia, com Eleonora Cruz Santos",
+    quote:
+      "Uma conversa no Instituto Nacional de Câncer sobre humanização, cuidado integral em oncologia e o que o (In)finitudes propõe: olhar para o adoecimento sem a obrigação da vitória.",
+    author: "Eleonora C. Santos",
+    role: "Instituto Nacional de Câncer · TV INCA",
+    cta: "youtube",
+  },
+];
+
 const ptComponents = {
   block: {
     normal: PTBlock,
@@ -382,162 +430,98 @@ const ptComponents = {
 
     {/* ============================================================
         4 · O LIVRO EM OUTRAS VOZES
-        Mescla, em duas colunas equivalentes:
-          A) Depoimento em destaque sobre o livro (Sanity ou fallback
-             editorial — coluna da Nalu Saad).
-          B) Conversa em vídeo · Bucket List PodCast (Grupo Zelo /
-             Gustavo Ziller) com link p/ YouTube.
-        Cada coluna tem seu próprio eyebrow e CTA opcional para o
-        material oficial. Se houver mais de 1 testimonial cadastrado
-        no Sanity, os adicionais aparecem em grid abaixo.
+        Coluna BHAZ, Bucket List e conversa no INCA. Se houver mais
+        de 1 testimonial no Sanity, os adicionais aparecem abaixo.
         ============================================================ */}
     <section class="bg-paper-soft border-y border-rule/60">
       <div class="max-w-7xl mx-auto px-6 lg:px-12 py-16 lg:py-24">
+        <header class="text-center mb-14 lg:mb-20">
+          <p class="eyebrow">Na mídia</p>
+          <h2
+            class="font-display text-[36px] sm:text-[44px] lg:text-[52px] leading-[1.08] font-normal mt-3 tracking-[-0.01em]"
+          >
+            O livro em outras vozes
+          </h2>
+          <p
+            class="font-serif italic text-[17px] lg:text-[19px] text-ink/75 mt-4 max-w-[42ch] mx-auto"
+          >
+            Coluna, entrevistas e conversas que atravessaram o (In)finitudes.
+          </p>
+        </header>
+
         <div
-          class="grid grid-cols-1 lg:grid-cols-2 gap-x-12 lg:gap-x-20 gap-y-16"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 lg:gap-x-12 gap-y-16"
         >
-          {/* Lado A · Depoimento em destaque (Em outra voz) */}
-          <article class="flex flex-col">
-            <header class="text-center mb-8">
-              <Divider variant="rouge" gap="mb-8 max-w-md mx-auto" />
-              <p
-                class="font-sans text-[11px] font-medium tracking-[0.30em] uppercase text-ink/80"
-              >
-                As infinitas vozes de Eleonora Santos
-              </p>
-            </header>
+          {outrasVozes.map((voz) => (
+            <article class="flex flex-col">
+              <header class="text-center mb-8">
+                <Divider variant="rouge" gap="mb-8 max-w-md mx-auto" />
+                <p class="font-sans text-[11px] font-medium tracking-[0.30em] uppercase text-ink/80">
+                  {voz.eyebrow}
+                </p>
+              </header>
 
-            <a
-              href="https://bhaz.com.br/colunas/siga-essa-mulher/as-infinitas-vozes-de-eleonora-santos/"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="group block mb-8 w-full max-w-[240px] mx-auto"
-              aria-label="As infinitas vozes de Eleonora Santos — coluna na BHAZ"
-            >
-              <img
-                src="/authors/eleonora-bhaz.webp"
-                alt="As infinitas vozes de Eleonora Santos — coluna na BHAZ, por Nalu Saad"
-                loading="lazy"
-                decoding="async"
-                class="w-full aspect-[4/3] object-cover transition-[filter] duration-300 group-hover:brightness-95"
-              />
-            </a>
+              <a
+                href={voz.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="group block mb-8 w-full max-w-[240px] mx-auto"
+                aria-label={voz.imageAlt}
+              >
+                <img
+                  src={voz.image}
+                  alt={voz.imageAlt}
+                  loading="lazy"
+                  decoding="async"
+                  class="w-full aspect-[4/3] object-cover transition-[filter] duration-300 group-hover:brightness-95"
+                />
+              </a>
 
-            <figure class="text-center flex-1 flex flex-col">
-              <span
-                class="font-display text-[64px] lg:text-[80px] leading-[1] text-rouge block"
-              >
-                “
-              </span>
-              <blockquote
-                class="font-serif italic text-[17px] lg:text-[19px] leading-[1.55] mt-2 text-ink-soft max-w-[52ch] mx-auto"
-              >
-                {showTestimonials[0].quote}
-              </blockquote>
-              <figcaption class="mt-8">
-                <span
-                  class="block font-sans text-[10px] font-medium tracking-[0.22em] uppercase text-rouge"
-                >
-                  {showTestimonials[0].author}
+              <figure class="text-center flex-1 flex flex-col">
+                <span class="font-display text-[64px] lg:text-[80px] leading-[1] text-rouge block">
+                  “
                 </span>
-                {showTestimonials[0].role && (
-                  <span class="meta block mt-1">
-                    {showTestimonials[0].role}
+                <blockquote class="font-serif italic text-[17px] lg:text-[19px] leading-[1.55] mt-2 text-ink-soft max-w-[52ch] mx-auto">
+                  {voz.quote}
+                </blockquote>
+                <figcaption class="mt-8">
+                  <span class="block font-sans text-[10px] font-medium tracking-[0.22em] uppercase text-rouge">
+                    {voz.author}
                   </span>
-                )}
-              </figcaption>
-            </figure>
+                  {voz.role && <span class="meta block mt-1">{voz.role}</span>}
+                </figcaption>
+              </figure>
 
-            {featuredTestimonialUrl && (
               <div class="text-center mt-10">
                 <a
-                  href={featuredTestimonialUrl}
+                  href={voz.href}
                   target="_blank"
                   rel="noopener noreferrer"
                   class="inline-flex items-center gap-2 bg-rouge text-paper px-7 py-3.5 text-[11px] font-medium tracking-[0.22em] uppercase hover:bg-rouge-deep transition-colors"
                 >
-                  Leia a matéria
-                  <span aria-hidden="true">↗</span>
+                  {voz.cta === "youtube" ? (
+                    <>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        class="w-3.5 h-3.5"
+                        aria-hidden="true"
+                      >
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                      Assista no YouTube
+                    </>
+                  ) : (
+                    <>
+                      Leia a matéria
+                      <span aria-hidden="true">↗</span>
+                    </>
+                  )}
                 </a>
               </div>
-            )}
-          </article>
-
-          {/* Lado B · Conversa em vídeo · Bucket List */}
-          <article class="flex flex-col">
-            <header class="text-center mb-8">
-              <Divider variant="rouge" gap="mb-8 max-w-md mx-auto" />
-              <p
-                class="font-sans text-[11px] font-medium tracking-[0.30em] uppercase text-ink/80"
-              >
-                Conversa em vídeo · Bucket List
-              </p>
-            </header>
-
-            <a
-              href="https://www.youtube.com/watch?v=cy-jyQ3kpDw"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="group block mb-8 w-full max-w-[240px] mx-auto"
-              aria-label="Eleonora Santos no Bucket List PodCast"
-            >
-              <img
-                src="https://i.ytimg.com/vi/cy-jyQ3kpDw/hqdefault.jpg"
-                alt="Eleonora Santos no Bucket List PodCast"
-                loading="lazy"
-                decoding="async"
-                class="w-full aspect-[4/3] object-cover transition-[filter] duration-300 group-hover:brightness-95"
-              />
-            </a>
-
-            <figure class="text-center flex-1 flex flex-col">
-              <span
-                class="font-display text-[64px] lg:text-[80px] leading-[1] text-rouge block"
-              >
-                “
-              </span>
-              <blockquote
-                class="font-serif italic text-[17px] lg:text-[19px] leading-[1.55] mt-2 text-ink-soft max-w-[52ch] mx-auto"
-              >
-                Toda vez que falavam comigo “vai dar tudo certo”, eu não tinha
-                reação. Ficava calada olhando para a pessoa e, dentro de mim,
-                pensava: o que você quer dizer com “vai dar tudo certo”? É a
-                dificuldade que o outro tem de lidar com a finitude que está
-                revelada no outro — e que é dele também.
-              </blockquote>
-              <figcaption class="mt-8">
-                <span
-                  class="block font-sans text-[10px] font-medium tracking-[0.22em] uppercase text-rouge"
-                >
-                  Eleonora C. Santos
-                </span>
-                <span class="meta block mt-1">
-                  Bucket List PodCast · Grupo Zelo &amp; Gustavo Ziller ·
-                  1h07min
-                </span>
-              </figcaption>
-            </figure>
-
-            <div class="text-center mt-10">
-              <a
-                href="https://www.youtube.com/watch?v=cy-jyQ3kpDw"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="inline-flex items-center gap-2 bg-rouge text-paper px-7 py-3.5 text-[11px] font-medium tracking-[0.22em] uppercase hover:bg-rouge-deep transition-colors"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  class="w-3.5 h-3.5"
-                  aria-hidden="true"
-                >
-                  <path d="M8 5v14l11-7z" />
-                </svg>
-                Assista no YouTube
-              </a>
-            </div>
-          </article>
+            </article>
+          ))}
         </div>
 
         {/* Testimoniais adicionais (a partir do 2º) — mantém compatibilidade
