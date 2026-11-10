@@ -5,7 +5,7 @@
 // Composição editorial:
 //   1. Header
 //   2. HeroFeatured            ← "capa de revista" com masthead + assinatura
-//   3. Grid de 3 posts         ← faixa direta sem título de seção
+//   3. Grid de 9 posts         ← Hub, Curadoria, Divã, Na Mídia e Recomenda
 //   4. BookSection             ← banner bordô do livro
 //   5. Grid "Recomendamos"     ← 3 últimas publicações da categoria
 //   6. NewsletterSection       ← captura de e-mail
@@ -28,10 +28,10 @@ import { CATEGORIES } from "../lib/categories";
 
 const posts = await getAllPosts();
 
-// Grid superior · "Em Alta & Podcasts da semana"
-//   1. Canal do YouTube do projeto (não aponta para um episódio).
-//   2. Última publicação editorial do site (Hub, Curadoria, Na Mídia, Recomenda).
-//   3. Coluna BHAZ (curadoria manual).
+// Grid superior · três linhas de três cards.
+//   1. Hub Infinito — os três artigos mais recentes.
+//   2. Na Mídia — os dois mais recentes e a coluna fixa da BHAZ.
+//   3. Divã (canal) · Curadoria mais recente · Voto de Júbilo fixo.
 type FeaturedCard = {
   href: string;
   external: boolean;
@@ -106,18 +106,10 @@ const HOME_OBJECT_POSITION: Record<string, string> = {
   bottom: "object-bottom",
 };
 
-const EDITORIAL_CATEGORIES = new Set([
-  "hub-infinito",
-  "curadoria",
-  "na-midia",
-  "recomenda",
-]);
-
-const latestPublication =
-  posts.find((p) => p.category && EDITORIAL_CATEGORIES.has(p.category)) ??
-  null;
-
-async function publicationCard(post: PostPreview): Promise<FeaturedCard> {
+async function publicationCard(
+  post: PostPreview,
+  eyebrow: string,
+): Promise<FeaturedCard> {
   const cat = CATEGORIES.find((c) => c.value === post.category);
   const local = HOME_THUMBS[post.slug];
   const image =
@@ -141,7 +133,7 @@ async function publicationCard(post: PostPreview): Promise<FeaturedCard> {
   return {
     href: hasExternal ? post.externalUrl! : `${cat?.href ?? ""}/${post.slug}`,
     external: hasExternal,
-    eyebrow: "Em alta",
+    eyebrow,
     title: post.title,
     excerpt: post.excerpt ?? "",
     meta: metaParts.join(" · "),
@@ -154,37 +146,70 @@ async function publicationCard(post: PostPreview): Promise<FeaturedCard> {
   };
 }
 
-const emAltaCard: FeaturedCard = latestPublication
-  ? await publicationCard(latestPublication)
-  : {
-      href: "https://www.youtube.com/watch?v=cy-jyQ3kpDw",
-      external: true,
-      eyebrow: "Em alta",
-      title: "Eleonora Santos no Bucket List PodCast",
-      excerpt:
-        "Conversa de pouco mais de uma hora com Gustavo Ziller (Grupo Zelo) sobre o “vai dar tudo certo”, finitude, espiritualidade e o projeto.",
-      meta: "Bucket List PodCast · 1h07min",
-      image: "https://i.ytimg.com/vi/cy-jyQ3kpDw/hqdefault.jpg",
-      imageAlt: "Eleonora Santos no Bucket List PodCast",
-      variant: "rouge",
-    };
+function takeLatest(
+  category: string,
+  count: number,
+  skipSlugs: Set<string> = new Set(),
+): PostPreview[] {
+  const picked: PostPreview[] = [];
+  for (const post of posts) {
+    if (post.category !== category || skipSlugs.has(post.slug)) continue;
+    picked.push(post);
+    if (picked.length === count) break;
+  }
+  return picked;
+}
+
+const hubPosts = takeLatest("hub-infinito", 3);
+const naMidiaPosts = takeLatest(
+  "na-midia",
+  2,
+  new Set(["midia-instagram-voto-de-jubilo-cmsp"]),
+);
+const curadoriaPosts = takeLatest("curadoria", 1);
+
+const bhazCard: FeaturedCard = {
+  href: "https://bhaz.com.br/colunas/siga-essa-mulher/as-infinitas-vozes-de-eleonora-santos/",
+  external: true,
+  eyebrow: "Na Mídia",
+  title: "As infinitas vozes de Eleonora Santos",
+  excerpt:
+    "Coluna sobre as decisões editoriais mais honestas do livro (In)finitudes — a recusa da “superação obrigatória” e as 20 vozes que atravessam a obra.",
+  meta: "BHAZ · Coluna “Siga essa mulher” · Nalu Saad",
+  image: "/authors/eleonora-bhaz.webp",
+  imageAlt: "As infinitas vozes de Eleonora Santos — coluna na BHAZ",
+  imageContain: true,
+  variant: "black",
+};
+
+const votoDeJubiloCard: FeaturedCard = {
+  href: "https://www.instagram.com/p/DeSDHGwJPE7/",
+  external: true,
+  eyebrow: "Na Mídia",
+  title:
+    "Voto de Júbilo da Câmara Municipal de São Paulo pelo livro (IN)FINITUDES",
+  excerpt:
+    "Eleonora Santos recebeu o Voto de Júbilo da Câmara Municipal de São Paulo pelo livro (IN)FINITUDES, registro nos anais da Casa.",
+  meta: "(IN)FINITUDES",
+  image: "/na-midia-thumbs/instagram-voto-de-jubilo.jpg",
+  imageAlt:
+    "Voto de Júbilo da Câmara Municipal de São Paulo pelo livro (IN)FINITUDES",
+  variant: "rouge",
+};
 
 const featuredCards: FeaturedCard[] = [
+  ...(await Promise.all(
+    hubPosts.map((post) => publicationCard(post, "Hub Infinito")),
+  )),
+  ...(await Promise.all(
+    naMidiaPosts.map((post) => publicationCard(post, "Na Mídia")),
+  )),
+  bhazCard,
   youtubeChannelCard,
-  emAltaCard,
-  {
-    href: "https://bhaz.com.br/colunas/siga-essa-mulher/as-infinitas-vozes-de-eleonora-santos/",
-    external: true,
-    eyebrow: "Em alta",
-    title: "As infinitas vozes de Eleonora Santos",
-    excerpt:
-      "Coluna sobre as decisões editoriais mais honestas do livro (In)finitudes — a recusa da “superação obrigatória” e as 20 vozes que atravessam a obra.",
-    meta: "BHAZ · Coluna “Siga essa mulher” · Nalu Saad",
-    image: "/authors/eleonora-bhaz.webp",
-    imageAlt: "As infinitas vozes de Eleonora Santos — coluna na BHAZ",
-    imageContain: true,
-    variant: "black",
-  },
+  ...(await Promise.all(
+    curadoriaPosts.map((post) => publicationCard(post, "Curadoria")),
+  )),
+  votoDeJubiloCard,
 ];
 
 // Hero · masthead + assinatura institucional fixa
@@ -306,17 +331,13 @@ const recommendationCards = await Promise.all(
     <div class="max-w-7xl mx-auto px-6 lg:px-12">
       <div class="flex items-center gap-6 py-10 lg:py-14">
         <span class="flex-1 h-px bg-rule"></span>
-        <span class="eyebrow whitespace-nowrap">
-          Em Alta & Podcasts da semana
-        </span>
+        <span class="eyebrow whitespace-nowrap">No portal</span>
         <span class="flex-1 h-px bg-rule"></span>
       </div>
     </div>
 
-    {/* 3 · Grid editorial · três destaques fixos com mesma estrutura visual
-         do PostCard (imagem 4:3 → eyebrow → título → excerpt → meta). Cards
-         externos abrem em nova aba; cards sem imagem caem no placeholder
-         de aquarela + logo. */}
+    {/* 3 · Três linhas: Hub, Na Mídia, Divã + Curadoria + Voto de Júbilo.
+         Legenda curta, no máximo duas linhas. */}
     <section class="max-w-7xl mx-auto px-6 lg:px-12 pb-16 lg:pb-24">
       <div
         class="grid grid-cols-1 md:grid-cols-3 gap-y-14 md:gap-x-10 lg:gap-x-14"
@@ -388,7 +409,7 @@ const recommendationCards = await Promise.all(
 
                 <span class="eyebrow mt-5 block">{card.eyebrow}</span>
 
-                <h3 class="font-serif text-[20px] lg:text-[22px] leading-[1.18] mt-2 font-medium tracking-[-0.005em] transition-colors group-hover:text-rouge">
+                <h3 class="font-serif text-[18px] lg:text-[20px] leading-[1.2] mt-2 font-medium tracking-[-0.005em] text-pretty transition-colors group-hover:text-rouge">
                   {card.title}
                   {card.external && (
                     <span class="ml-1 align-middle" aria-hidden="true">
@@ -397,9 +418,13 @@ const recommendationCards = await Promise.all(
                   )}
                 </h3>
 
-                <p class="font-serif text-[15px] lg:text-[16px] leading-[1.45] mt-3 text-ink/80">
-                  {card.excerpt}
-                </p>
+                {
+                  card.excerpt && (
+                    <p class="font-serif text-[13px] lg:text-[14px] leading-[1.4] mt-2 text-ink/75 line-clamp-2 text-pretty">
+                      {card.excerpt}
+                    </p>
+                  )
+                }
 
                 <div class="meta mt-2">{card.meta}</div>
               </a>
