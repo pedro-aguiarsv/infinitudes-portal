@@ -1,11 +1,16 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import vercel from '@astrojs/vercel';
 
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
+  // O site continua estático. Só /api/newsletter roda no servidor.
+  output: 'static',
+  adapter: vercel(),
+
   // URL canônica do site (usada por Open Graph, sitemap, etc.)
   site: 'https://infinitudes.com.br',
 
@@ -18,7 +23,8 @@ export default defineConfig({
       // Filtra páginas que não devem aparecer em buscadores
       filter: (page) =>
         !page.includes('/preview/') &&
-        !page.includes('/404'),
+        !page.includes('/404') &&
+        !page.includes('/api/'),
       changefreq: 'weekly',
       priority: 0.7,
       // Páginas estáticas têm prioridade maior do que rotas dinâmicas
