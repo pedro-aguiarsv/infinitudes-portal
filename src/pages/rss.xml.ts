@@ -27,7 +27,16 @@ type FeedItem = {
   description: string;
   content?: string;
   categories?: string[];
+  enclosure?: { url: string; length: number; type: string };
 };
+
+/** Miniatura 3:2 em JPEG, lida pelo Brevo como {{ item.ENCLOSURE }} no resumo semanal. */
+function thumbEnclosure(source: PostPreview["mainImage"] | EpisodePreview["thumbnail"] | undefined, fallback?: string | null) {
+  const url = source
+    ? urlFor(source).width(600).height(400).fit("crop").format("jpg").url()
+    : fallback;
+  return url ? { url, length: 0, type: "image/jpeg" } : undefined;
+}
 
 function postImage(post: PostPreview): string | null {
   if (post.mainImage) {
@@ -75,6 +84,7 @@ export async function GET(context: APIContext) {
         description: excerpt,
         content: buildContent(image, excerpt),
         categories: p.category ? [p.category] : undefined,
+        enclosure: thumbEnclosure(p.mainImage, p.coverUrl),
       };
     });
 
@@ -91,6 +101,10 @@ export async function GET(context: APIContext) {
         description: excerpt,
         content: buildContent(image, excerpt),
         categories: ["diva-infinito"],
+        enclosure: thumbEnclosure(
+          e.thumbnail,
+          e.videoUrl ? getYouTubeThumbnail(e.videoUrl) : null,
+        ),
       };
     });
 
