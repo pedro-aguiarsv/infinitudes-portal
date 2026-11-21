@@ -31,14 +31,14 @@ type FeedItem = {
 
 function postImage(post: PostPreview): string | null {
   if (post.mainImage) {
-    return urlFor(post.mainImage).width(1200).height(630).fit("crop").url();
+    return urlFor(post.mainImage).width(1200).height(630).fit("crop").format("jpg").url();
   }
   return null;
 }
 
 function episodeImage(ep: EpisodePreview): string | null {
   if (ep.thumbnail) {
-    return urlFor(ep.thumbnail).width(1200).height(630).fit("crop").url();
+    return urlFor(ep.thumbnail).width(1200).height(630).fit("crop").format("jpg").url();
   }
   if (ep.videoUrl) {
     return getYouTubeThumbnail(ep.videoUrl);
